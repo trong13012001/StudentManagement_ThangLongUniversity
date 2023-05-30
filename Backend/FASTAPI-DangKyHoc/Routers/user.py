@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder
 from datetime import date
 from auth.auth_bearer import JWTBearer
 from auth.auth_handler import decodeJWT
-from model import UserSchema,StudentSchema,TeacherSchema
+from model import UserSchema,StudentSchema,TeacherSchema,ImageSchema
 import schema
 from database import SessionLocal, engine
 import model
@@ -35,6 +35,8 @@ async def get_user(
     user_id = user.get("user_id")
     
     user = db.query(UserSchema).filter_by(username=user_id).first()
+    image = db.query(ImageSchema).filter_by(user_id=user_id).first()
+    
     print(user.role)
     if(user.role=="1"):
         student = db.query(StudentSchema).get(user_id) or None
@@ -53,7 +55,7 @@ async def get_user(
             date_of_join=student.date_of_join,
             parent_name=student.parent_name
         )
-        return {"user": user, "student": get_student}
+        return {"user": user, "student": get_student,"image":image}
     elif(user.role=="2"):
         teacher = db.query(TeacherSchema).get(user_id) or None
         if teacher is None:
@@ -68,4 +70,4 @@ async def get_user(
             phone=teacher.phone,
             date_of_join=teacher.date_of_join,
         )
-        return {"user": user, "teacher": get_teacher}
+        return {"user": user, "teacher": get_teacher,"image":image}

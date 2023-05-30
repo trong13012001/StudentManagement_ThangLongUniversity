@@ -1,5 +1,5 @@
 from typing import Text
-from sqlalchemy import Column,Date
+from sqlalchemy import Column,Date,BLOB
 from sqlalchemy.types import String, Integer, Text
 from database import Base
 
@@ -42,4 +42,7 @@ class TeacherSchema(Base):
     address=Column(String(45))
     phone=Column(String(10))
     date_of_join=Column(Date)
-
+class ImageSchema(Base):
+    __tablename__="image"
+    user_id=Column(String(6),primary_key=True, index=True)
+    image=Column(String)

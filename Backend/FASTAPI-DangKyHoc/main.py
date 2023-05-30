@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, Request, Form,status,Header
+from fastapi import Depends, FastAPI, Request, Form,status,Header,UploadFile,File
 from fastapi.responses import HTMLResponse, JSONResponse
 from sqlalchemy import exists
 import base64
@@ -14,27 +14,24 @@ from model import Movie,UserSchema,StudentSchema,TeacherSchema
 import schema
 from database import SessionLocal, engine
 import model
-from Routers import login,student,teacher,user
+from Routers import login,student,teacher,user,image
+import uuid
+
 app = FastAPI()
 
-model.Base.metadata.create_all(bind=engine)
 
-
-def get_database_session():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
 
 app.include_router(login.router, tags=['Login Controller'], prefix='')
 app.include_router(student.router, tags=['Student Controller'], prefix='')
 app.include_router(teacher.router, tags=['Teacher Controller'], prefix='')
 app.include_router(user.router, tags=['User Controller'], prefix='')
+app.include_router(image.router, tags=['Image Controller'], prefix='')
 
 # @app.get("/", response_class=HTMLResponse)
 # async def read_item(request: Request, db: Session = Depends(get_database_session)):
 #     records = db.query(Movie).all()
+
+
 
 
 # @app.get("/movie/{name}", response_class=HTMLResponse)

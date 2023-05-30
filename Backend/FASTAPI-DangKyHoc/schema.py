@@ -41,4 +41,6 @@ class TeacherSchema(BaseModel):
     address=str
     phone=str
     date_of_join=date
-    
+class ImageSchema(BaseModel):
+    user_id=str
+    image=str

@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder
 from datetime import date
 from auth.auth_bearer import JWTBearer
 from auth.auth_handler import signJWT,decodeJWT,refresh_access_token
-from model import UserSchema,StudentSchema,TeacherSchema
+from model import UserSchema,StudentSchema,TeacherSchema,ImageSchema
 import schema
 from database import SessionLocal, engine
 import model
@@ -42,7 +42,8 @@ async def create_account(
         return {"data": "Email bị trùng!"}
     
     userSchema = UserSchema(username=username, email=email, password=base64.b64encode(password.encode("utf-8")),role=role)
-        
+    imageSchema=ImageSchema(user_id=username)
+    db.add(imageSchema)
     if(role==1):
         studentSchema = StudentSchema(student_id=username, email=email)
         db.add(studentSchema)
