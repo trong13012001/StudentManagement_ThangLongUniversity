@@ -6,10 +6,9 @@ import {
 import axios from "axios";
 import { BASE_URL } from "../../../env/url"; 
 import * as SecureStore from "expo-secure-store";
-import Header from "../../../components/Header/Header";
 import Icon1 from 'react-native-vector-icons/Ionicons';
 import GlobalStyle from "../../../GlobalStyle";
-const AccountScreen=({navigation})=>{
+const StudentAccountScreen=({navigation})=>{
   const [user_id, setUserID] = useState("");
   const [userName, setUserName] = useState("");
   const [emailStudent, setEmail] = useState("");
@@ -17,7 +16,7 @@ const AccountScreen=({navigation})=>{
   const [gender,setGender]=useState("")
   const [address,setAddress]=useState("")
   const [loading, setLoading] = useState(true);
-
+  const [b64, setB64] = useState('');
   const load = async () => {
     // Variables used for calling API....
     const accessToken = await SecureStore.getItemAsync("accessToken");
@@ -34,6 +33,7 @@ const AccountScreen=({navigation})=>{
       .then(function (response) {
         console.log(response)
         setUserID(response.data.student.student_id)
+        setB64(response.data.image.image)
         setUserName(response.data.student.name);
         setEmail(response.data.user.email);
         setPhone(response.data.student.phone)
@@ -93,8 +93,8 @@ const AccountScreen=({navigation})=>{
               <ScrollView>
             
                 <View style={{height: '70%',alignItems: 'center',justifyContent: 'center'}}>
-                  <Image source={require('../../../assets/user1.png')} style={{width:72,height:72, resizeMode: 'contain' }} />
-                  <Text allowFontScaling={false} style={[styles.text, { fontWeight: 'bold',fontSize:16,paddingTop:16,paddingBottom:4 ,textTransform: 'uppercase'}]}>{user_id} - {userName}</Text>
+                  <Image source={{uri:`data:image/png;base64,${b64}`}} style={{width:72,height:72, resizeMode: 'contain',borderRadius:40 }} />
+                  <Text allowFontScaling={false} style={[styles.text, { fontWeight: 'bold',fontSize:16,paddingTop:16,paddingBottom:4 }]}><Text style={{textTransform: 'uppercase'}}>{user_id} </Text>{userName}</Text>
                   <Text allowFontScaling={false} style={[styles.text, { color: GlobalStyle.textColor.color,fontSize:14 }]}>{emailStudent}</Text></View>
                 <View>
                   <FlatList
@@ -125,7 +125,7 @@ const AccountScreen=({navigation})=>{
 )
 }
 
-export default AccountScreen;
+export default StudentAccountScreen;
 const styles = StyleSheet.create({
     container: {
       flex: 1,

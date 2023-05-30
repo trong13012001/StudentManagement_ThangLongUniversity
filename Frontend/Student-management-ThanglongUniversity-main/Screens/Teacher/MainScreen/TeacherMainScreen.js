@@ -7,8 +7,9 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import GlobalStyle from '../../../GlobalStyle';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import TeacherHomeScreen from "../HomeScreen/TeacherHomeScreen";
-import TimeTable from "../../TimeTable/TimeTable"
+import TeacherHomeScreen from "../HomeScreen/TeacherHomeScreen"
+import TeacherAccountScreen from "../AccountScreen/TeacherAccountScreen";
+import TimeTable from "../TimeTable/TimeTable"
 let windowWidth = Dimensions.get('window').width;
 
 const Tab = createBottomTabNavigator();
@@ -24,20 +25,37 @@ const TeacherMainScreen=()=>{
           tabBarHideOnKeyboard: Platform.OS==="android"?true:false,
           headerShown: false,
           tabBarShowLabel: false,
+
           tabBarStyle: {
             height: Platform.OS === 'ios' ? '10%' : '10%',
+            width:"90%",
+            marginLeft:"5%",
             position: 'absolute',
+            borderRadius:15
           }
         }
       }
     >
+         <Tab.Screen
+        name="Trang chủ"
+        component={TeacherHomeScreen}
+        options={{
+          tabBarIcon: ({ focused, color, size }) => (
+            <View style={{ alignItems: 'center', width: windowWidth > 800 ? 100 : undefined }}>
+              <Icon name="home" color={focused ? GlobalStyle.themeColor.color : GlobalStyle.textColor.color} size={size} />
+              <Text allowFontScaling={false} style={{ color: focused ? GlobalStyle.themeColor.color : GlobalStyle.textColor.color,fontSize:12, }}>Trang chủ</Text>
+            </View>
+          ),
+        }}
+      />
       <Tab.Screen
         name="Thời khóa biểu"
         component={TimeTable}
         options={{
-          tabBarIcon:({focus,color,size})=>(
+          tabBarIcon:({focused,color,size})=>(
             <View style={{alignItems:'center', width: windowWidth > 800 ? 100 : undefined}}>
-              <Icon></Icon>
+               <Icon name="calendar" color={focused ? GlobalStyle.themeColor.color : GlobalStyle.textColor.color} size={size} />
+              <Text allowFontScaling={false} style={{ color: focused ? GlobalStyle.themeColor.color : GlobalStyle.textColor.color,fontSize:12, }}>Thời khóa biểu</Text>
             </View>
           )
         }}
@@ -46,14 +64,15 @@ const TeacherMainScreen=()=>{
        
 
       
-      <Tab.Screen
-        name="Trang chủ"
-        component={TeacherHomeScreen}
+   
+        <Tab.Screen
+        name="Tài khoản"
+        component={TeacherAccountScreen}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <View style={{ alignItems: 'center', width: windowWidth > 800 ? 100 : undefined }}>
-              <Icon name="home" color={focused ? GlobalStyle.themeColor.color : color} size={size} />
-              <Text allowFontScaling={false} style={{ color: focused ? GlobalStyle.themeColor.color : color, paddingTop: 5,fontSize:12, }}>Trang chủ</Text>
+              <Icon name="user" color={focused ? GlobalStyle.themeColor.color : GlobalStyle.textColor.color} size={size} />
+              <Text allowFontScaling={false} style={{ color: focused ? GlobalStyle.themeColor.color : GlobalStyle.textColor.color,fontSize:12, }}>Tài khoản</Text>
             </View>
           ),
         }}

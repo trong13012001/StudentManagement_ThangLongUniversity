@@ -9,8 +9,12 @@ import * as SecureStore from "expo-secure-store";
 import Header from "../../../components/Header/Header";
 import GlobalStyle from "../../../GlobalStyle";
 const statusBarStyle = Platform.OS === 'ios' ? 'dark-content':'light-content';
+let windowWidth = Dimensions.get('window').width;
+
 
 const StudentHomeScreen=({navigation})=>{
+  const [user_id, setUserID] = useState("");
+
   const [userName, setUserName] = useState("");
   const [emailStudent, setEmail] = useState("");
   const [phone,setPhone]=useState("")
@@ -33,6 +37,8 @@ const StudentHomeScreen=({navigation})=>{
       })
       .then(function (response) {
         console.log(response)
+        setUserID(response.data.user.username);
+
         setUserName(response.data.student.name);
         setEmail(response.data.user.email);
         setPhone(response.data.student.phone)
@@ -50,27 +56,6 @@ const StudentHomeScreen=({navigation})=>{
   useEffect(() => {
     load();
   }, [])
-  const handleLogout = async () => {
-    Alert.alert(
-      "Đăng xuất",
-      "Bạn có chắc bạn muốn đăng xuất?",
-      [
-        {
-          text: "Quay lại",
-        },
-        {
-          text: "Đăng xuất",
-          onPress: () => {
-            // Clear data inside SecureStore
-            SecureStore.deleteItemAsync('accessToken');
-            SecureStore.deleteItemAsync('refreshToken');
-            navigation.replace("LoginScreen");
-
-          },
-        },
-      ]
-    );
-  }
 
 
 
@@ -81,7 +66,7 @@ const StudentHomeScreen=({navigation})=>{
         <View style={{marginLeft:"5%",top:"10%"}}>
           <Text style={styles.header}>ThangLong University</Text>
           <Text style={styles.header2}>Xin chào!</Text>
-          <Text style={styles.header3}>{userName}</Text>
+          <Text style={styles.header3}><Text style={{textTransform: 'uppercase'}}>{user_id} </Text>{userName}</Text>
         </View>
         <View
         style={{
@@ -94,7 +79,6 @@ const StudentHomeScreen=({navigation})=>{
         <Text>Điện thoại: {phone}</Text>
         <Text>Giới tính: {gender}</Text>
         <Text>Địa chỉ: {address}</Text>
-        <Button title="Logout" onPress={handleLogout} />
       </View></>
         
 )
@@ -104,18 +88,18 @@ export default StudentHomeScreen;
 const styles = StyleSheet.create({
 
   header:{
-    fontSize: 36,
+    fontSize:(Platform.OS === 'ios' && windowWidth>400) ? 36 : 36*0.6,
     fontWeight:"600",
     color:GlobalStyle.textColor.color
   },
   header2:{
-    fontSize: 30,
+    fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 30 : 30*0.6,
     fontWeight:"600",
     color:GlobalStyle.themeColor.color
   }
   ,
   header3:{
-    fontSize: 24,
+    fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 24 : 24*0.6,
     fontWeight:"600",
     color:GlobalStyle.textColor.color
   }

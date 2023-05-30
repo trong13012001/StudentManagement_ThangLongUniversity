@@ -8,8 +8,8 @@ import GlobalStyle from '../../../GlobalStyle';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import StudentHomeScreen from "../HomeScreen/StudentHomeScreen";
-import AccountScreen from "../AccountScreen.js/AccountScreen";
-import TimeTable from "../../TimeTable/TimeTable"
+import StudentAccountScreen from "../AccountScreen.js/StudentAccountScreen";
+import TimeTable from "../TimeTable/TimeTable"
 let windowWidth = Dimensions.get('window').width;
 
 const Tab = createBottomTabNavigator();
@@ -67,7 +67,7 @@ const StudentMainScreen=()=>{
    
         <Tab.Screen
         name="Tài khoản"
-        component={AccountScreen}
+        component={StudentAccountScreen}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <View style={{ alignItems: 'center', width: windowWidth > 800 ? 100 : undefined }}>

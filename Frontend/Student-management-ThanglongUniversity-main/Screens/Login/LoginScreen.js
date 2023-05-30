@@ -62,7 +62,6 @@ const LoginScreen=({navigation})=>{
             SecureStore.setItemAsync("refreshToken", response.data.token.refresh_token);
             console.log(response.data.token.access_token)
             console.log(response.data.token.refresh_token)
-            
             setIdSecureStorage();
             setLoading(false);   
             }

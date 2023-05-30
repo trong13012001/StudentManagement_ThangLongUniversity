@@ -3,8 +3,9 @@ import {
     StyleSheet, TextInput, View, Text, ScrollView, Dimensions, Platform,
     Image, Keyboard, TouchableOpacity, KeyboardAvoidingView, Alert,StatusBar
   } from "react-native"; 
-import GlobalStyle from "../../GlobalStyle";
+import GlobalStyle from "../../../GlobalStyle";
 const statusBarStyle = Platform.OS === 'ios' ? 'dark-content':'light-content';
+let windowWidth = Dimensions.get('window').width;
 
 const TimeTable=()=>{
     return(
@@ -23,18 +24,18 @@ export default TimeTable;
 const styles = StyleSheet.create({
 
   header:{
-    fontSize: 36,
+    fontSize:(Platform.OS === 'ios' && windowWidth>400) ? 36 : 36*0.6,
     fontWeight:"600",
     color:GlobalStyle.textColor.color
   },
   header2:{
-    fontSize: 30,
+    fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 30 : 30*0.6,
     fontWeight:"600",
     color:GlobalStyle.themeColor.color
   }
   ,
   header3:{
-    fontSize: 24,
+    fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 24 : 24*0.6,
     fontWeight:"600",
     color:GlobalStyle.textColor.color
   }
