@@ -31,3 +31,9 @@ class TeacherSchema(BaseModel):
 class ImageSchema(BaseModel):
     userID=str
     image=str
+class MajorSchema(BaseModel):
+    majorID=str
+    majorName=str
+class ImageSchema(BaseModel):
+    branchID=int
+    branchName=str

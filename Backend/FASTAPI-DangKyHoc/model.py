@@ -22,6 +22,8 @@ class StudentSchema(Base):
     studentPhone=Column(String(10))
     studentDatejoin=Column(Date)
     studentParent=Column(String(45))
+    majorID=Column(String(6))
+    branchID=Column(Integer)
 class TeacherSchema(Base):
     __tablename__="teacher"
     teacherID = Column(String(6),primary_key=True, index=True)
@@ -36,3 +38,11 @@ class ImageSchema(Base):
     __tablename__="image"
     userID=Column(String(6),primary_key=True, index=True)
     image=Column(String)
+class MajorSchema(Base):
+    __tablename__="major"
+    majorID=Column(String(6),primary_key=True, index=True)
+    majorName=Column(String)
+class BranchSchema(Base):
+    __tablename__="branch"
+    branchID=Column(Integer,primary_key=True, index=True)
+    branchName=Column(String)

@@ -87,15 +87,15 @@ const StudentAccountScreen=({navigation})=>{
 
 
     return(
-        <View style={styles.container}>
+        <View style={[styles.container]}>
             <>
               <ScrollView>
             
-                <View style={{height: '70%',alignItems: 'center',justifyContent: 'center'}}>
+                <View style={{height: '70%',alignItems: 'center',justifyContent: 'center',top:"10%"}}>
                   <Image source={{uri:`data:image/png;base64,${b64}`}} style={{width:72,height:72, resizeMode: 'contain',borderRadius:40 }} />
                   <Text allowFontScaling={false} style={[styles.text, { fontWeight: 'bold',fontSize:16,paddingTop:16,paddingBottom:4 }]}><Text style={{textTransform: 'uppercase'}}>{user_id} </Text>{userName}</Text>
                   <Text allowFontScaling={false} style={[styles.text, { color: GlobalStyle.textColor.color,fontSize:14 }]}>{emailStudent}</Text></View>
-                <View>
+                <View style={{top:"10%"}}>
                   <FlatList
                     data={[
                       {

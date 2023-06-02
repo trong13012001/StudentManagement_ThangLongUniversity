@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from datetime import date
 from auth.auth_bearer import JWTBearer
 from auth.auth_handler import decodeJWT
-from model import UserSchema,StudentSchema,TeacherSchema,ImageSchema
+from model import UserSchema,StudentSchema,TeacherSchema,ImageSchema,MajorSchema,BranchSchema
 import schema
 from database import SessionLocal, engine
 import model
@@ -53,7 +53,11 @@ async def get_user(
             studentDatejoin=student.studentDatejoin,
             studentParent=student.studentParent
         )
-        return {"user": user, "student": get_student,"image":image}
+        major = db.query(MajorSchema).filter_by(majorID=student.majorID).first()
+        branch = db.query(BranchSchema).filter_by(branchID=student.branchID).first()
+
+
+        return {"user": user, "student": get_student,"image":image,"branch":branch,"major":major}
     elif(user.userRole==2):
         teacher = db.query(TeacherSchema).get(userID) or None
         if teacher is None:

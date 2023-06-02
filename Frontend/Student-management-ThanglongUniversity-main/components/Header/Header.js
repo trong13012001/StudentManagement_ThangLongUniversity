@@ -17,7 +17,7 @@ const Header = ({ hasBackButton, title }) => {
        
             
             <><StatusBar barStyle={statusBarStyle} />
-            <View style={{ height: "15%",top:"10%" }}>
+            <View style={{ height: "16%",top:"10%" }}>
             <View style={{  justifyContent: 'center'}}>
                 {hasBackButton ? (
                     <TouchableOpacity
@@ -32,7 +32,7 @@ const Header = ({ hasBackButton, title }) => {
 
                 ) : null}
                 <View style={{ position: 'absolute', marginLeft: '20%' }}>
-                    <Text allowFontScaling={false} style={{ color: 'white', fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 30 : 30*0.6, fontWeight: '600',color:GlobalStyle.textColor.color }}>{title}</Text>
+                    <Text allowFontScaling={false} style={{ color: 'white', fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 30 : 30*0.8, fontWeight: '600',color:GlobalStyle.textColor.color }}>{title}</Text>
                 </View>
             </View>
         </View></>
