@@ -27,25 +27,25 @@ def get_database_session():
 @router.post("/update_teacher_information")
 async def update_teacher(
     db: Session = Depends(get_database_session),
-    id: str = Form(...),
-    name: str = Form(...),
-    dob: date = Form(...),
-    gender: str = Form(...),
-    address: str = Form(...),
-    phone: str = Form(...),
-    date_of_join: date = Form(...),
+    teacher_ID: str = Form(...),
+    teacherName: str = Form(...),
+    teacherDOB: date = Form(...),
+    teacherGender: str = Form(...),
+    teacherAddress: str = Form(...),
+    teacherPhone: str = Form(...),
+    teacherDatejoin: date = Form(...),
 ):
-    teacher_exists = db.query(exists().where(TeacherSchema.teacher_id == id)).scalar()
+    teacher_exists = db.query(exists().where(TeacherSchema.teacherID == teacher_ID)).scalar()
 
-    teacher = db.query(TeacherSchema).get(id)
+    teacher = db.query(TeacherSchema).get(teacher_ID)
     if teacher_exists:
    
-        teacher.name = name
-        teacher.dob = dob
-        teacher.gender = gender
-        teacher.address = address
-        teacher.phone = phone
-        teacher.date_of_join = date_of_join
+        teacher.teacherName = teacherName
+        teacher.teacherDOB = teacherDOB
+        teacher.teacherGender = teacherGender
+        teacher.teacherAddress = teacherAddress
+        teacher.teacherPhone = teacherPhone
+        teacher.teacherDatejoin = teacherDatejoin
 
         # Commit and refresh
         db.commit()

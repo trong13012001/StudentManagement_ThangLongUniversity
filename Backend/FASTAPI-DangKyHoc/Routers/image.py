@@ -41,7 +41,7 @@ async def create_upload_file(
     image: UploadFile = File(...),
     db: Session = Depends(get_database_session)
 ):
-    image_exists = db.query(exists().where(ImageSchema.user_id == user_id)).scalar()
+    image_exists = db.query(exists().where(ImageSchema.userID == user_id)).scalar()
     image_db = db.query(ImageSchema).get(user_id)
 
     if image_exists:
@@ -65,6 +65,6 @@ async def create_upload_file(
         db.commit()
         db.refresh(image_db)
 
-        return {"filename":encoded_image}
+        return {"message":"Cập nhật ảnh đại diện thành công"}
     else:
         return JSONResponse(status_code=400, content={"message": "Thông tin sinh viên không có trong dữ liệu"})

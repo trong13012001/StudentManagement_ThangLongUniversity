@@ -29,26 +29,26 @@ def get_database_session():
 @router.post("/signup")
 async def create_account(
     db: Session = Depends(get_database_session),
-    username:schema.UserSchema.username=Form(...),
-    email:schema.UserSchema.email=Form(...),
-    password:schema.UserSchema.password=Form(...),
-    role:schema.UserSchema.role=Form(...)
+    userName:schema.UserSchema.userName=Form(...),
+    userEmail:schema.UserSchema.userEmail=Form(...),
+    userPassword:schema.UserSchema.userPassword=Form(...),
+    userRole:schema.UserSchema.userRole=Form(...)
     ):
-    user_exists = db.query(exists().where(UserSchema.username == username)).scalar()
-    email_exists = db.query(exists().where(UserSchema.email == email)).scalar()
+    user_exists = db.query(exists().where(UserSchema.userName == userName)).scalar()
+    email_exists = db.query(exists().where(UserSchema.userEmail == userEmail)).scalar()
     if user_exists:
         return {"data": "Username bị trùng!"}
     elif email_exists:
         return {"data": "Email bị trùng!"}
     
-    userSchema = UserSchema(username=username, email=email, password=base64.b64encode(password.encode("utf-8")),role=role)
-    imageSchema=ImageSchema(user_id=username)
+    userSchema = UserSchema(userName = userName, userEmail =userEmail, userPassword=base64.b64encode(userPassword.encode("utf-8")),userRole=userRole)
+    imageSchema=ImageSchema(userID=userName)
     db.add(imageSchema)
-    if(role==1):
-        studentSchema = StudentSchema(student_id=username, email=email)
+    if(userRole==1):
+        studentSchema = StudentSchema(studentID=userName, studentEmail=userEmail)
         db.add(studentSchema)
-    if(role==2):
-        teacherSchema = TeacherSchema(teacher_id=username, email=email)
+    if(userRole==2):
+        teacherSchema = TeacherSchema(teacherID=userName, teacherEmail=userEmail)
         db.add(teacherSchema)
     db.add(userSchema)
     db.commit()
@@ -57,20 +57,23 @@ async def create_account(
         "data": "Tài khoản đã được tạo thành công!"
     }
 @router.post("/login",status_code=status.HTTP_200_OK)
-async def login(db:Session=Depends(get_database_session),username:schema.UserSchema.username=Form(...),password:schema.UserSchema.password=Form(...)):
-    password=base64.b64encode(password.encode("utf-8"))
-    user_exists = db.query(exists().where(UserSchema.username == username)).scalar()
-    pass_exists = db.query(exists().where(UserSchema.password==password)).scalar()
-    user = db.query(UserSchema).filter(UserSchema.username == username).first()
-    role_exists = user.role if user else None
+async def login(db:Session=Depends(get_database_session),userName:schema.UserSchema.userName=Form(...),userPassword:schema.UserSchema.userPassword=Form(...)):
+    password=base64.b64encode(userPassword.encode("utf-8"))
+    user_exists = db.query(exists().where(UserSchema.userName == userName)).scalar()
+    pass_exists = db.query(exists().where(UserSchema.userPassword==password)).scalar()
+    user = db.query(UserSchema).filter(UserSchema.userName == userName).first()
+    role_exists = user.userRole if user else None
     print(role_exists)
-    if user_exists and pass_exists:
-        response_data = {"token": signJWT(username), "role_exists": role_exists}
-
-        return response_data
+    if user_exists==False:
+        return JSONResponse(status_code=400, content={"message": "Không có tài khoản"})
+    elif pass_exists==False:
+        return JSONResponse(status_code=400, content={"message": "Sai mật khẩu"})
     else:
-        return JSONResponse(status_code=400, content={"message": "Sai tài khoản hoặc mật khẩu"})
-
+        response_data = {"token": signJWT(userName), "role_exists": role_exists}
+        return response_data
 @router.post("/refresh")
 async def refresh_token(refresh_token: str):
     return refresh_access_token(refresh_token)
+
+
+
