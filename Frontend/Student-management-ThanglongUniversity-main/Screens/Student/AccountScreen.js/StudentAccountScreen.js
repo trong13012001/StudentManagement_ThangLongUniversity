@@ -107,6 +107,8 @@ const StudentAccountScreen=({navigation})=>{
                       {
                         title: 'Cài đặt',
                         icon: 'settings',
+                        onPress: () => { navigation.dispatch(CommonActions.navigate({ name: 'Tài khoản', params: { screen: 'Cài đặt' } })) }
+
                       },
         
                       {

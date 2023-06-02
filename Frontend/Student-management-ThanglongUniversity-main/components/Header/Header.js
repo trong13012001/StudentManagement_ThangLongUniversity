@@ -11,37 +11,33 @@ import NetworkCheck from '../NetworkCheck/CheckInternetConnectivity.js'
 
 const Header = ({ hasBackButton, title }) => {
     let navigation = useNavigation();
-    const statusBarStyle = Platform.OS === 'ios' ? 'light-content':'dark-content';
+    const statusBarStyle = Platform.OS === 'ios' ? 'dark-content':'dark-content';
 
     return (
-        <View>
+       
             
-            <StatusBar barStyle={statusBarStyle}/>
+            <><StatusBar barStyle={statusBarStyle} />
+            <View style={{ height: "15%",top:"10%" }}>
+            <View style={{  justifyContent: 'center'}}>
+                {hasBackButton ? (
+                    <TouchableOpacity
+                        onPress={() => { navigation.goBack(); } }
+                        style={{ marginLeft: '5%', paddingRight: 100 }}
+                    >
+                        <Icon
+                            name='chevron-left'
+                            size={30}
+                            color={GlobalStyle.textColor.color} />
+                    </TouchableOpacity>
 
-            <View style={{ height: Platform.OS === 'ios' && windowHeight>750? 88 : 63, backgroundColor: GlobalStyle.textColor.color }}>
-                <View style={{ height: Platform.OS === 'ios' ? "145%" : 60, width: windowWidth, justifyContent: 'center' }} >
-                    {
-                        hasBackButton ? (
-                            <TouchableOpacity
-                                onPress={() => { navigation.goBack() }}
-                                style={{ marginLeft: '5%', paddingRight: 100 }}
-                            >
-                                <Icon
-                                    name='chevron-left'
-                                    size={20}
-                                    color={'white'}
-                                />
-                            </TouchableOpacity>
-
-                        ) : null
-                    }
-                    <View style={{ position: 'absolute', alignSelf: 'center', justifyContent: 'center' }}>
-                        <Text allowFontScaling={false} style={{ color: 'white', fontSize: 20,fontWeight:'600' }}>{title}</Text>
-                    </View>
+                ) : null}
+                <View style={{ position: 'absolute', marginLeft: '20%' }}>
+                    <Text allowFontScaling={false} style={{ color: 'white', fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 30 : 30*0.6, fontWeight: '600',color:GlobalStyle.textColor.color }}>{title}</Text>
                 </View>
             </View>
-            <NetworkCheck></NetworkCheck>
-        </View>    
+        </View></>
+            
+        
     )
 }
 
