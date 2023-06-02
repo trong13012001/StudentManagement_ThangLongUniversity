@@ -5,7 +5,6 @@ import * as SecureStore from "expo-secure-store";
 import { BASE_URL } from "../../env/url"
 import qs from 'qs';
 
-import { setEnabled } from "react-native/Libraries/Performance/Systrace";
 
 const SplashScreen=({navigation}) => {
     const [userName,setUserName]=useState("");
@@ -28,19 +27,19 @@ const SplashScreen=({navigation}) => {
             },
           })
           .then(function (response) {
-            if(response.data.user.role=="1"){
+            if(response.data.user.userRole==1){
             // Checking if user is on the onsite list or not
             console.log(response.data.student)
-              SecureStore.setItemAsync("studentId", `${response.data.student.student_id}`)
-              SecureStore.setItemAsync("fullName", `${response.data.student.name}`)
-              SecureStore.setItemAsync("email", `${response.data.student.email}`)
+              SecureStore.setItemAsync("studentId", `${response.data.student.studentID}`)
+              SecureStore.setItemAsync("fullName", `${response.data.student.studentName}`)
+              SecureStore.setItemAsync("email", `${response.data.student.studentEmail}`)
               navigation.replace("StudentMainScreen");
               }
-            if(response.data.user.role=="2"){
+            if(response.data.user.userRole==2){
               console.log(response.data.teacher)
-              SecureStore.setItemAsync("teacherId", `${response.data.teacher.teacher_id}`)
-              SecureStore.setItemAsync("fullName", `${response.data.teacher.name}`)
-              SecureStore.setItemAsync("email", `${response.data.teacher.email}`)
+              SecureStore.setItemAsync("teacherId", `${response.data.teacher.teacherID}`)
+              SecureStore.setItemAsync("fullName", `${response.data.teacher.teacherName}`)
+              SecureStore.setItemAsync("email", `${response.data.teacher.teacherEmail}`)
               navigation.replace("TeacherMainScreen");
             }
             }
@@ -61,12 +60,6 @@ const SplashScreen=({navigation}) => {
 
 
     const load = async () => {
-        const data = {
-            username: userName,
-            password: userPassword
-          };
-          
-        const formData = qs.stringify(data);
         // Variable used for checking if user's logged in or not
         const isLoggedin = await SecureStore.getItemAsync("isLoggedin");
         

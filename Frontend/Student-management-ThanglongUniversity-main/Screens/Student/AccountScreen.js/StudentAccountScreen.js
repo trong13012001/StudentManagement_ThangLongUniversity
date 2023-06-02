@@ -8,6 +8,8 @@ import { BASE_URL } from "../../../env/url";
 import * as SecureStore from "expo-secure-store";
 import Icon1 from 'react-native-vector-icons/Ionicons';
 import GlobalStyle from "../../../GlobalStyle";
+import { CommonActions } from "@react-navigation/native";
+
 const StudentAccountScreen=({navigation})=>{
   const [user_id, setUserID] = useState("");
   const [userName, setUserName] = useState("");
@@ -32,13 +34,10 @@ const StudentAccountScreen=({navigation})=>{
       })
       .then(function (response) {
         console.log(response)
-        setUserID(response.data.student.student_id)
+        setUserID(response.data.student.studentID)
+        setUserName(response.data.student.studentName);
+        setEmail(response.data.user.userEmail);
         setB64(response.data.image.image)
-        setUserName(response.data.student.name);
-        setEmail(response.data.user.email);
-        setPhone(response.data.student.phone)
-        setGender(response.data.student.gender)
-        setAddress(response.data.student.address)
         setLoading(false);
       })
       .catch(function (error) {
@@ -100,8 +99,10 @@ const StudentAccountScreen=({navigation})=>{
                   <FlatList
                     data={[
                       {
-                        title: 'Thông tin tài khoản',
+                        title: 'Thông tin sinh viên',
                         icon: 'information-circle',
+                        onPress: () => { navigation.dispatch(CommonActions.navigate({ name: 'Tài khoản', params: { screen: 'Thông tin sinh viên' } })) }
+
                       },
                       {
                         title: 'Cài đặt',

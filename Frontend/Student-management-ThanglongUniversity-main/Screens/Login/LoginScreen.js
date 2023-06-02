@@ -44,8 +44,8 @@ const LoginScreen=({navigation})=>{
         }
         setLoading(true)
         const data = {
-          username: userName,
-          password: userPassword
+          userName: userName,
+          userPassword: userPassword
         };
         
         const formData = qs.stringify(data);
@@ -92,7 +92,6 @@ const LoginScreen=({navigation})=>{
     const setIdSecureStorage = async () => {
       // Variables used for calling API
       const accessToken = await SecureStore.getItemAsync("accessToken");
-      
       const authorization = `Bearer ${accessToken}`
       console.log(authorization)
       // Calling API
@@ -104,21 +103,21 @@ const LoginScreen=({navigation})=>{
           },
         })
         .then(function (response) {
-          if(response.data.user.role=="1"){
-          // Checking if user is on the onsite list or not
-          console.log(response.data.student)
-            SecureStore.setItemAsync("studentId", `${response.data.student.student_id}`)
-            SecureStore.setItemAsync("fullName", `${response.data.student.name}`)
-            SecureStore.setItemAsync("email", `${response.data.student.email}`)
-            navigation.replace("StudentMainScreen");
+          if(response.data.user.userRole=="1"){
+            // Checking if user is on the onsite list or not
+            console.log(response.data.student)
+              SecureStore.setItemAsync("studentId", `${response.data.student.studentID}`)
+              SecureStore.setItemAsync("fullName", `${response.data.student.studentName}`)
+              SecureStore.setItemAsync("email", `${response.data.student.studentEmail}`)
+              navigation.replace("StudentMainScreen");
+              }
+            if(response.data.user.userRole=="2"){
+              console.log(response.data.teacher)
+              SecureStore.setItemAsync("teacherId", `${response.data.teacher.teacherID}`)
+              SecureStore.setItemAsync("fullName", `${response.data.teacher.teacherName}`)
+              SecureStore.setItemAsync("email", `${response.data.teacher.teacherEmail}`)
+              navigation.replace("TeacherMainScreen");
             }
-          if(response.data.user.role=="2"){
-            console.log(response.data.teacher)
-            SecureStore.setItemAsync("teacherId", `${response.data.teacher.teacher_id}`)
-            SecureStore.setItemAsync("fullName", `${response.data.teacher.name}`)
-            SecureStore.setItemAsync("email", `${response.data.teacher.email}`)
-            navigation.replace("TeacherMainScreen");
-          }
           }
 
         ) 

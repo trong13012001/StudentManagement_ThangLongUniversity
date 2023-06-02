@@ -14,7 +14,6 @@ let windowWidth = Dimensions.get('window').width;
 
 const StudentHomeScreen=({navigation})=>{
   const [user_id, setUserID] = useState("");
-
   const [userName, setUserName] = useState("");
   const [emailStudent, setEmail] = useState("");
   const [phone,setPhone]=useState("")
@@ -37,13 +36,12 @@ const StudentHomeScreen=({navigation})=>{
       })
       .then(function (response) {
         console.log(response)
-        setUserID(response.data.user.username);
-
-        setUserName(response.data.student.name);
-        setEmail(response.data.user.email);
-        setPhone(response.data.student.phone)
-        setGender(response.data.student.gender)
-        setAddress(response.data.student.address)
+        setUserID(response.data.user.userName);
+        setUserName(response.data.student.studentName);
+        setEmail(response.data.user.userEmail);
+        setPhone(response.data.student.studentPhone)
+        setGender(response.data.student.studentGender)
+        setAddress(response.data.student.studentAddress)
         setLoading(false);
       })
       .catch(function (error) {

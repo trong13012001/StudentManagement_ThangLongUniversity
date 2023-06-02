@@ -10,6 +10,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import StudentHomeScreen from "../HomeScreen/StudentHomeScreen";
 import StudentAccountScreen from "../AccountScreen.js/StudentAccountScreen";
 import TimeTable from "../TimeTable/TimeTable"
+import StudentAccountScreenStack from "../AccountScreen.js/StudentAccountScreenStack";
 let windowWidth = Dimensions.get('window').width;
 
 const Tab = createBottomTabNavigator();
@@ -31,7 +32,8 @@ const StudentMainScreen=()=>{
             width:"90%",
             marginLeft:"5%",
             position: 'absolute',
-            borderRadius:15
+            borderTopRightRadius:15,
+            borderTopLeftRadius:15,
           }
         }
       }
@@ -67,7 +69,7 @@ const StudentMainScreen=()=>{
    
         <Tab.Screen
         name="Tài khoản"
-        component={StudentAccountScreen}
+        component={StudentAccountScreenStack}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <View style={{ alignItems: 'center', width: windowWidth > 800 ? 100 : undefined }}>
@@ -76,6 +78,11 @@ const StudentMainScreen=()=>{
             </View>
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: () => {
+            navigation.navigate('Tài khoản', { screen: 'Thông tin' });
+          },
+        })}
       />
 </Tab.Navigator>
 
