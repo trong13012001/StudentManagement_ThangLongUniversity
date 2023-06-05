@@ -36,7 +36,6 @@ const InformationScreen=()=>{
             },
           })
           .then(function (response) {
-            console.log(response)
             setUserID(response.data.teacher.teacherID)
             setUserName(response.data.teacher.teacherName);
             setGender(response.data.teacher.teacherGender)
