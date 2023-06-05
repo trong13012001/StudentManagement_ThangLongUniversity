@@ -8,12 +8,15 @@ import axios from "axios";
 import { BASE_URL } from "../../../env/url"; 
 import * as SecureStore from "expo-secure-store";
 import Icon1 from 'react-native-vector-icons/Ionicons';
+import { CommonActions } from "@react-navigation/native";
+
 const statusBarStyle = Platform.OS === 'ios' ? 'dark-content':'light-content';
 
-const TeacherAccountScreen=()=>{
+const TeacherAccountScreen=({navigation})=>{
     const [user_id, setUserID] = useState("");
     const [userName, setUserName] = useState("");
     const [emailStudent, setEmail] = useState("");
+    const [b64,setB64]=useState("")
     const [phone,setPhone]=useState("")
     const [gender,setGender]=useState("")
     const [address,setAddress]=useState("")
@@ -33,13 +36,10 @@ const TeacherAccountScreen=()=>{
           },
         })
         .then(function (response) {
-          console.log(response)
-          setUserID(response.data.teacher.teacher_id)
-          setUserName(response.data.teacher.name);
-          setEmail(response.data.user.email);
-          setPhone(response.data.teacher.phone)
-          setGender(response.data.teacher.gender)
-          setAddress(response.data.teacher.address)
+          setUserID(response.data.teacher.teacherID)
+          setUserName(response.data.teacher.teacherName);
+          setEmail(response.data.user.userEmail);
+          setB64(response.data.image.image)
           setLoading(false);
         })
         .catch(function (error) {
@@ -89,41 +89,43 @@ const TeacherAccountScreen=()=>{
   
   
       return(
-          <View style={styles.container}>
-                  <StatusBar barStyle={statusBarStyle}/>
+        <View style={[styles.container]}>
+            <>
+              <ScrollView>
+            
+                <View style={{height: '70%',alignItems: 'center',justifyContent: 'center',top:"10%"}}>
+                  <Image source={{uri:`data:image/png;base64,${b64}`}} style={{width:72,height:72, resizeMode: 'contain',borderRadius:40 }} />
+                  <Text allowFontScaling={false} style={[styles.text, { fontWeight: 'bold',fontSize:16,paddingTop:16,paddingBottom:4 }]}><Text style={{textTransform: 'uppercase'}}>{user_id} </Text>{userName}</Text>
+                  <Text allowFontScaling={false} style={[styles.text, { color: GlobalStyle.textColor.color,fontSize:14 }]}>{emailStudent}</Text></View>
+                <View style={{top:"10%"}}>
+                  <FlatList
+                    data={[
+                      {
+                        title: 'Thông tin giáo viên',
+                        icon: 'information-circle',
+                        onPress: () => { navigation.dispatch(CommonActions.navigate({ name: 'Tài khoản', params: { screen: 'Thông tin giáo viên' } })) }
 
-              <>
-                <ScrollView>
-              
-                  <View style={{height: '70%',alignItems: 'center',justifyContent: 'center'}}>
-                    <Image source={require('../../../assets/user1.png')} style={{width:72,height:72, resizeMode: 'contain' }} />
-                    <Text allowFontScaling={false} style={[styles.text, { fontWeight: 'bold',fontSize:16,paddingTop:16,paddingBottom:4 }]}><Text style={{textTransform: 'uppercase'}}>{user_id} - </Text>{userName}</Text>
-                    <Text allowFontScaling={false} style={[styles.text, { color: GlobalStyle.textColor.color,fontSize:14 }]}>{emailStudent}</Text></View>
-                  <View>
-                    <FlatList
-                      data={[
-                        {
-                          title: 'Thông tin tài khoản',
-                          icon: 'information-circle',
-                        },
-                        {
-                          title: 'Cài đặt',
-                          icon: 'settings',
-                        },
-          
-                        {
-                          title: 'Đăng xuất',
-                          icon: 'log-out',
-                          onPress: () => { handleLogout() }
-                        }
-                      ]}
-                      renderItem={renderItem}
-                      scrollEnabled={false}
-                    />
-                  </View>
-                </ScrollView>
-              </>
-          </View>
+                      },
+                      {
+                        title: 'Cài đặt',
+                        icon: 'settings',
+                        onPress: () => { navigation.dispatch(CommonActions.navigate({ name: 'Tài khoản', params: { screen: 'Cài đặt' } })) }
+
+                      },
+        
+                      {
+                        title: 'Đăng xuất',
+                        icon: 'log-out',
+                        onPress: () => { handleLogout() }
+                      }
+                    ]}
+                    renderItem={renderItem}
+                    scrollEnabled={false}
+                  />
+                </View>
+              </ScrollView>
+            </>
+        </View>
           
   )
   }

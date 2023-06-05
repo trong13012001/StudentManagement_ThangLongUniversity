@@ -34,6 +34,8 @@ class TeacherSchema(Base):
     teacherAddress=Column(String(45))
     teacherPhone=Column(String(10))
     teacherDatejoin=Column(Date)
+    majorID=Column(String(6))
+    branchID=Column(Integer)
 class ImageSchema(Base):
     __tablename__="image"
     userID=Column(String(6),primary_key=True, index=True)

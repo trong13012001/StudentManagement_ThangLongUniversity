@@ -72,4 +72,6 @@ async def get_user(
             teacherPhone=teacher.teacherPhone,
             teacherDatejoin=teacher.teacherDatejoin,
         )
-        return {"user": user, "teacher": get_teacher,"image":image}
+        major = db.query(MajorSchema).filter_by(majorID=teacher.majorID).first()
+        branch = db.query(BranchSchema).filter_by(branchID=teacher.branchID).first()
+        return {"user": user, "teacher": get_teacher,"image":image,"branch":branch,"major":major}

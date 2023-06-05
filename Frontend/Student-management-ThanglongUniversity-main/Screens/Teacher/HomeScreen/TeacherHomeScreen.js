@@ -35,13 +35,13 @@ const TeacherHomeScreen=(navigation)=>{
         },
       })
       .then(function (response) {
-        setUserID(response.data.user.username);
+        setUserID(response.data.user.userName);
 
-        setUserName(response.data.teacher.name);
-        setEmail(response.data.user.email);
-        setPhone(response.data.teacher.phone)
-        setGender(response.data.teacher.gender)
-        setAddress(response.data.teacher.address)
+        setUserName(response.data.teacher.teacherName);
+        setEmail(response.data.user.userEmail);
+        setPhone(response.data.teacher.teacherPhone)
+        setGender(response.data.teacher.teacherGender)
+        setAddress(response.data.teacher.teacherAddress)
         setLoading(false);
       })
       .catch(function (error) {

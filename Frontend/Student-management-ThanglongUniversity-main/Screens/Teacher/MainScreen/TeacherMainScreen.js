@@ -8,8 +8,8 @@ import GlobalStyle from '../../../GlobalStyle';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import TeacherHomeScreen from "../HomeScreen/TeacherHomeScreen"
-import TeacherAccountScreen from "../AccountScreen/TeacherAccountScreen";
 import TimeTable from "../TimeTable/TimeTable"
+import TeacherAccountScreenStack from "../AccountScreen/TeacherAccountScreenStack";
 let windowWidth = Dimensions.get('window').width;
 
 const Tab = createBottomTabNavigator();
@@ -65,9 +65,9 @@ const TeacherMainScreen=()=>{
 
       
    
-        <Tab.Screen
+       <Tab.Screen
         name="Tài khoản"
-        component={TeacherAccountScreen}
+        component={TeacherAccountScreenStack}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <View style={{ alignItems: 'center', width: windowWidth > 800 ? 100 : undefined }}>
@@ -76,6 +76,11 @@ const TeacherMainScreen=()=>{
             </View>
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: () => {
+            navigation.navigate('Tài khoản', { screen: 'Thông tin' });
+          },
+        })}
       />
 </Tab.Navigator>
 
