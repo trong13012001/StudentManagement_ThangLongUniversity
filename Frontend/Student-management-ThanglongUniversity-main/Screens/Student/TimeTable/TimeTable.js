@@ -12,9 +12,9 @@ const TimeTable=()=>{
       <>
         <StatusBar barStyle={statusBarStyle}/>
         <View style={{marginLeft:"5%",top:"10%"}}>
-          <Text style={styles.header}>Thời Khóa Biểu</Text>
-          <Text style={styles.header2}>Học kỳ 3 - Nhóm 2</Text>
-          <Text style={styles.header3}></Text>
+          <Text allowFontScaling={false} style={styles.header}>Thời Khóa Biểu</Text>
+          <Text allowFontScaling={false} style={styles.header2}>Học kỳ 3 - Nhóm 2</Text>
+          <Text allowFontScaling={false} style={styles.header3}></Text>
         </View>
       </>
 )
@@ -24,18 +24,18 @@ export default TimeTable;
 const styles = StyleSheet.create({
 
   header:{
-    fontSize:(Platform.OS === 'ios' && windowWidth>400) ? 36 : 36*0.6,
+    fontSize:(Platform.OS === 'ios' && windowWidth>400) ? 36 : 36*(windowWidth/428),
     fontWeight:"600",
     color:GlobalStyle.textColor.color
   },
   header2:{
-    fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 30 : 30*0.6,
+    fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 30 : 30*(windowWidth/428),
     fontWeight:"600",
     color:GlobalStyle.themeColor.color
   }
   ,
   header3:{
-    fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 24 : 24*0.6,
+    fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 24 : 24*(windowWidth/428),
     fontWeight:"600",
     color:GlobalStyle.textColor.color
   }

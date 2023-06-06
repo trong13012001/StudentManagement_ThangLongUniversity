@@ -12,9 +12,9 @@ const TimeTable=()=>{
       <>
         <StatusBar barStyle={statusBarStyle}/>
         <View style={{marginLeft:"5%",top:"10%"}}>
-          <Text style={styles.header}>Thời Khóa Biểu</Text>
-          <Text style={styles.header2}>Học kỳ 3 - Nhóm 2</Text>
-          <Text style={styles.header3}></Text>
+          <Text allowFontScaling={false} style={styles.header}>Thời Khóa Biểu</Text>
+          <Text allowFontScaling={false}  style={styles.header2}>Học kỳ 3 - Nhóm 2</Text>
+          <Text allowFontScaling={false} style={styles.header3}></Text>
         </View>
       </>
 )

@@ -144,9 +144,6 @@ const styles = StyleSheet.create({
         borderRadius:15,
         marginLeft:"5%",
         top:"8%",
-        
-    
-
     },
     itemwrapper: {
       height: 50,

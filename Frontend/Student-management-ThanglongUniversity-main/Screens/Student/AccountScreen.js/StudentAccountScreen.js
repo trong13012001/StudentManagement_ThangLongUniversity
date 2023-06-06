@@ -9,14 +9,12 @@ import * as SecureStore from "expo-secure-store";
 import Icon1 from 'react-native-vector-icons/Ionicons';
 import GlobalStyle from "../../../GlobalStyle";
 import { CommonActions } from "@react-navigation/native";
+import { SvgUri } from 'react-native-svg';
 
 const StudentAccountScreen=({navigation})=>{
   const [user_id, setUserID] = useState("");
   const [userName, setUserName] = useState("");
   const [emailStudent, setEmail] = useState("");
-  const [phone,setPhone]=useState("")
-  const [gender,setGender]=useState("")
-  const [address,setAddress]=useState("")
   const [loading, setLoading] = useState(true);
   const [b64, setB64] = useState('');
   const load = async () => {
@@ -79,7 +77,7 @@ const StudentAccountScreen=({navigation})=>{
         <View style={[styles.item]}>
           <Icon1 style={{paddingLeft:"1.5%"} } name={item.icon} size={20} color={GlobalStyle.textColor.color} />
           <Text allowFontScaling={false} style={{ paddingLeft: "2.79%",fontSize: 16, paddingTop:"0.5%" }}>{item.title}</Text>
-          {(item.title === 'Đăng xuất') || (item.title === 'Xóa tài khoản') ? null : (<Icon1 name="chevron-forward" size={15} style={{ position:"absolute", top:"15%",left:"93%",color:GlobalStyle.textColor.color}} />)}
+          {(item.title === 'Đăng xuất') || (item.title === 'Xóa tài khoản') ? null : (<Icon1 name="chevron-forward" size={15} style={{ position:"absolute", top:"15%",left:"92%",color:GlobalStyle.textColor.color}} />)}
         </View> 
       </View>
     </TouchableOpacity>
@@ -92,7 +90,7 @@ const StudentAccountScreen=({navigation})=>{
               <ScrollView>
             
                 <View style={{height: '70%',alignItems: 'center',justifyContent: 'center',top:"10%"}}>
-                  <Image source={{uri:`data:image/png;base64,${b64}`}} style={{width:72,height:72, resizeMode: 'contain',borderRadius:40 }} />
+                  <Image source={{uri:`data:image/png;base64,${b64}`}} style={{width:100,height:100, resizeMode: 'contain',borderRadius:50 }} />
                   <Text allowFontScaling={false} style={[styles.text, { fontWeight: 'bold',fontSize:16,paddingTop:16,paddingBottom:4 }]}><Text style={{textTransform: 'uppercase'}}>{user_id} </Text>{userName}</Text>
                   <Text allowFontScaling={false} style={[styles.text, { color: GlobalStyle.textColor.color,fontSize:14 }]}>{emailStudent}</Text></View>
                 <View style={{top:"10%"}}>

@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from "react";
 import {
     StyleSheet, TextInput, View, Text, ScrollView, Dimensions, Platform,
-    Image, Keyboard, TouchableOpacity, KeyboardAvoidingView, Alert,StatusBar, Button
+    Image, Keyboard, TouchableOpacity, KeyboardAvoidingView, Alert,StatusBar,FlatList
   } from "react-native"; 
 import axios from "axios";
 import { BASE_URL } from "../../../env/url"; 
 import * as SecureStore from "expo-secure-store";
-import Header from "../../../components/Header/Header";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { CommonActions } from "@react-navigation/native";
+import { faCoffee, faHeart, faStar } from '@fortawesome/free-solid-svg-icons';
+
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import GlobalStyle from "../../../GlobalStyle";
 const statusBarStyle = Platform.OS === 'ios' ? 'dark-content':'light-content';
 let windowWidth = Dimensions.get('window').width;
-
+console.log(windowWidth)
 
 const StudentHomeScreen=({navigation})=>{
   const [user_id, setUserID] = useState("");
   const [userName, setUserName] = useState("");
-  const [emailStudent, setEmail] = useState("");
-  const [phone,setPhone]=useState("")
-  const [gender,setGender]=useState("")
-  const [address,setAddress]=useState("")
-  const [loading, setLoading] = useState(true);
+
 
   const load = async () => {
     // Variables used for calling API....
@@ -35,13 +36,9 @@ const StudentHomeScreen=({navigation})=>{
         },
       })
       .then(function (response) {
-        console.log(response)
         setUserID(response.data.user.userName);
         setUserName(response.data.student.studentName);
-        setEmail(response.data.user.userEmail);
-        setPhone(response.data.student.studentPhone)
-        setGender(response.data.student.studentGender)
-        setAddress(response.data.student.studentAddress)
+
         setLoading(false);
       })
       .catch(function (error) {
@@ -54,6 +51,19 @@ const StudentHomeScreen=({navigation})=>{
   useEffect(() => {
     load();
   }, [])
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      onPress={item.onPress}
+      key={item.key}>
+      <View style={styles.itemwrapper}>
+        <View style={[styles.item]}>
+          <Icon  name={item.icon} size={(Platform.OS === 'ios' && windowWidth>400) ? 40 : 40*(windowWidth/428)} color={"#07038c"}/>
+        </View> 
+        <View style={{width:windowWidth*0.23}}><Text allowFontScaling={false} style={{ fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 14 : 14*(windowWidth/428), textAlign:"center",color:GlobalStyle.textColor.color,top:"15%"}}>{item.title}</Text></View>
+
+      </View>
+    </TouchableOpacity>
+  );
 
 
 
@@ -62,22 +72,99 @@ const StudentHomeScreen=({navigation})=>{
         
         <StatusBar barStyle={statusBarStyle}/>
         <View style={{marginLeft:"5%",top:"10%"}}>
-          <Text style={styles.header}>ThangLong University</Text>
-          <Text style={styles.header2}>Xin chào!</Text>
-          <Text style={styles.header3}><Text style={{textTransform: 'uppercase'}}>{user_id} </Text>{userName}</Text>
+          <Text allowFontScaling={false} style={styles.header}>ThangLong University</Text>
+          <Text allowFontScaling={false} style={styles.header2}>Xin chào!</Text>
+          <Text allowFontScaling={false} style={styles.header3}><Text style={{textTransform: 'uppercase'}}>{user_id} </Text>{userName}</Text>
         </View>
-        <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Text>Họ tên: {userName}</Text>
-        <Text>Email: {emailStudent}</Text>
-        <Text>Điện thoại: {phone}</Text>
-        <Text>Giới tính: {gender}</Text>
-        <Text>Địa chỉ: {address}</Text>
-      </View></>
+
+        <View style={styles.wrapper1}>
+          <FlatList
+                    data={[
+                      {
+                        title: 'Thời khóa biểu toàn trường',
+                        icon: 'calendar-month',
+
+                      },
+                      {
+                        title: 'Lịch thi lại toàn trường',
+                        icon: 'calendar-search',
+
+                      },
+        
+                      {
+                        title: 'Chương trình đào tạo',
+                        icon: 'school',
+                      },
+                    ]}
+                    renderItem={renderItem}
+                    scrollEnabled={false}
+                    numColumns={3}
+                    horizontal={false} 
+
+                  />
+      </View>
+        <View style={styles.wrapper}>
+          <FlatList
+                    data={[
+                      {
+                        title: 'Đăng ký học',
+                        icon: 'calendar-plus',
+
+                      },
+                      {
+                        title: 'Đăng ký thi lại',
+                        icon: 'calendar-edit',
+
+                      },
+        
+                      {
+                        title: 'Phiếu báo thu tiền',
+                        icon:"cash-check",
+                      },
+                      {
+                        title: 'Bảng điểm',
+                        icon: 'file-account-outline',
+                      }
+                      ,
+                      {
+                        title: 'Lịch thi chính thức',
+                        icon: 'calendar-check',
+
+                      },
+                      {
+                        title: 'Lịch thi dự kiến',
+                        icon: 'calendar-question',
+
+                      },
+                      {
+                        title: 'Phiếu báo điểm',
+                        icon: 'file-chart-outline',
+
+                      },
+                      {
+                        title: 'Lịch ký sổ gốc',
+                        icon: 'pencil-plus-outline',
+
+                      },
+                      {
+                        title: 'Định hướng học tập',
+                        icon: 'trending-up',
+
+                      },
+
+
+                    ]}
+                    renderItem={renderItem}
+                    scrollEnabled={false}
+                    numColumns={3}
+                    horizontal={false} 
+
+                  />
+      </View>
+
+      
+      
+      </>
         
 )
 }
@@ -86,19 +173,56 @@ export default StudentHomeScreen;
 const styles = StyleSheet.create({
 
   header:{
-    fontSize:(Platform.OS === 'ios' && windowWidth>400) ? 36 : 36*0.6,
+    fontSize:(Platform.OS === 'ios' && windowWidth>400) ? 36 : 36*(windowWidth/428),
     fontWeight:"600",
     color:GlobalStyle.textColor.color
   },
   header2:{
-    fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 30 : 30*0.6,
+    fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 30 : 30*(windowWidth/428),
     fontWeight:"600",
     color:GlobalStyle.themeColor.color
   }
   ,
   header3:{
-    fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 24 : 24*0.6,
+    fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 24 : 24*(windowWidth/428),
     fontWeight:"600",
     color:GlobalStyle.textColor.color
-  }
+  },
+  itemwrapper: {
+    marginTop:"15%",
+    width:windowWidth*0.3,
+    alignContent:"center",
+    alignItems:"center",
+    
+  },
+  item: {
+    flexDirection: "column",
+    alignSelf:"center",
+    alignItems:"center",
+    backgroundColor:"#eeeded",
+    borderRadius:20,
+    height:(Platform.OS === 'ios' && windowWidth>400) ? 66 : 66*(windowWidth/428),
+    width:(Platform.OS === 'ios' && windowWidth>400) ? 66 : 66*(windowWidth/428),
+    justifyContent:"center",
+    shadowColor:"gray",
+    shadowOpacity:0.3
+
+  },
+  wrapper:{
+    
+    width: '90%',
+    backgroundColor: 'white',
+    borderRadius:15,
+    marginLeft:"5%",
+    top:"17%",
+    height:  "40%"
+},
+wrapper1:{
+  width: '90%',
+  backgroundColor: 'white',
+  borderRadius:15,
+  marginLeft:"5%",
+  top:"15%",
+  height: "15%"
+},
 });

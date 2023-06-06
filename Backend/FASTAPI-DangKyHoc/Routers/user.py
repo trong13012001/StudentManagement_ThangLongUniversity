@@ -53,7 +53,7 @@ async def get_user(
             studentDatejoin=student.studentDatejoin,
             studentParent=student.studentParent
         )
-        major = db.query(MajorSchema).filter_by(majorID=student.majorID).first()
+        major = db.query(MajorSchema).filter_by(majorID=student.majorID).first() 
         branch = db.query(BranchSchema).filter_by(branchID=student.branchID).first()
 
 

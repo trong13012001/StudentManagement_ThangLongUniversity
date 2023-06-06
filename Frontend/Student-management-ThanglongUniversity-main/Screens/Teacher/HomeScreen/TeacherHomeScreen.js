@@ -60,9 +60,9 @@ const TeacherHomeScreen=(navigation)=>{
         
       <StatusBar barStyle={statusBarStyle}/>
       <View style={{marginLeft:"5%",top:"10%"}}>
-        <Text style={styles.header}>ThangLong University</Text>
-        <Text style={styles.header2}>Xin chào!</Text>
-        <Text style={styles.header3}><Text style={{textTransform: 'uppercase'}}>{user_id} </Text>{userName}</Text>
+        <Text allowFontScaling={false} style={styles.header}>ThangLong University</Text>
+        <Text allowFontScaling={false} style={styles.header2}>Xin chào!</Text>
+        <Text allowFontScaling={false} style={styles.header3}><Text style={{textTransform: 'uppercase'}}>{user_id} </Text>{userName}</Text>
       </View>
       <View
       style={{
@@ -70,11 +70,11 @@ const TeacherHomeScreen=(navigation)=>{
         justifyContent: 'center',
         alignItems: 'center',
       }}>
-      <Text>Họ tên: {userName}</Text>
-      <Text>Email: {emailStudent}</Text>
-      <Text>Điện thoại: {phone}</Text>
-      <Text>Giới tính: {gender}</Text>
-      <Text>Địa chỉ: {address}</Text>
+      <Text allowFontScaling={false}>Họ tên: {userName}</Text>
+      <Text allowFontScaling={false} >Email: {emailStudent}</Text>
+      <Text allowFontScaling={false}>Điện thoại: {phone}</Text>
+      <Text allowFontScaling={false}>Giới tính: {gender}</Text>
+      <Text allowFontScaling={false}>Địa chỉ: {address}</Text>
     </View></>
 )
 }

@@ -29,9 +29,10 @@ const TeacherMainScreen=()=>{
           tabBarStyle: {
             height: Platform.OS === 'ios' ? '10%' : '10%',
             width:"90%",
+
             marginLeft:"5%",
             position: 'absolute',
-            borderRadius:15
+            borderRadius:15,
           }
         }
       }

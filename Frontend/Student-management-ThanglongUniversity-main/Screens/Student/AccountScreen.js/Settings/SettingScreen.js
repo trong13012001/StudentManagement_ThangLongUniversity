@@ -17,7 +17,7 @@ const SettingSrceen=()=>{
             alignItems: 'center',
             justifyContent: 'center',
         }}>
-            <Text>Setting Screen</Text>
+            <Text allowFontScaling={false}>Setting Screen</Text>
         </View></ScrollView></>
     )
 }
