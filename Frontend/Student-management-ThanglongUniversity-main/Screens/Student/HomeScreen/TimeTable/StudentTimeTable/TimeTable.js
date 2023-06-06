@@ -3,7 +3,7 @@ import {
     StyleSheet, TextInput, View, Text, ScrollView, Dimensions, Platform,
     Image, Keyboard, TouchableOpacity, KeyboardAvoidingView, Alert,StatusBar
   } from "react-native"; 
-import GlobalStyle from "../../../GlobalStyle";
+import GlobalStyle from "../../../../../GlobalStyle";
 const statusBarStyle = Platform.OS === 'ios' ? 'dark-content':'light-content';
 let windowWidth = Dimensions.get('window').width;
 

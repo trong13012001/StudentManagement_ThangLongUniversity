@@ -8,8 +8,8 @@ import GlobalStyle from '../../../GlobalStyle';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import StudentHomeScreen from "../HomeScreen/StudentHomeScreen";
-import StudentAccountScreen from "../AccountScreen.js/StudentAccountScreen";
-import TimeTable from "../TimeTable/TimeTable"
+import TimeTable from "../HomeScreen/TimeTable/StudentTimeTable/TimeTable"
+import StudentHomeScreenStack from "../HomeScreen/StudentHomeScreenStack";
 import StudentAccountScreenStack from "../AccountScreen.js/StudentAccountScreenStack";
 let windowWidth = Dimensions.get('window').width;
 
@@ -40,7 +40,7 @@ const StudentMainScreen=()=>{
     >
          <Tab.Screen
         name="Trang chủ"
-        component={StudentHomeScreen}
+        component={StudentHomeScreenStack}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <View style={{ alignItems: 'center', width: windowWidth > 800 ? 100 : undefined }}>
@@ -49,6 +49,11 @@ const StudentMainScreen=()=>{
             </View>
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: () => {
+            navigation.navigate('Trang chủ', { screen: 'Thông tin trang chủ' });
+          },
+        })}
       />
       <Tab.Screen
         name="Thời khóa biểu"

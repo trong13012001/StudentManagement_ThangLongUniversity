@@ -15,7 +15,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import GlobalStyle from "../../../GlobalStyle";
 const statusBarStyle = Platform.OS === 'ios' ? 'dark-content':'light-content';
 let windowWidth = Dimensions.get('window').width;
-console.log(windowWidth)
 
 const StudentHomeScreen=({navigation})=>{
   const [user_id, setUserID] = useState("");
@@ -39,11 +38,9 @@ const StudentHomeScreen=({navigation})=>{
         setUserID(response.data.user.userName);
         setUserName(response.data.student.studentName);
 
-        setLoading(false);
       })
       .catch(function (error) {
         console.log(error);
-        setLoading(false);
       })
   }
 
@@ -83,6 +80,8 @@ const StudentHomeScreen=({navigation})=>{
                       {
                         title: 'Thời khóa biểu toàn trường',
                         icon: 'calendar-month',
+                        onPress: () => { navigation.dispatch(CommonActions.navigate({ name: "Thông tin trang chủ", params: { screen: 'Thời khóa biểu toàn trường' } })) }
+
 
                       },
                       {
