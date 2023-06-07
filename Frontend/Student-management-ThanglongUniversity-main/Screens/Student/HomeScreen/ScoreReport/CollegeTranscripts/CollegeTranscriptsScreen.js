@@ -12,7 +12,7 @@ import Header from "../../../../../components/Header/Header";
 
 const CollegeTranscriptsScreen=()=>{
     return(
-        <><Header hasBackButton={true} title={"Cài đặt"}></Header>
+        <><Header hasBackButton={true} title={"Bảng điểm"}></Header>
         <ScrollView>
         <View style={{
             flex: 1,

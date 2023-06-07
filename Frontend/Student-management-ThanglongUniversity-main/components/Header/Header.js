@@ -31,8 +31,8 @@ const Header = ({ hasBackButton, title }) => {
                     </TouchableOpacity>
 
                 ) : null}
-                <View style={{ position: 'absolute', marginLeft: '20%' }}>
-                    <Text allowFontScaling={false} style={{ color: 'white', fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 30 : 30*0.8, fontWeight: '600',color:GlobalStyle.textColor.color }}>{title}</Text>
+                <View style={{ position: 'absolute', marginLeft: '15%' }}>
+                    <Text allowFontScaling={false} style={{ color: 'white', fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 26 : 26*(windowWidth/428), fontWeight: '600',color:GlobalStyle.textColor.color }}>{title}</Text>
                 </View>
             </View>
         </View></>

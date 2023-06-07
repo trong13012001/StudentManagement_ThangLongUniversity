@@ -12,7 +12,7 @@ import Header from "../../../../../components/Header/Header";
 
 const CourseRegistrationScreen=()=>{
     return(
-        <><Header hasBackButton={true} title={"Cài đặt"}></Header>
+        <><Header hasBackButton={true} title={"Đăng ký học"}></Header>
         <ScrollView>
         <View style={{
             flex: 1,

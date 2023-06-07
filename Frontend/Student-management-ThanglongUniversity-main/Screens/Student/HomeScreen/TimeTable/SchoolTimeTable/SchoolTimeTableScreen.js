@@ -8,9 +8,9 @@ import Header from "../../../../../components/Header/Header";
 
 
 
-const 13SchoolTimeTableScreen=()=>{
+const SchoolTimeTableScreen=()=>{
     return(
-        <><Header hasBackButton={true} title={"Cài đặt"}></Header>
+        <><Header hasBackButton={true} title={"Thời khóa biểu toàn trường"}></Header>
         <ScrollView>
         <View style={{
             flex: 1,

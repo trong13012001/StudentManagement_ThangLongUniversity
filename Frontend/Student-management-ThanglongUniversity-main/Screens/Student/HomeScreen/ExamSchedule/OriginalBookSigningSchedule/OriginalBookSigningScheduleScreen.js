@@ -12,7 +12,7 @@ import Header from "../../../../../components/Header/Header";
 
 const OriginalBookSigningScheduleScreen=()=>{
     return(
-        <><Header hasBackButton={true} title={"Cài đặt"}></Header>
+        <><Header hasBackButton={true} title={"Lịch ký sổ gốc"}></Header>
         <ScrollView>
         <View style={{
             flex: 1,

@@ -6,10 +6,7 @@ import {
 import axios from "axios";
 import { BASE_URL } from "../../../env/url"; 
 import * as SecureStore from "expo-secure-store";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CommonActions } from "@react-navigation/native";
-import { faCoffee, faHeart, faStar } from '@fortawesome/free-solid-svg-icons';
-
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import GlobalStyle from "../../../GlobalStyle";
@@ -80,19 +77,26 @@ const StudentHomeScreen=({navigation})=>{
                       {
                         title: 'Thời khóa biểu toàn trường',
                         icon: 'calendar-month',
-                        onPress: () => { navigation.dispatch(CommonActions.navigate({ name: "Thông tin trang chủ", params: { screen: 'Thời khóa biểu toàn trường' } })) }
-
-
+                        onPress: () => {
+                          navigation.dispatch(
+                            CommonActions.navigate({ name: 'Thời khóa biểu toàn trường' })
+                          );
+                        }
                       },
                       {
                         title: 'Lịch thi lại toàn trường',
                         icon: 'calendar-search',
-
+                        onPress: () => {
+                          navigation.dispatch(
+                            CommonActions.navigate({ name: 'Lịch thi lại toàn trường' })
+                          );
+                        }
                       },
         
                       {
                         title: 'Chương trình đào tạo',
                         icon: 'school',
+                        onPress: () => {navigation.dispatch(CommonActions.navigate({ name: 'Chương trình đào tạo' }));}
                       },
                     ]}
                     renderItem={renderItem}
@@ -108,46 +112,62 @@ const StudentHomeScreen=({navigation})=>{
                       {
                         title: 'Đăng ký học',
                         icon: 'calendar-plus',
+                        onPress: () => {navigation.dispatch(CommonActions.navigate({ name: 'Đăng ký học' }));}
 
                       },
                       {
                         title: 'Đăng ký thi lại',
                         icon: 'calendar-edit',
+                        onPress: () => {navigation.dispatch(CommonActions.navigate({ name: 'Đăng ký thi lại' }));}
 
                       },
         
                       {
                         title: 'Phiếu báo thu tiền',
                         icon:"cash-check",
+                        onPress: () => {navigation.dispatch(CommonActions.navigate({ name: 'Phiếu báo thu tiền' }));}
+
                       },
                       {
                         title: 'Bảng điểm',
                         icon: 'file-account-outline',
+                        onPress: () => {navigation.dispatch(CommonActions.navigate({ name: 'Bảng điểm' }));}
+
                       }
                       ,
                       {
                         title: 'Lịch thi chính thức',
                         icon: 'calendar-check',
+                        onPress: () => {navigation.dispatch(CommonActions.navigate({ name: 'Lịch thi chính thức' }));}
+
 
                       },
                       {
                         title: 'Lịch thi dự kiến',
                         icon: 'calendar-question',
+                        onPress: () => {navigation.dispatch(CommonActions.navigate({ name: 'Lịch thi dự kiến' }));}
+
 
                       },
                       {
                         title: 'Phiếu báo điểm',
                         icon: 'file-chart-outline',
+                        onPress: () => {navigation.dispatch(CommonActions.navigate({ name: 'Phiếu báo điểm' }));}
+
 
                       },
                       {
                         title: 'Lịch ký sổ gốc',
                         icon: 'pencil-plus-outline',
+                        onPress: () => {navigation.dispatch(CommonActions.navigate({ name: 'Lịch ký sổ gốc' }));}
+
 
                       },
                       {
                         title: 'Định hướng học tập',
                         icon: 'trending-up',
+                        onPress: () => {navigation.dispatch(CommonActions.navigate({ name: 'Định hướng học tập' }));}
+
 
                       },
 

@@ -10,7 +10,7 @@ import Header from "../../../../components/Header/Header";
 
 const PaymentReceiptScreen=()=>{
     return(
-        <><Header hasBackButton={true} title={"Cài đặt"}></Header>
+        <><Header hasBackButton={true} title={"Phiếu báo thu tiền"}></Header>
         <ScrollView>
         <View style={{
             flex: 1,

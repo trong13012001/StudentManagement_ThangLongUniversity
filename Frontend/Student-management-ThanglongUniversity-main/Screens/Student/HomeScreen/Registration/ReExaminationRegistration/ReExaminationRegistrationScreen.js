@@ -10,7 +10,7 @@ import Header from "../../../../../components/Header/Header";
 
 const ReExaminationRegistrationScreen=()=>{
     return(
-        <><Header hasBackButton={true} title={"Cài đặt"}></Header>
+        <><Header hasBackButton={true} title={"Đăng ký thi lại"}></Header>
         <ScrollView>
         <View style={{
             flex: 1,

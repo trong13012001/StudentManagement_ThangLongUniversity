@@ -10,7 +10,7 @@ import Header from "../../../../../components/Header/Header";
 
 const OfficialExamSchedule=()=>{
     return(
-        <><Header hasBackButton={true} title={"Cài đặt"}></Header>
+        <><Header hasBackButton={true} title={"Lịch thi chính thức"}></Header>
         <ScrollView>
         <View style={{
             flex: 1,
