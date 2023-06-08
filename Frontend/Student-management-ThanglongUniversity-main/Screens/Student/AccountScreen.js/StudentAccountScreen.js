@@ -31,7 +31,6 @@ const StudentAccountScreen=({navigation})=>{
         },
       })
       .then(function (response) {
-        console.log(response)
         setUserID(response.data.student.studentID)
         setUserName(response.data.student.studentName);
         setEmail(response.data.user.userEmail);

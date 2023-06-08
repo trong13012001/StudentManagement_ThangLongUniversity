@@ -16,6 +16,7 @@ class StudentSchema(Base):
     studentID = Column(String(6),primary_key=True, index=True)
     studentEmail=Column(String(45),unique=True)
     studentName=Column(String(45))
+    studentK=Column(Integer)
     studentDOB=Column(Date)
     studentGender=Column(String(4))
     studentAddress=Column(String(45))
@@ -48,3 +49,16 @@ class BranchSchema(Base):
     __tablename__="branch"
     branchID=Column(Integer,primary_key=True, index=True)
     branchName=Column(String)
+    majorID=Column(String(6))
+    majorName=Column(String)
+class CourseSchema(Base):
+    __tablename__="course"
+    courseID=Column(Integer,primary_key=True, index=True)
+    subjectID=Column(String)
+    subjectName=Column(String)
+    className=Column(String)
+    courseDate=Column(Integer)
+    courseShift=Column(String)
+    courseRoom=Column(String)
+    courseCredits=Column(Integer)
+    teacherName=Column(String)

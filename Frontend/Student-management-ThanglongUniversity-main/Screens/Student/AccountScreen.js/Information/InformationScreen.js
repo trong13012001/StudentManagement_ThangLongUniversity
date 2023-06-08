@@ -16,6 +16,7 @@ const InformationScreen=()=>{
     const [emailStudent, setEmail] = useState("");
     const [phone,setPhone]=useState("")
     const [gender,setGender]=useState("")
+    const [K,setK]=useState("")
     const [major,setMajor]=useState("")
     const [branch,setBranch]=useState("")
     const [address,setAddress]=useState("")
@@ -39,11 +40,14 @@ const InformationScreen=()=>{
             setUserID(response.data.student.studentID)
             setUserName(response.data.student.studentName);
             setGender(response.data.student.studentGender)
+            setK(response.data.student.studentK)
+            setB64(response.data.image.image)
             setPhone(response.data.student.studentPhone)
             setEmail(response.data.user.userEmail);
-            setMajor(response.data.major.majorName)
+            setMajor(response.data.branch.majorName)
             setBranch(response.data.branch.branchName)
-            setB64(response.data.image.image)
+            setAddress(response.data.student.studentAddress)
+        
             setLoading(false);
           })
           .catch(function (error) {
@@ -89,6 +93,11 @@ const InformationScreen=()=>{
 
                       },
                       {
+                        title: 'Khóa:',
+                        content: K,
+
+                      },
+                      {
                         title: 'Khoa:',
                         content: major,
 
@@ -107,6 +116,11 @@ const InformationScreen=()=>{
                       {
                         title: 'Số điện thoại:',
                         content: phone,
+
+                      },
+                      {
+                        title: 'Địa chỉ:',
+                        content: address,
 
                       },
         
