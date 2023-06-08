@@ -118,14 +118,15 @@ async def get_course(
     get_courses = []
     for course in courses:
         get_course = CourseSchema(
-            subjectID=course.subjectID,
-            subjectName=course.subjectName,
-            className=course.className,
-            courseDate=course.courseDate,
-            courseShift=course.courseShift,
-            courseRoom=course.courseRoom,
-            courseCredits=course.courseCredits,
-            teacherName=course.teacherName
+            subjectID = course.subjectID,
+            subjectName = course.subjectName,
+            className = course.className,
+            courseDate = course.courseDate,
+            courseShiftStart = course.courseShift,
+            courseShiftEnd = course.courseShiftEnd,
+            courseRoom = course.courseRoom,
+            teacherID = course.teacherID,
+            groupID = course.groupID
         )
         get_courses.append(get_course)
 
