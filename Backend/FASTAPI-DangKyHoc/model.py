@@ -17,6 +17,7 @@ class StudentSchema(Base):
     studentID = Column(String(6),primary_key=True, index=True)
     studentEmail=Column(String(45),unique=True)
     studentName=Column(String(45))
+    studentK=Column(Integer)
     studentDOB=Column(Date)
     studentGender=Column(String(4))
     studentAddress=Column(String(45))
