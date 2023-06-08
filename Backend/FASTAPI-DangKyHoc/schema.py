@@ -13,6 +13,7 @@ class StudentSchema(BaseModel):
     studentID=str
     studentEmail=str
     studentName=str
+    studentK=int
     studentDOB=date
     studentGender=str
     studentAddress=str

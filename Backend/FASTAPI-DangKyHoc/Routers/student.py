@@ -30,6 +30,7 @@ async def update_student(
     student_ID: str = Form(...),
     studentName: str = Form(...),
     studentDOB: date = Form(...),
+    studentK:int =Form(...),
     studentGender: str = Form(...),
     studentAddress: str = Form(...),
     studentPhone: str = Form(...),
@@ -45,6 +46,7 @@ async def update_student(
     # Update student information
         student.studentName = studentName
         student.studentDOB = studentDOB
+        student.studentK=studentK
         student.studentGender = studentGender
         student.studentAddress = studentAddress
         student.studentPhone = studentPhone
@@ -57,6 +59,32 @@ async def update_student(
 
         return {
             "data": "Thông tin sinh viên được cập nhật thành công"
+        }
+    else:
+        return JSONResponse(status_code=400, content={"message": "Thông tin sinh viên không có trong dữ liệu "})
+
+
+
+@router.post("/update_student_major_information")
+async def update_student(
+    db: Session = Depends(get_database_session),
+    student_ID: str = Form(...),
+    branchID:int= Form(...),
+
+):
+    student_exists = db.query(exists().where(StudentSchema.studentID == student_ID)).scalar()
+
+    # Retrieve existing student record
+    student = db.query(StudentSchema).get(student_ID)
+    if student_exists:
+    # Update student information
+        student.branchID =branchID
+        # Commit and refresh
+        db.commit()
+        db.refresh(student)
+
+        return {
+            "data": "Thông tin ngành sinh viên được cập nhật thành công"
         }
     else:
         return JSONResponse(status_code=400, content={"message": "Thông tin sinh viên không có trong dữ liệu "})
