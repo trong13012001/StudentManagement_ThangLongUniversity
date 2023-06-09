@@ -74,12 +74,16 @@ class CourseSchema(Base):
     __tablename__="course"
     courseID=Column(Integer, primary_key=True)
     subjectID=Column(String(5))
+    subjectName=Column(String)
     className=Column(String(30), unique=True)
     courseDate=Column(Integer)
     courseShiftStart=Column(Integer)
     courseShiftEnd=Column(Integer)
+    courseCredits=Column(Integer)
     courseRoom=Column(String(15))
     teacherID=Column(String(6))
+    teacherName=Column(String)
+
     groupID=Column(String(10))
 
 #Lớp học

@@ -35,7 +35,6 @@ async def get_user(
     user = db.query(UserSchema).filter_by(userName=userID).first()
     image = db.query(ImageSchema).filter_by(userID=userID).first()
     
-    print(user.userRole)
     if(user.userRole==1):
         student = db.query(StudentSchema).get(userID) or None
         print(student)
@@ -53,10 +52,11 @@ async def get_user(
             studentPhone=student.studentPhone,
             studentDatejoin=student.studentDatejoin,
         )
+        major = db.query(MajorSchema).filter_by(majorID=student.majorID).first()
         branch = db.query(BranchSchema).filter_by(branchID=student.branchID).first()
 
 
-        return {"user": user, "student": get_student,"image":image,"branch":branch}
+        return {"user": user, "student": get_student,"image":image,"branch":branch,"major":major}
     elif(user.userRole==2):
         teacher = db.query(TeacherSchema).get(userID) or None
         if teacher is None:

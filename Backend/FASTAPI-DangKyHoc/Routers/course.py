@@ -26,10 +26,11 @@ def get_database_session():
         
 @router.get("/course")
 async def get_course(
+    groupID: str=Header(...),
+
     db: Session = Depends(get_database_session),
 ):
-    courses = db.query(CourseSchema).all()
-    
+    courses = db.query(CourseSchema).filter(CourseSchema.groupID == groupID).all()
     get_courses = []
     for course in courses:
         get_course = CourseSchema(
@@ -37,7 +38,8 @@ async def get_course(
             subjectName=course.subjectName,
             className=course.className,
             courseDate=course.courseDate,
-            courseShift=course.courseShift,
+            courseShiftStart=course.courseShiftStart,
+            courseShiftEnd=course.courseShiftEnd,
             courseRoom=course.courseRoom,
             courseCredits=course.courseCredits,
             teacherName=course.teacherName
@@ -45,4 +47,3 @@ async def get_course(
         get_courses.append(get_course)
 
     return {"courses": get_courses}
-
