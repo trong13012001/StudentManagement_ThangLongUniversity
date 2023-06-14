@@ -27,7 +27,8 @@ async def create_branch(
     db: Session = Depends(get_database_session),
     branchID: str = Form(...),
     branchName: str = Form(...),
-    majorID: str = Form(...)
+    majorID: str = Form(...),
+    groupEnd:int = Form(...)
 ):
     branch_exists = db.query(exists().where(BranchSchema.branchID == branchID)).scalar()
     major_non_exists = db.query(exists().where(MajorSchema.majorID != majorID)).scalar()
@@ -36,8 +37,9 @@ async def create_branch(
         return {"data": "Trùng mã ngành!"}
     elif major_non_exists:
         return {"data": "Không tìm thấy khoa!"}
-
-    branchSchema = BranchSchema(branchID = branchID, branchName = branchName, majorID = majorID)
+    elif (groupEnd > 3 or groupEnd < 1):
+        return {"data": "Nhóm không tồn tại!"}
+    branchSchema = BranchSchema(branchID = branchID, branchName = branchName, majorID = majorID, groupEnd = groupEnd)
     db.add(branchSchema)
     db.commit()
     db.refresh(branchSchema)
@@ -50,7 +52,8 @@ async def update_branch(
     db: Session = Depends(get_database_session),
     branchID: str = Form(...),
     branchName: str = Form(...),
-    majorID: str = Form(...)
+    majorID: str = Form(...),
+    groupEnd: int = Form(...)
 ):
     branch_exists = db.query(exists().where(BranchSchema.branchID == branchID)).scalar()
     major_non_exists = db.query(exists().where(MajorSchema.majorID != majorID)).scalar()
@@ -59,8 +62,11 @@ async def update_branch(
         print(branch)
         if major_non_exists:
             return {"data": "Không tìm thấy khoa!"}
+        elif (groupEnd > 3 or groupEnd < 1):
+            return {"data": "Nhóm không tồn tại!"}
         branch.branchName = branchName
         branch.majorID = majorID
+        branch.groupEnd = groupEnd
         db.commit()
         db.refresh(branch)
         return {
