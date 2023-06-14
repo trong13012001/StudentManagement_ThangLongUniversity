@@ -23,10 +23,12 @@ class StudentSchema(Base):
     studentAddress=Column(String(45))
     studentPhone=Column(String(10))
     studentDatejoin=Column(Date)
+    studentYearJoin=Column(Integer)
     studentParent=Column(String(45))
     majorID=Column(String(6))
     branchID=Column(Integer)
-    groupID=Column(String(10))
+    group=Column(Integer)
+    status=Column(Integer)
 
 #Giáo viên
 class TeacherSchema(Base):
@@ -60,6 +62,7 @@ class BranchSchema(Base):
     branchID=Column(Integer(),primary_key=True, index=True)
     branchName=Column(String)
     majorID=Column(String)
+    groupEnd=Column(Integer)
 
 #Môn học
 class SubjectSchema(Base):
@@ -107,3 +110,7 @@ class GroupSchema(Base):
     groupName=Column(String(45))
     groupYear=Column(String(15))
     groupTerm=Column(Integer)
+#Năm
+class YearSchema(Base):
+    __tablename__="year"
+    yearID=Column(Integer, primary_key=True)
