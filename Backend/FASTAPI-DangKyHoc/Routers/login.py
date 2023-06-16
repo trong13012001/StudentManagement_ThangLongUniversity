@@ -69,7 +69,7 @@ async def login(db:Session=Depends(get_database_session),userName:schema.UserSch
     elif pass_exists==False:
         return JSONResponse(status_code=400, content={"message": "Sai mật khẩu"})
     else:
-        response_data = {"token": signJWT(userName), "role_exists": role_exists}
+        response_data = {"token": signJWT(userName), "userRole": role_exists}
         return response_data
 @router.post("/refresh")
 async def refresh_token(refresh_token: str):

@@ -35,6 +35,8 @@ class TeacherSchema(BaseModel):
     teacherAddress=str
     teacherPhone=str
     teacherDatejoin=date
+    majorID=str
+    branchID=int
 
 class ImageSchema(BaseModel):
     userID=str
@@ -50,6 +52,7 @@ class BranchSchema(BaseModel):
     majorID=str
     groupEnd=int
 
+
 class ImageSchema(BaseModel):
     branchID=int
     branchName=str
@@ -63,12 +66,15 @@ class SubjectSchema(BaseModel):
 class CourseSchema(BaseModel):
     courseID=int
     subjectID=str
+    subjectName=str
     className=str
     courseDate=int
     courseShiftStart=int
     courseShiftEnd=int
+    courseCredits=int
     courseRoom=str
     teacherID=str
+    teacherName=str
     groupID=str
 
 class ClassSchema(BaseModel):

@@ -111,10 +111,11 @@ async def update_course(
         
 @router.get("/course")
 async def get_course(
+    groupID: str=Header(...),
+
     db: Session = Depends(get_database_session),
 ):
-    courses = db.query(CourseSchema).all()
-    
+    courses = db.query(CourseSchema).filter(CourseSchema.groupID == groupID).all()
     get_courses = []
     for course in courses:
         get_course = CourseSchema(
@@ -127,8 +128,8 @@ async def get_course(
             courseRoom = course.courseRoom,
             teacherID = course.teacherID,
             groupID = course.groupID
+
         )
         get_courses.append(get_course)
 
     return {"courses": get_courses}
-
