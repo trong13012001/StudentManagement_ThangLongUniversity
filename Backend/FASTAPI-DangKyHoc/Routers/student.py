@@ -46,6 +46,7 @@ async def update_student(
     branch = db.query(BranchSchema).get(branchID)
     if student and major and branch and (status == 0 or status == 1):
         branchFilter = db.query(BranchSchema).filter(BranchSchema.branchID==branchID).first()
+        getMajor = branchFilter.majorID
         getGroup = branchFilter.groupEnd
         yearFilter = db.query(func.max(YearSchema.yearID)).scalar()
         studentK = studentYearJoin - 1987
@@ -56,6 +57,9 @@ async def update_student(
         else:
             current_year = 0
 
+        if getMajor != majorID:
+            return JSONResponse(status_code=400, content={"message": "Mã và ngành không khớp"})
+        
         if status == 1:
             if current_year == 0:
                 group = 3
@@ -67,7 +71,7 @@ async def update_student(
                 group = 3
         else:
             group = 0
-        
+           
     # Update student information
         student.studentName = studentName
         student.studentDOB = studentDOB
