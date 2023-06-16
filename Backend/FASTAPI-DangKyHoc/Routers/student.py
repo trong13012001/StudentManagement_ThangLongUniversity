@@ -33,36 +33,27 @@ async def update_student(
     studentGender: str = Form(...),
     studentAddress: str = Form(...),
     studentPhone: str = Form(...),
-    studentDatejoin: date = Form(...),
     studentYearJoin: int = Form(...),
     studentParent: str = Form(...),
-    majorID: str = Form(...),
     branchID: int = Form(...),
     status: int = Form(...)
 ):
     
-    today = date.today()
-    print(today)
     # Retrieve existing student record
     student = db.query(StudentSchema).get(student_ID)
-    major = db.query(MajorSchema).get(majorID)
     branch = db.query(BranchSchema).get(branchID)
-    if student and major and branch and (status == 0 or status == 1):
+    if student and branch and (status == 0 or status == 1):
         branchFilter = db.query(BranchSchema).filter(BranchSchema.branchID==branchID).first()
-        getMajor = branchFilter.majorID
         getGroup = branchFilter.groupEnd
-        yearFilter = db.query(func.max(YearSchema.yearID)).scalar()
+        today = date.today()
+
+        yearFilter = db.query(YearSchema).filter(YearSchema.yearID==date.today().year-1).first()
+        if(today>yearFilter.yearEnd):
+            yearFilter = db.query(YearSchema).filter(YearSchema.yearID==date.today().year).first()
+        print(yearFilter.yearID)
         studentK = studentYearJoin - 1987
-
-        if yearFilter:
-            current_year = yearFilter - studentYearJoin
-
-        else:
-            current_year = 0
-
-        if getMajor != majorID:
-            return JSONResponse(status_code=400, content={"message": "Mã và ngành không khớp"})
-        
+        current_year = yearFilter.yearID - studentYearJoin
+        print(current_year)
         if status == 1:
             if current_year == 0:
                 group = 3
@@ -82,10 +73,8 @@ async def update_student(
         student.studentGender = studentGender
         student.studentAddress = studentAddress
         student.studentPhone = studentPhone
-        student.studentDatejoin = studentDatejoin
         student.studentYearJoin = studentYearJoin
         student.studentParent = studentParent
-        student.majorID = majorID
         student.branchID = branchID
         student.group = group
         student.status = status
@@ -118,18 +107,12 @@ async def update_student(
         branchFilter = db.query(BranchSchema).filter(BranchSchema.branchID==branchID).first()
 
         getGroup = branchFilter.groupEnd
+        today = date.today()
 
         yearFilter = db.query(YearSchema).filter(YearSchema.yearID==date.today().year-1).first()
-        if(date.today()>yearFilter.yearEnd):
+        if(today>yearFilter.yearEnd):
             yearFilter = db.query(YearSchema).filter(YearSchema.yearID==date.today().year).first()
-
-        today = date.today()
-        if yearFilter:
-            current_year = yearFilter.yearID - studentFilter.studentYearJoin
-
-        else:
-            current_year = 0
-
+        current_year = yearFilter.yearID - studentFilter.studentYearJoin
         if studentFilter.status == 1:
             if current_year == 0:
                 group = 3

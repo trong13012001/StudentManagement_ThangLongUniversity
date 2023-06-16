@@ -41,7 +41,7 @@ async def create_upload_file(
     image: UploadFile = File(...),
     db: Session = Depends(get_database_session)
 ):
-    image_exists = db.query(exists().where(ImageSchema.userID == user_id)).scalar()
+    image_exists = db.query(exists().where(ImageSchema.userName == user_id)).scalar()
     image_db = db.query(ImageSchema).get(user_id)
 
     if image_exists:

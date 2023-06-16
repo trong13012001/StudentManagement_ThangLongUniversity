@@ -33,7 +33,7 @@ async def get_user(
     userID = user.get("user_id")
 
     user = db.query(UserSchema).filter_by(userName=userID).first()
-    image = db.query(ImageSchema).filter_by(userID=userID).first()
+    image = db.query(ImageSchema).filter_by(userName=userID).first()
     
     if(user.userRole==1):
         student = db.query(StudentSchema).get(userID) or None
@@ -50,13 +50,12 @@ async def get_user(
             studentGender=student.studentGender,
             studentAddress=student.studentAddress,
             studentPhone=student.studentPhone,
-            studentDatejoin=student.studentDatejoin,
+            studentYearJoin=student.studentYearJoin,
         )
-        major = db.query(MajorSchema).filter_by(majorID=student.majorID).first()
         branch = db.query(BranchSchema).filter_by(branchID=student.branchID).first()
 
 
-        return {"user": user, "student": get_student,"image":image,"branch":branch,"major":major}
+        return {"user": user, "student": get_student,"image":image.image,"branch":branch.branchID,"major":branch.majorID}
     elif(user.userRole==2):
         teacher = db.query(TeacherSchema).get(userID) or None
         if teacher is None:
@@ -71,6 +70,5 @@ async def get_user(
             teacherPhone=teacher.teacherPhone,
             teacherDatejoin=teacher.teacherDatejoin,
         )
-        major = db.query(MajorSchema).filter_by(majorID=teacher.majorID).first()
         branch = db.query(BranchSchema).filter_by(branchID=teacher.branchID).first()
-        return {"user": user, "teacher": get_teacher,"image":image,"branch":branch,"major":major}
+        return {"user": user, "teacher": get_teacher,"image":image,"branch":branch.branchID,"major":branch.majorID}

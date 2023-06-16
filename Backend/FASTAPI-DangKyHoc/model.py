@@ -22,10 +22,8 @@ class StudentSchema(Base):
     studentGender=Column(String(4))
     studentAddress=Column(String(45))
     studentPhone=Column(String(10))
-    studentDatejoin=Column(Date)
     studentYearJoin=Column(Integer)
     studentParent=Column(String(45))
-    majorID=Column(String(6))
     branchID=Column(Integer)
     group=Column(Integer)
     status=Column(Integer)
@@ -47,7 +45,7 @@ class TeacherSchema(Base):
 #Avatar
 class ImageSchema(Base):
     __tablename__="image"
-    userID=Column(String(6),primary_key=True, index=True)
+    userName=Column(String(6),primary_key=True, index=True)
     image=Column(String)
 
 #Khoa

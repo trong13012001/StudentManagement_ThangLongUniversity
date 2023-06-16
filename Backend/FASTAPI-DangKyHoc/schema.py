@@ -18,10 +18,8 @@ class StudentSchema(BaseModel):
     studentGender=str
     studentAddress=str
     studentPhone=str
-    studentDatejoin=date
     studentYearJoin=int
     studentParent=str
-    majorID=str
     branchID=int
     group=int
     status=int
@@ -39,7 +37,7 @@ class TeacherSchema(BaseModel):
     branchID=int
 
 class ImageSchema(BaseModel):
-    userID=str
+    userName=str
     image=str
 
 class MajorSchema(BaseModel):
@@ -51,11 +49,6 @@ class BranchSchema(BaseModel):
     branchName=str
     majorID=str
     groupEnd=int
-
-
-class ImageSchema(BaseModel):
-    branchID=int
-    branchName=str
 
 class SubjectSchema(BaseModel):
     subjectID=str
