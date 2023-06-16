@@ -99,3 +99,5 @@ class GroupSchema(BaseModel):
 
 class YearSchema(BaseModel):
     yearID=int
+    yearStart=date
+    yearEnd=date

@@ -11,7 +11,7 @@ from model import UserSchema,StudentSchema, BranchSchema, YearSchema, MajorSchem
 import schema
 from database import SessionLocal, engine
 import model
-
+from datetime import date
 
 router = APIRouter()  
 model.Base.metadata.create_all(bind=engine)
@@ -40,6 +40,9 @@ async def update_student(
     branchID: int = Form(...),
     status: int = Form(...)
 ):
+    
+    today = date.today()
+    print(today)
     # Retrieve existing student record
     student = db.query(StudentSchema).get(student_ID)
     major = db.query(MajorSchema).get(majorID)
@@ -107,8 +110,37 @@ async def update_student(
     # Retrieve existing student record
     student = db.query(StudentSchema).get(student_ID)
     if student_exists:
+        studentFilter = db.query(StudentSchema).filter(StudentSchema.studentID==student_ID).first()
+        branchFilter = db.query(BranchSchema).filter(BranchSchema.branchID==branchID).first()
+
+        getGroup = branchFilter.groupEnd
+
+        yearFilter = db.query(YearSchema).filter(YearSchema.yearID==date.today().year-1).first()
+        if(date.today()>yearFilter.yearEnd):
+            yearFilter = db.query(YearSchema).filter(YearSchema.yearID==date.today().year).first()
+
+        today = date.today()
+        if yearFilter:
+            current_year = yearFilter.yearID - studentFilter.studentYearJoin
+
+        else:
+            current_year = 0
+
+        if studentFilter.status == 1:
+            if current_year == 0:
+                group = 3
+            elif current_year == 1:
+                group = 2
+            elif current_year > 1:
+                group = getGroup
+            else:
+                group = 3
+        else:
+            group = 0
+        
     # Update student information
-        student.branchID =branchID
+        student.branchID = branchID
+        student.group = group
         # Commit and refresh
         db.commit()
         db.refresh(student)

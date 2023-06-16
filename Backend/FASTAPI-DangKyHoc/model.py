@@ -118,3 +118,5 @@ class GroupSchema(Base):
 class YearSchema(Base):
     __tablename__="year"
     yearID=Column(Integer, primary_key=True)
+    yearStart=Column(Date)
+    yearEnd=Column(Date)
