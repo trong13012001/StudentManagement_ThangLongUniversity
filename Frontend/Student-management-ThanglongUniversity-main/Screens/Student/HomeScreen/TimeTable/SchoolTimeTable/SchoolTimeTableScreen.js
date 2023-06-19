@@ -16,7 +16,7 @@ const SchoolTimeTableScreen=()=>{
     const [loading, setLoading] = useState(true);
     const [dataset, setDataset] = useState([]) // State use for storing history data from API
     const [refreshing, setRefreshing] = useState(false); // State use for displaying refresh animation
-
+    const [termID,setTermID]=useState("2223HK1N1")
     const onRefresh = useCallback(() => {
       setRefreshing(true);
       load();
@@ -24,7 +24,13 @@ const SchoolTimeTableScreen=()=>{
       const load = async () => {
     
         // Calling API
-        await axios.get(`${BASE_URL}/course`)
+        await axios.get(`${BASE_URL}/course`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "termID": termID,
+          },
+        })
           .then(function (response) {
             setRefreshing(false);
             setLoading(false);
@@ -80,15 +86,18 @@ const SchoolTimeTableScreen=()=>{
                 return (
                   <TouchableOpacity
                     key={data.id}
-                    style={[styles.tableRow, {  backgroundColor: index % 2 === 0 ? 'white' : '#f6f6f6',borderColor:"#EAECF0"  }]}>
-                    <View style={{ width: '8%',textAlign:"center",marginRight:"3%"}}>
-                      <Text allowFontScaling={false} style={[styles.text, { alignSelf: 'center'  }]}>
+                    style={[styles.tableRow, {  backgroundColor: index % 2 === 0 ? 'white' : '#f6f6f6',borderColor:"#EAECF0" }]}>
+                    <View style={{ width: '8%', alignSelf: 'center',marginRight:"3%"}}>
+                      <Text allowFontScaling={false} style={[styles.text]}>
                         {index + 1}
                       </Text>
                     </View>
                     <View style={{ width: '45%', alignSelf: 'center',marginRight:"2%" }}>
                     <Text allowFontScaling={false} style={styles.text}>
                       {data.subjectName}
+                      </Text>
+                      <Text allowFontScaling={false} style={styles.text}>
+                      {data.className}
                       </Text>
                     </View>
                     <View style={{ width: '10%', alignSelf: 'center' }}>
@@ -98,7 +107,7 @@ const SchoolTimeTableScreen=()=>{
                     </View>
                     <View style={{ width: '10%', alignSelf: 'center' }}>
                     <Text allowFontScaling={false} style={styles.text}>
-                      {data.courseShift}
+                      {data.courseShiftStart}-{data.courseShiftEnd}
                       </Text>
                     </View>
                     <View style={{ width: '22%', alignSelf: 'center' }}>
@@ -119,8 +128,7 @@ const SchoolTimeTableScreen=()=>{
 export default SchoolTimeTableScreen
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      // backgroundColor: 'white',
+      flex: 0.85,
     },
   
     tableHeader: {
@@ -143,6 +151,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         width:"90%",
         marginLeft: "5%",
+
 
       },
       activityIndicator: {
