@@ -1,7 +1,10 @@
 from typing import Text
-from sqlalchemy import Column,Date,BLOB
+from sqlalchemy import Column,Date,BLOB,ForeignKey
 from sqlalchemy.types import String, Integer, Text, Float
+
 from database import Base
+from sqlalchemy.orm import  relationship
+
 
 #Tài khoản
 class UserSchema(Base):
@@ -64,28 +67,24 @@ class BranchSchema(Base):
 
 #Môn học
 class SubjectSchema(Base):
-    __tablename__="subject"
+    __tablename__="subjectUni"
     subjectID=Column(String(5), primary_key=True, index=True)
-    subjectName=Column(String(60))
-    majorID=Column(String(6))
+    subjectName=Column(String(100))
     subjectCredit=Column(Integer)
+    Coefficient=Column(Float)
 
 #Chương trình
 class CourseSchema(Base):
-    __tablename__="course"
-    courseID=Column(Integer, primary_key=True)
-    subjectID=Column(String(5))
-    subjectName=Column(String)
-    className=Column(String(30), unique=True)
-    courseDate=Column(Integer)
-    courseShiftStart=Column(Integer)
-    courseShiftEnd=Column(Integer)
-    courseCredits=Column(Integer)
-    courseRoom=Column(String(15))
-    teacherID=Column(String(6))
-    teacherName=Column(String)
-
-    groupID=Column(String(10))
+    __tablename__ = "course1"
+    courseID = Column(Integer, primary_key=True)
+    subjectID = Column(String(5))
+    className = Column(String(30), unique=True)
+    courseDate = Column(Integer)
+    courseShiftStart = Column(Integer)
+    courseShiftEnd = Column(Integer)
+    courseRoom = Column(String(15))
+    termID = Column(String(8))
+    teacherID = Column(String(6), ForeignKey("teacher.teacherID"))
 
 #Lớp học
 class ClassSchema(Base):

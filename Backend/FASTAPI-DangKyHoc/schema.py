@@ -53,22 +53,20 @@ class BranchSchema(BaseModel):
 class SubjectSchema(BaseModel):
     subjectID=str
     subjectName=str
-    majorID=str
     subjectCredit=int
+    coefficient=float
 
 class CourseSchema(BaseModel):
     courseID=int
     subjectID=str
-    subjectName=str
     className=str
     courseDate=int
     courseShiftStart=int
     courseShiftEnd=int
-    courseCredits=int
     courseRoom=str
+    termID=str
     teacherID=str
-    teacherName=str
-    groupID=str
+
 
 class ClassSchema(BaseModel):
     courseID=str

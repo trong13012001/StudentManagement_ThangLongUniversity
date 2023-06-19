@@ -110,26 +110,43 @@ async def update_course(
         return JSONResponse(status_code=400, content={"message": "Không có thông tin chương trình!"})
         
 @router.get("/course")
-async def get_course(
-    groupID: str=Header(...),
-
+def get_courses_with_subject_info(
     db: Session = Depends(get_database_session),
-):
-    courses = db.query(CourseSchema).filter(CourseSchema.groupID == groupID).all()
-    get_courses = []
-    for course in courses:
-        get_course = CourseSchema(
-            subjectID = course.subjectID,
-            subjectName = course.subjectName,
-            className = course.className,
-            courseDate = course.courseDate,
-            courseShiftStart = course.courseShift,
-            courseShiftEnd = course.courseShiftEnd,
-            courseRoom = course.courseRoom,
-            teacherID = course.teacherID,
-            groupID = course.groupID
-
+    termID: str=Header(...)):
+    courses = (
+        db.query(
+            CourseSchema.subjectID,
+            SubjectSchema.subjectName,
+            CourseSchema.className,
+            CourseSchema.courseDate,
+            CourseSchema.courseShiftStart,
+            CourseSchema.courseShiftEnd,
+            CourseSchema.courseRoom,
+            CourseSchema.teacherID,
+            TeacherSchema.teacherName,
+            CourseSchema.termID,
         )
-        get_courses.append(get_course)
+        .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
+        .join(TeacherSchema, CourseSchema.teacherID==TeacherSchema.teacherID)
+        .filter(CourseSchema.termID==termID).all()
+    )
 
-    return {"courses": get_courses}
+    result = []
+    for course in courses:
+        result.append(
+            {
+                "subjectID": course[0],
+                "subjectName": course[1],
+                "className": course[2],
+                "courseDate": course[3],
+                "courseShiftStart": course[4],
+                "courseShiftEnd": course[5],
+                "courseRoom": course[6],
+                "teacherID": course[7],
+                "teacherName":course[8],
+                "termID": course[9],
+            }
+        )
+
+    return {"courses": result}
+
