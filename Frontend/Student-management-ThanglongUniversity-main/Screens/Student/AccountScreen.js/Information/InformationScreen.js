@@ -17,9 +17,11 @@ const InformationScreen=()=>{
     const [phone,setPhone]=useState("")
     const [gender,setGender]=useState("")
     const [K,setK]=useState("")
+    const [group,setGroup]=useState("")
     const [major,setMajor]=useState("")
     const [branch,setBranch]=useState("")
     const [address,setAddress]=useState("")
+    const [status,setStatus]=useState("")
     const [loading, setLoading] = useState(true);
     const [b64, setB64] = useState('');
 
@@ -37,16 +39,18 @@ const InformationScreen=()=>{
             },
           })
           .then(function (response) {
-            setUserID(response.data.student.studentID)
+            setUserID(response.data.student.studentID);
             setUserName(response.data.student.studentName);
-            setGender(response.data.student.studentGender)
-            setK(response.data.student.studentK)
-            setB64(response.data.image.image)
+            setGender(response.data.student.studentGender);
+            setK(response.data.student.studentK);
+            setGroup(response.data.student.group);
+            setB64(response.data.image);
             setPhone(response.data.student.studentPhone)
             setEmail(response.data.user.userEmail);
-            setMajor(response.data.branch.majorName)
-            setBranch(response.data.branch.branchName)
+            setMajor(response.data.major)
+            setBranch(response.data.branch)
             setAddress(response.data.student.studentAddress)
+            setStatus(response.data.student.status)
         
             setLoading(false);
           })
@@ -69,58 +73,93 @@ const InformationScreen=()=>{
             </View> 
           </View>
       );
+      const StatusCheck=()=>{
+        if(status==1){
+          return(
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center',top:"5%" }}>
+            <Text style={{ color: 'green', textAlign: 'center',marginRight:5 }}>
+              {'\u2B24'}
+            </Text>
+            <View></View>
+            <Text style={{ fontSize: 16, fontWeight: '600', color: GlobalStyle.textColor.color }}>
+              Bình thường
+            </Text>
+          </View>
+
+
+          )
+        }
+        else if(status==0)
+        {
+          return(
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center',top:"5%" }}>
+            <Text style={{ color: 'red', textAlign: 'center',marginRight:5 }}>
+              {'\u2B24'}
+            </Text>
+            <View></View>
+            <Text style={{ fontSize: 16, fontWeight: '600', color: GlobalStyle.textColor.color }}>
+              Cảnh cáo
+            </Text>
+          </View>          )
+        }
+      }
     return(
         <><Header hasBackButton={true} title={"Thông tin sinh viên"}></Header>
         <ScrollView>
         <View style={{alignItems:"center",justifyContent:"center"}}>
             <Image source={{uri:`data:image/png;base64,${b64}`}} style={{width:100,height:100, resizeMode: 'contain',borderRadius:50 }} />
+            <StatusCheck></StatusCheck>
         </View>
         <View style={styles.wrapper}>
                   <FlatList
                     data={[
                       {
-                        title: 'Mã sinh viên:',
-                        content:<Text style={{textTransform: 'uppercase'}}>{userID} </Text>
+                        title: 'Mã sinh viên',
+                        content:<Text style={{textTransform: 'uppercase'}}>: {userID} </Text>
                       },
                       {
-                        title: 'Họ tên:',
-                        content: userName,
+                        title: 'Họ tên',
+                        content: <Text>: {userName}</Text>,
 
                       },
                       {
-                        title: 'Giới tính:',
-                        content: gender,
+                        title: 'Giới tính',
+                        content: <Text>: {gender}</Text>,
 
                       },
                       {
-                        title: 'Khóa:',
-                        content: K,
+                        title: 'Khóa',
+                        content: <Text>: {K}</Text>,
 
                       },
                       {
-                        title: 'Khoa:',
-                        content: major,
+                        title:'Nhóm',
+                        content:<Text>: {group}</Text>,
+                      },
+                      {
+                        title: 'Khoa',
+                        content: <Text>: {major}</Text>,
 
                       },
                     {
-                        title: 'Ngành:',
-                        content: branch,
+                        title: 'Ngành',
+                        content: <Text>: {branch}</Text>,
 
                       },
                       {
-                        title: 'Email:',
-                        content: emailStudent,
+                        title: 'Email',
+                        content: <Text>: {emailStudent}</Text>,
 
                       },
 
                       {
-                        title: 'Số điện thoại:',
-                        content: phone,
+                        title: 'Số điện thoại',
+                        content: <Text>: {phone}</Text>,
 
                       },
                       {
-                        title: 'Địa chỉ:',
-                        content: address,
+                        title: 'Địa chỉ',
+                        content: <Text>: {address}</Text>,
 
                       },
         

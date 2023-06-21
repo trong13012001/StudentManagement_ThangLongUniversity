@@ -34,7 +34,7 @@ const StudentAccountScreen=({navigation})=>{
         setUserID(response.data.student.studentID)
         setUserName(response.data.student.studentName);
         setEmail(response.data.user.userEmail);
-        setB64(response.data.image.image)
+        setB64(response.data.image)
         setLoading(false);
       })
       .catch(function (error) {
@@ -87,7 +87,7 @@ const StudentAccountScreen=({navigation})=>{
         <View style={[styles.container]}>
             <>
               <ScrollView>
-            
+                
                 <View style={{height: '70%',alignItems: 'center',justifyContent: 'center',top:"10%"}}>
                   <Image source={{uri:`data:image/png;base64,${b64}`}} style={{width:100,height:100, resizeMode: 'contain',borderRadius:50 }} />
                   <Text allowFontScaling={false} style={[styles.text, { fontWeight: 'bold',fontSize:16,paddingTop:16,paddingBottom:4 }]}><Text style={{textTransform: 'uppercase'}}>{user_id} </Text>{userName}</Text>

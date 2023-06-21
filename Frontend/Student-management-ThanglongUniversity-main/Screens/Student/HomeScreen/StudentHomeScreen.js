@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
     borderRadius:15,
     marginLeft:"5%",
     top:"17%",
-    height:  "40%"
+    height:  "41%"
 },
 wrapper1:{
   width: '90%',

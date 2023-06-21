@@ -13,7 +13,10 @@ const TimeTable=()=>{
         <StatusBar barStyle={statusBarStyle}/>
         <View style={{marginLeft:"5%",top:"10%"}}>
           <Text allowFontScaling={false} style={styles.header}>Thời Khóa Biểu</Text>
+          <TouchableOpacity>
           <Text allowFontScaling={false} style={styles.header2}>Học kỳ 3 - Nhóm 2</Text>
+
+          </TouchableOpacity>
           <Text allowFontScaling={false} style={styles.header3}></Text>
         </View>
       </>
