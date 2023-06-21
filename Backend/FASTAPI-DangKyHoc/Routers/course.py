@@ -1,13 +1,13 @@
 from fastapi import Depends, FastAPI, Request, Form,status,Header,APIRouter
 from fastapi.responses import HTMLResponse, JSONResponse
-from sqlalchemy import exists
+from sqlalchemy import exists,Integer
 import base64
 from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder
 from datetime import date
 from auth.auth_bearer import JWTBearer
 from auth.auth_handler import signJWT,decodeJWT,refresh_access_token
-from model import CourseSchema, TeacherSchema, GroupSchema, SubjectSchema
+from model import CourseSchema, TeacherSchema, GroupSchema, SubjectSchema,ClassSchema   
 from model import CourseSchema
 import schema
 from database import SessionLocal, engine
@@ -150,3 +150,32 @@ def get_courses_with_subject_info(
 
     return {"courses": result}
 
+@router.get("/bills")
+def get_bill(
+    db: Session = Depends(get_database_session),
+    studentID: str=Header(...),
+    termID:str=Header(...)):
+    courses = (
+        db.query(
+            ClassSchema.className,
+            SubjectSchema.subjectName,
+            ClassSchema.termID,
+            (SubjectSchema.subjectCredit * SubjectSchema.Coefficient * 400000).cast(Integer)
+        )
+        .join(CourseSchema, ClassSchema.className == CourseSchema.className)
+        .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
+        .filter(ClassSchema.termID==termID and ClassSchema.studentID==studentID).all()
+    )
+
+    result = []
+    for course in courses:
+        result.append(
+            {
+                "subjectID": course[0],
+                "subjectName": course[1],
+                "termID": course[2],
+                "bill": course[3],
+            }
+        )
+
+    return {"courses": result}

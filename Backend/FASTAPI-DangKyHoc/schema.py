@@ -92,3 +92,7 @@ class YearSchema(BaseModel):
     yearID=int
     yearStart=date
     yearEnd=date
+class ClassSchema(BaseModel):
+    courseName=str
+    studentID=str
+    termID=str

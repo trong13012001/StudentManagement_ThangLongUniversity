@@ -67,7 +67,7 @@ class BranchSchema(Base):
 
 #Môn học
 class SubjectSchema(Base):
-    __tablename__="subjectUni"
+    __tablename__="subject"
     subjectID=Column(String(5), primary_key=True, index=True)
     subjectName=Column(String(100))
     subjectCredit=Column(Integer)
@@ -87,10 +87,7 @@ class CourseSchema(Base):
     teacherID = Column(String(6), ForeignKey("teacher.teacherID"))
 
 #Lớp học
-class ClassSchema(Base):
-    __tablename__="class"
-    courseID=Column(String(5), primary_key=True)
-    studentID=Column(String(6), primary_key=True)
+
 
 #Phiếu báo điểm
 class GradeSchema(Base):
@@ -117,3 +114,9 @@ class YearSchema(Base):
     yearID=Column(Integer, primary_key=True)
     yearStart=Column(Date)
     yearEnd=Column(Date)
+#Lớp học
+class ClassSchema(Base):
+    __tablename__="class"
+    className=Column(String,primary_key=True)
+    studentID=Column(String)
+    termID=Column(String)
