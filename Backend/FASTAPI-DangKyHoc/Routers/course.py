@@ -88,9 +88,7 @@ async def update_course(
 
         if subject_non_exists:
             return {"data": "Không tìm thấy môn học!"}
-        elif class_exists:
-            return {"data": "Trùng tên lớp!"}
-        if course_time:
+        elif course_time:
             return {"data": "Trùng thời gian học!"}
 
         course.subjectID = subjectID
@@ -108,11 +106,29 @@ async def update_course(
         }
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin chương trình!"})
-        
+
+@router.post("/delete_course")
+async def delete_course(
+    db: Session = Depends(get_database_session),
+    courseID: int = Form(...)
+):
+    course_exists = db.query(exists().where(CourseSchema.courseID == courseID)).scalar()
+    if course_exists:
+        course = db.query(CourseSchema).get(courseID)
+        db.delete(course)
+        db.commit()
+        return{
+         "data": "Xóa lớp học thành công!"
+        }
+    else:
+        return JSONResponse(status_code=400, content={"message": "Không tồn tại lớp học!"})
+
+#Danh sách lớp theo học kỳ  
 @router.get("/course")
 def get_courses_with_subject_info(
     db: Session = Depends(get_database_session),
-    termID: str=Header(...)):
+    termID: str=Header(...)
+):
     courses = (
         db.query(
             CourseSchema.courseID,
@@ -125,8 +141,7 @@ def get_courses_with_subject_info(
             CourseSchema.courseRoom,
             CourseSchema.teacherID,
             TeacherSchema.teacherName,
-            CourseSchema.termID,
-            
+            CourseSchema.termID 
         )
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
         .join(TeacherSchema, CourseSchema.teacherID==TeacherSchema.teacherID)
@@ -150,9 +165,9 @@ def get_courses_with_subject_info(
                 "termID": course[10],
             }
         )
-
     return {"courses": result}
 
+#Lớp theo ID
 @router.get("/course/{courseID}")
 def get_courses_with_subject_info(courseID: int,
     db: Session = Depends(get_database_session)):
@@ -168,7 +183,7 @@ def get_courses_with_subject_info(courseID: int,
             CourseSchema.courseRoom,
             CourseSchema.teacherID,
             TeacherSchema.teacherName,
-            CourseSchema.termID,
+            CourseSchema.termID
         )
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
         .join(TeacherSchema, CourseSchema.teacherID==TeacherSchema.teacherID)

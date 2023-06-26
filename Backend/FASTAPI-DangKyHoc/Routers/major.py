@@ -69,7 +69,7 @@ async def delete_major(
 ):
     major_exists = db.query(exists().where(MajorSchema.majorID == majorID)).scalar()
     if major_exists:
-        year = db.query(MajorSchema).get(majorID)
+        major = db.query(MajorSchema).get(majorID)
         db.delete(major)
         db.commit()
         return{
