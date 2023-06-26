@@ -115,6 +115,7 @@ def get_courses_with_subject_info(
     termID: str=Header(...)):
     courses = (
         db.query(
+            CourseSchema.courseID,
             CourseSchema.subjectID,
             SubjectSchema.subjectName,
             CourseSchema.className,
@@ -125,6 +126,7 @@ def get_courses_with_subject_info(
             CourseSchema.teacherID,
             TeacherSchema.teacherName,
             CourseSchema.termID,
+            
         )
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
         .join(TeacherSchema, CourseSchema.teacherID==TeacherSchema.teacherID)
@@ -134,27 +136,29 @@ def get_courses_with_subject_info(
     result = []
     for course in courses:
         result.append(
-            {
-                "subjectID": course[0],
-                "subjectName": course[1],
-                "className": course[2],
-                "courseDate": course[3],
-                "courseShiftStart": course[4],
-                "courseShiftEnd": course[5],
-                "courseRoom": course[6],
-                "teacherID": course[7],
-                "teacherName":course[8],
-                "termID": course[9],
+            {   
+                "courseID":course[0],
+                "subjectID": course[1],
+                "subjectName": course[2],
+                "className": course[3],
+                "courseDate": course[4],
+                "courseShiftStart": course[5],
+                "courseShiftEnd": course[6],
+                "courseRoom": course[7],
+                "teacherID": course[8],
+                "teacherName":course[9],
+                "termID": course[10],
             }
         )
 
     return {"courses": result}
 
-@router.get("/course/{className}")
-def get_courses_with_subject_info(className: str,
+@router.get("/course/{courseID}")
+def get_courses_with_subject_info(courseID: int,
     db: Session = Depends(get_database_session)):
     courses = (
         db.query(
+            CourseSchema.courseID,
             CourseSchema.subjectID,
             SubjectSchema.subjectName,
             CourseSchema.className,
@@ -168,23 +172,24 @@ def get_courses_with_subject_info(className: str,
         )
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
         .join(TeacherSchema, CourseSchema.teacherID==TeacherSchema.teacherID)
-        .filter(CourseSchema.className==className).all()
+        .filter(CourseSchema.courseID==courseID).all()
     )
 
     result = []
     for course in courses:
         result.append(
             {
-                "subjectID": course[0],
-                "subjectName": course[1],
-                "className": course[2],
-                "courseDate": course[3],
-                "courseShiftStart": course[4],
-                "courseShiftEnd": course[5],
-                "courseRoom": course[6],
-                "teacherID": course[7],
-                "teacherName":course[8],
-                "termID": course[9],
+                "courseID":course[0],
+                "subjectID": course[1],
+                "subjectName": course[2],
+                "className": course[3],
+                "courseDate": course[4],
+                "courseShiftStart": course[5],
+                "courseShiftEnd": course[6],
+                "courseRoom": course[7],
+                "teacherID": course[8],
+                "teacherName":course[9],
+                "termID": course[10],
             }
         )
 
