@@ -150,21 +150,25 @@ def get_courses_with_subject_info(
 
     return {"courses": result}
 
-@router.get("/bills")
-def get_bill(
-    db: Session = Depends(get_database_session),
-    studentID: str=Header(...),
-    termID:str=Header(...)):
+@router.get("/course/{className}")
+def get_courses_with_subject_info(className: str,
+    db: Session = Depends(get_database_session)):
     courses = (
         db.query(
-            ClassSchema.className,
+            CourseSchema.subjectID,
             SubjectSchema.subjectName,
-            ClassSchema.termID,
-            (SubjectSchema.subjectCredit * SubjectSchema.Coefficient * 400000).cast(Integer)
+            CourseSchema.className,
+            CourseSchema.courseDate,
+            CourseSchema.courseShiftStart,
+            CourseSchema.courseShiftEnd,
+            CourseSchema.courseRoom,
+            CourseSchema.teacherID,
+            TeacherSchema.teacherName,
+            CourseSchema.termID,
         )
-        .join(CourseSchema, ClassSchema.className == CourseSchema.className)
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
-        .filter(ClassSchema.termID==termID and ClassSchema.studentID==studentID).all()
+        .join(TeacherSchema, CourseSchema.teacherID==TeacherSchema.teacherID)
+        .filter(CourseSchema.className==className).all()
     )
 
     result = []
@@ -173,9 +177,16 @@ def get_bill(
             {
                 "subjectID": course[0],
                 "subjectName": course[1],
-                "termID": course[2],
-                "bill": course[3],
+                "className": course[2],
+                "courseDate": course[3],
+                "courseShiftStart": course[4],
+                "courseShiftEnd": course[5],
+                "courseRoom": course[6],
+                "teacherID": course[7],
+                "teacherName":course[8],
+                "termID": course[9],
             }
         )
 
     return {"courses": result}
+
