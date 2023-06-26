@@ -34,7 +34,7 @@ async def create_year(
     }
 
 @router.post("/delete_year")
-async def create_year(
+async def delete_year(
     db: Session = Depends(get_database_session),
     yearID: int = Form(...)
 ):

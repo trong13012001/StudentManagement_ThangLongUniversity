@@ -43,6 +43,7 @@ class ImageSchema(BaseModel):
 class MajorSchema(BaseModel):
     majorID=str
     majorName=str
+    majorELO=int
 
 class BranchSchema(BaseModel):
     branchID=str

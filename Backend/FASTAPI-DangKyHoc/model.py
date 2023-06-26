@@ -56,7 +56,7 @@ class MajorSchema(Base):
     __tablename__="major"
     majorID=Column(String(6),primary_key=True, index=True)
     majorName=Column(String)
-
+    majorELO=Column(Integer)
 #Ngành
 class BranchSchema(Base):
     __tablename__="branch"
@@ -75,7 +75,7 @@ class SubjectSchema(Base):
 
 #Chương trình
 class CourseSchema(Base):
-    __tablename__ = "course1"
+    __tablename__ = "course"
     courseID = Column(Integer, primary_key=True)
     subjectID = Column(String(5))
     className = Column(String(30), unique=True)
