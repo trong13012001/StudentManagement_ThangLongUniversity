@@ -68,3 +68,19 @@ async def update_subject(
         }
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin môn học!"})
+    
+@router.post("/delete_subject")
+async def delete_subject(
+    db: Session = Depends(get_database_session),
+    subjectID: str = Form(...)
+):
+    subject_exists = db.query(exists().where(SubjectSchema.subjectID == subjectID)).scalar()
+    if subject_exists:
+        subject = db.query(SubjectSchema).get(subjectID)
+        db.delete(subject)
+        db.commit()
+        return{
+         "data": "Xóa môn học thành công!"
+        }
+    else:
+        return JSONResponse(status_code=400, content={"message": "Không tồn tại môn học!"})

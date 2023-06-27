@@ -74,3 +74,19 @@ async def update_branch(
         }
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin chuyên ngành!"})
+    
+@router.post("/delete_branch")
+async def delete_branch(
+    db: Session = Depends(get_database_session),
+    branchID: str = Form(...)
+):
+    branch_exists = db.query(exists().where(BranchSchema.branchID == branchID)).scalar()
+    if branch_exists:
+        branch = db.query(BranchSchema).get(branchID)
+        db.delete(branch)
+        db.commit()
+        return{
+         "data": "Xóa chuyên ngành thành công!"
+        }
+    else:
+        return JSONResponse(status_code=400, content={"message": "Không tồn tại chuyên ngành!"})

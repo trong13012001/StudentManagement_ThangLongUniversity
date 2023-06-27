@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder
 from datetime import date
 from auth.auth_bearer import JWTBearer
 from auth.auth_handler import signJWT,decodeJWT,refresh_access_token
-from model import CourseSchema, TeacherSchema, GroupSchema, SubjectSchema,ClassSchema   
+from model import CourseSchema, TeacherSchema, termSchema, SubjectSchema,ClassSchema   
 from model import CourseSchema
 import schema
 from database import SessionLocal, engine
@@ -35,7 +35,7 @@ async def create_course(
     courseShiftEnd: int = Form(...),
     courseRoom: str = Form(...),
     teacherID: str = Form(...),
-    groupID: str = Form(...)
+    termID: str = Form(...)
 ):
     #Check có tồn tại môn học không
     subject_non_exists = db.query(exists().where(SubjectSchema.subjectID != subjectID)).scalar()
@@ -55,7 +55,7 @@ async def create_course(
 
     courseSchema = CourseSchema(courseID = courseID, subjectID = subjectID, className = className,
     courseDate = courseDate, courseShiftStart = courseShiftStart, courseShiftEnd = courseShiftEnd,
-    courseRoom = courseRoom, teacherID = teacherID, groupID = groupID)
+    courseRoom = courseRoom, teacherID = teacherID, termID = termID)
     db.add(courseSchema)
     db.commit()
     db.refresh(courseSchema)
@@ -74,7 +74,7 @@ async def update_course(
     courseShiftEnd: int = Form(...),
     courseRoom: str = Form(...),
     teacherID: str = Form(...),
-    groupID: str = Form(...)
+    termID: str = Form(...)
 ):
     subject_non_exists = db.query(exists().where(SubjectSchema.subjectID != subjectID)).scalar()
     course_exists = db.query(exists().where(CourseSchema.courseID == courseID)).scalar()
@@ -98,7 +98,7 @@ async def update_course(
         course.courseShiftEnd = courseShiftEnd
         course.courseRoom = courseRoom
         course.teacherID = teacherID
-        course.groupID = groupID
+        course.termID = termID
         db.commit()
         db.refresh(course)
         return {
