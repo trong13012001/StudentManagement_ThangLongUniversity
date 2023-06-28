@@ -75,7 +75,7 @@ class SubjectSchema(Base):
 
 #Chương trình
 class CourseSchema(Base):
-    __tablename__ = "course1"
+    __tablename__ = "course"
     courseID = Column(Integer, primary_key=True)
     subjectID = Column(String(5))
     className = Column(String(30), unique=True)

@@ -9,11 +9,15 @@ import { BASE_URL } from "../../../../../env/url";
 import Header from "../../../../../components/Header/Header";
 import GlobalStyle from "../../../../../GlobalStyle";
 import SubjectViewer from "../../../../../components/SubjectViewer/SubjectViewer";
+import Loader from "../../../../../components/Loader/Loader";
+
+
 let windowWidth = Dimensions.get('window').width;
 
 
 const SchoolTimeTableScreen=()=>{
     const [loading, setLoading] = useState(true);
+    const [loadingLoader,setLoadingLoader]=useState(true);
     const [dataset, setDataset] = useState([]) // State use for storing history data from API
     const [subjectID, setSubjectID]=useState("")
     const [subjectName, setSubjectName]=useState("")
@@ -21,6 +25,7 @@ const SchoolTimeTableScreen=()=>{
     const [courseDate, setCourseDate]=useState("")
     const [courseShiftStart, setCourseShiftStart]=useState("")
     const [courseShiftEnd, setCourseShiftEnd]=useState("")
+    const [courseRoom, setCourseRoom]=useState("")
     const [teacherID,setTeacherID]=useState("")
     const [teacherName, setTeacherName]=useState("")
     const [searchQuery, setSearchQuery] = useState("");
@@ -45,31 +50,18 @@ const SchoolTimeTableScreen=()=>{
         })
           .then(function (response) {
             setRefreshing(false);
-            setLoading(false);
-            setDataset(response.data.courses)        
+            setDataset(response.data.courses)
+            setLoading(false)
+            setLoadingLoader(false);
+  
           })
           .catch(function (error) {
            setRefreshing(false);
             setLoading(false);
+            setLoadingLoader(false);
+
           })
       }
-      const showSubject = async ()=>{
-        await axios.get(`${BASE_URL}/course/${className}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "className": termID,
-          },
-        })
-          .then(function (response) {
-            setRefreshing(false);
-            setLoading(false);
-            setDataset(response.data.courses)        
-          })
-          .catch(function (error) {
-           setRefreshing(false);
-            setLoading(false);
-          })      }
       useEffect(() => {
         load();
       }, [refreshing])
@@ -84,6 +76,7 @@ const SchoolTimeTableScreen=()=>{
       );
     return(
         <><Header hasBackButton={true} title={"Thời khóa biểu toàn trường"}></Header>
+        <Loader loading={loadingLoader}/>
       <TextInput
                 style={styles.searchInput}
                 placeholder="Tìm kiếm"
@@ -128,21 +121,42 @@ const SchoolTimeTableScreen=()=>{
                   <Text style={styles.noResultsText}>No results found</Text>
                 ) : 
                 (
-                  filteredDataset.map((data, index) => {
+                  filteredDataset.map((data, index) =>
+                   { 
                 return (
                   <TouchableOpacity
                     key={data.id}
+                    
                     style={[styles.tableRow, {  backgroundColor: index % 2 === 0 ? 'white' : '#f6f6f6',borderColor:"#EAECF0" }]}
-                    onPress={()=> {
-                      setSubjectID(data.subjectID)
-                      setSubjectName(data.subjectName)
-                      setClassName(data.className)
-                      setCourseDate(data.courseDate)
-                      setCourseShiftStart(data.courseShiftStart)
-                      setCourseShiftEnd(data.courseShiftEnd)
-                      setTeacherID(data.teacherID)
-                      setTeacherName(data.teacherName)
+                    onPress={ async()=> {
+                      setLoadingLoader(true)
+                      let courseID=data.courseID
+                      console.log(courseID)
+                      await axios.get(`${BASE_URL}/course/${courseID}`,
+                      {
+                        headers: {
+                          "Content-Type": "application/json",
+                          "courseID":courseID ,
+                        },
+                      })
+                        .then(function (response) {
+                          setLoadingLoader(false)
 
+                          setSubjectID(response.data.courses[0].subjectID)
+                          setSubjectName(response.data.courses[0].subjectName)
+                          setClassName(response.data.courses[0].className)
+                          setCourseDate(response.data.courses[0].courseDate)
+                          setCourseShiftStart(response.data.courses[0].courseShiftStart)
+                          setCourseShiftEnd(response.data.courses[0].courseShiftEnd)
+                          setCourseRoom(response.data.courses[0].courseRoom)
+                          setTeacherID(response.data.courses[0].teacherID)
+                          setTeacherName(response.data.courses[0].teacherName)
+                        })
+                        .catch(function (error) {
+                          console.log(error)
+                         setRefreshing(false);
+                          setLoading(false);
+                        })  
                       setShowModal(true)
                     }
                     }

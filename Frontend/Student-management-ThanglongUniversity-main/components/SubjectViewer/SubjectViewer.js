@@ -19,7 +19,6 @@ const SubjectViewer = (props) => {
             transparent={true}
             onRequestClose={onRequestClose}
             visible={showModal}
-            hardwareAccelerated={true}
             
         >
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>

@@ -150,7 +150,7 @@ def get_courses_with_subject_info(
                 "termID": course[10],
             }
         )
-
+    print(CourseSchema.courseID)
     return {"courses": result}
 
 @router.get("/course/{courseID}")
@@ -192,6 +192,7 @@ def get_courses_with_subject_info(courseID: int,
                 "termID": course[10],
             }
         )
+    print(course[0])
 
     return {"courses": result}
 
