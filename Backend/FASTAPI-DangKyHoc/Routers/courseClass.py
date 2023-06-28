@@ -109,9 +109,11 @@ def get_courses_with_subject_info(
             CourseSchema.courseShiftEnd,
             CourseSchema.courseRoom
         )
-        .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
+        .join(ClassSchema, ClassSchema.courseID == CourseSchema.courseID)
         .join(TermSchema, ClassSchema.termID == TermSchema.termID)
-        .filter(ClassSchema.studentID == studentID, ClassSchema.termID == termID).all()
+        .filter(ClassSchema.studentID == studentID, ClassSchema.termID == termID)
+        .all()
+
     )
 
     result = []
