@@ -61,3 +61,19 @@ async def update_major(
         }
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin khoa!"})
+    
+@router.post("/delete_major")
+async def delete_major(
+    db: Session = Depends(get_database_session),
+    majorID: str = Form(...)
+):
+    major_exists = db.query(exists().where(MajorSchema.majorID == majorID)).scalar()
+    if major_exists:
+        major = db.query(MajorSchema).get(majorID)
+        db.delete(major)
+        db.commit()
+        return{
+         "data": "Xóa khoa thành công!"
+        }
+    else:
+        return JSONResponse(status_code=400, content={"message": "Không tồn tại khoa!"})
