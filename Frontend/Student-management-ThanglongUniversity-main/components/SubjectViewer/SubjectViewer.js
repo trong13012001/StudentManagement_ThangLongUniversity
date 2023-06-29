@@ -1,18 +1,49 @@
 import {
     StyleSheet, TextInput, View, Text, ScrollView,ActivityIndicator, Platform,Dimensions,
     Image, Keyboard, TouchableOpacity, Modal
-  } from "react-native"; import React from 'react'
+  } from "react-native"; import React,{useState,useEffect} from 'react'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import GlobalStyle from "../../GlobalStyle";
-
+import axios from "axios";
+import { BASE_URL } from "../../env/url";
 // Get window's width, height to style view
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height
 const imgHeight = windowWidth * 4 / 3;
 
 const SubjectViewer = (props) => {
-    const { subjectID,subjectName,className,courseDate,courseShiftStart,courseShiftEnd,teacherID,teacherName, showModal, onRequestClose } = props; // Props passed from HistoryScreen
+    const { courseID, showModal, onRequestClose } = props; // Props passed from HistoryScreen
 // Store base64 used for Image source prop
+    const [subjectID, setSubjectID]=useState("")
+
+    const [subjectName, setSubjectName]=useState("")
+    const [className, setClassName]=useState("")
+    const [courseDate, setCourseDate]=useState("")
+    const [courseShiftStart, setCourseShiftStart]=useState("")
+    const [courseShiftEnd, setCourseShiftEnd]=useState("")
+    const [courseRoom, setCourseRoom]=useState("")
+    const [teacherID,setTeacherID]=useState("")
+    const [teacherName, setTeacherName]=useState("")
+    const load = async(courseID)=>{
+        await axios.get(`${BASE_URL}/course/${courseID}`)
+          .then(function (response) {
+            setSubjectID(response.data.courses[0].subjectID)
+            setSubjectName(response.data.courses[0].subjectName)
+            setClassName(response.data.courses[0].className)
+            setCourseDate(response.data.courses[0].courseDate)
+            setCourseShiftStart(response.data.courses[0].courseShiftStart)
+            setCourseShiftEnd(response.data.courses[0].courseShiftEnd)
+            setCourseRoom(response.data.courses[0].courseRoom)
+            setTeacherID(response.data.courses[0].teacherID)
+            setTeacherName(response.data.courses[0].teacherName)
+          })
+          .catch(function (error) {
+            console.log(error)
+          })  
+    }
+    useEffect(() => {
+        load(courseID);
+      }, [courseID])
     return (
         <Modal
             animationType="slide"
@@ -28,6 +59,7 @@ const SubjectViewer = (props) => {
                         <Text style={styles.headerText}>Mã môn: {subjectID}</Text>
                         <Text style={styles.headerText}>Tên môn: {subjectName}</Text>
                         <Text style={styles.headerText}>Tên lớp: {className}</Text>
+                        <Text style={styles.headerText}>Phòng học: {courseRoom}</Text>
                         <Text style={styles.headerText}>Thứ: {courseDate}</Text>
                         <Text style={styles.headerText}>Ca: {courseShiftStart}-{courseShiftEnd}</Text>
                         <Text style={styles.headerText}>Giáo viên: {teacherName}( {teacherID} )</Text>

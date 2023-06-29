@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, Request, Form,status,Header,APIRouter
+from fastapi import Depends, FastAPI, Request, Form,status,Header,APIRouter,HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from sqlalchemy import exists,Integer
 import base64
@@ -107,7 +107,8 @@ async def update_course(
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin chương trình!"})
 
-@router.post("/delete_course")
+
+@router.delete("/delete_course")
 async def delete_course(
     db: Session = Depends(get_database_session),
     courseID: int = Form(...)
@@ -117,11 +118,14 @@ async def delete_course(
         course = db.query(CourseSchema).get(courseID)
         db.delete(course)
         db.commit()
-        return{
-         "data": "Xóa lớp học thành công!"
+        return {
+            "data": "Xóa lớp học thành công!"
         }
     else:
-        return JSONResponse(status_code=400, content={"message": "Không tồn tại lớp học!"})
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Không tồn tại lớp học!"
+        )
 
 #Danh sách lớp theo học kỳ  
 @router.get("/course")

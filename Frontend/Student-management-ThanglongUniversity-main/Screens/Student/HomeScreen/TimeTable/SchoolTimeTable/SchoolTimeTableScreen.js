@@ -19,15 +19,7 @@ const SchoolTimeTableScreen=()=>{
     const [loading, setLoading] = useState(true);
     const [loadingLoader,setLoadingLoader]=useState(true);
     const [dataset, setDataset] = useState([]) // State use for storing history data from API
-    const [subjectID, setSubjectID]=useState("")
-    const [subjectName, setSubjectName]=useState("")
-    const [className, setClassName]=useState("")
-    const [courseDate, setCourseDate]=useState("")
-    const [courseShiftStart, setCourseShiftStart]=useState("")
-    const [courseShiftEnd, setCourseShiftEnd]=useState("")
-    const [courseRoom, setCourseRoom]=useState("")
-    const [teacherID,setTeacherID]=useState("")
-    const [teacherName, setTeacherName]=useState("")
+    const [courseID,setCourseID]=useState("")
     const [searchQuery, setSearchQuery] = useState("");
 
 
@@ -56,6 +48,7 @@ const SchoolTimeTableScreen=()=>{
   
           })
           .catch(function (error) {
+              console.log(error)
            setRefreshing(false);
             setLoading(false);
             setLoadingLoader(false);
@@ -126,37 +119,9 @@ const SchoolTimeTableScreen=()=>{
                 return (
                   <TouchableOpacity
                     key={data.id}
-                    
                     style={[styles.tableRow, {  backgroundColor: index % 2 === 0 ? 'white' : '#f6f6f6',borderColor:"#EAECF0" }]}
                     onPress={ async()=> {
-                      setLoadingLoader(true)
-                      let courseID=data.courseID
-                      console.log(courseID)
-                      await axios.get(`${BASE_URL}/course/${courseID}`,
-                      {
-                        headers: {
-                          "Content-Type": "application/json",
-                          "courseID":courseID ,
-                        },
-                      })
-                        .then(function (response) {
-                          setLoadingLoader(false)
-
-                          setSubjectID(response.data.courses[0].subjectID)
-                          setSubjectName(response.data.courses[0].subjectName)
-                          setClassName(response.data.courses[0].className)
-                          setCourseDate(response.data.courses[0].courseDate)
-                          setCourseShiftStart(response.data.courses[0].courseShiftStart)
-                          setCourseShiftEnd(response.data.courses[0].courseShiftEnd)
-                          setCourseRoom(response.data.courses[0].courseRoom)
-                          setTeacherID(response.data.courses[0].teacherID)
-                          setTeacherName(response.data.courses[0].teacherName)
-                        })
-                        .catch(function (error) {
-                          console.log(error)
-                         setRefreshing(false);
-                          setLoading(false);
-                        })  
+                      setCourseID(data.courseID)
                       setShowModal(true)
                     }
                     }
@@ -193,7 +158,7 @@ const SchoolTimeTableScreen=()=>{
                 );
               }))}
             </View>
-            <SubjectViewer subjectID={subjectID} subjectName={subjectName} className={className} courseDate={courseDate} courseShiftStart={courseShiftStart} courseShiftEnd={courseShiftEnd} teacherID={teacherID} teacherName={teacherName} showModal={showModal} onRequestClose={closeModal}></SubjectViewer>
+            <SubjectViewer courseID={courseID} showModal={showModal} onRequestClose={closeModal}></SubjectViewer>
           </View>
         )}
       </ScrollView>
