@@ -75,7 +75,7 @@ async def update_branch(
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin chuyên ngành!"})
     
-@router.post("/delete_branch")
+@router.delete("/delete_branch")
 async def delete_branch(
     db: Session = Depends(get_database_session),
     branchID: str = Form(...)

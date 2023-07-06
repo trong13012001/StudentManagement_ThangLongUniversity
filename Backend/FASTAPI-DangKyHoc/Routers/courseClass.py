@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder
 from datetime import date
 from auth.auth_bearer import JWTBearer
 from auth.auth_handler import signJWT,decodeJWT,refresh_access_token
-from model import StudentSchema, ClassSchema, CourseSchema, StudentSchema, TermSchema
+from model import ClassSchema, CourseSchema, StudentSchema, TermSchema, SubjectSchema, BranchSubjectSchema
 import schema
 from database import SessionLocal, engine
 import model
@@ -49,7 +49,7 @@ async def create_class(
     }
 
 #Hủy đăng ký
-@router.post("/delete_class")
+@router.delete("/delete_class")
 async def delete_class(
     db: Session = Depends(get_database_session),
     classID: int = Form(...)
@@ -66,14 +66,15 @@ async def delete_class(
         return JSONResponse(status_code=400, content={"message": "Không tồn tại lớp học!"})
 
 #Lấy danh sách lớp
-@router.get("/class_by_course/{courseID}")
+@router.get("/class_by_course/")
 def get_class_by_course(
-    db: Session = Depends(get_database_session),
-    courseID: str=Header(...),
-    termID: str=Header(...)
+    courseID: int=Header(),
+    termID: str=Header(),
+    db: Session = Depends(get_database_session)
 ):
     classes = (
         db.query(
+            ClassSchema.courseID,
             CourseSchema.className,
             ClassSchema.studentID,
             StudentSchema.studentName
@@ -95,22 +96,23 @@ def get_class_by_course(
     return {"courses": result}
 
 #Lấy TKB sinh viên
-@router.get("/class_by_student/{studentID}")
+@router.get("/class_by_student/")
 def get_courses_with_subject_info(
-    studentID: str=Header(...),
-    termID: str=Header(...),
+    studentID: str=Header(),
+    termID: str=Header(),
     db: Session = Depends(get_database_session)
     ):
     classes = (
         db.query(
+            StudentSchema.studentID,
             CourseSchema.className,
             CourseSchema.courseDate,
             CourseSchema.courseShiftStart,
             CourseSchema.courseShiftEnd,
             CourseSchema.courseRoom
         )
-        .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
-        .join(TermSchema, ClassSchema.termID == TermSchema.termID)
+        .join(ClassSchema, CourseSchema.courseID == ClassSchema.courseID)
+        .join(StudentSchema, ClassSchema.studentID == StudentSchema.studentID)
         .filter(ClassSchema.studentID == studentID, ClassSchema.termID == termID).all()
     )
 
@@ -127,3 +129,6 @@ def get_courses_with_subject_info(
         )
 
     return {"courses": result}
+
+    
+#Hiện các môn chưa học

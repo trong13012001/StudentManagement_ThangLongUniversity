@@ -74,9 +74,10 @@ class ClassSchema(BaseModel):
     studentID=str
 
 class GradeSchema(BaseModel):
+    gradeID=int
     studentID=str
-    groupID=str
-    courseID=str
+    termID=str
+    classID=int
     progressGrade=float
     bonusGrade=float
     examGrade1=float
@@ -106,3 +107,8 @@ class TermSchema(BaseModel):
     termEnd=date
     groupID=int
     yearID=int
+
+class BranchSubjectSchema(BaseModel):
+    id=int
+    subjectID=str
+    branchID=int

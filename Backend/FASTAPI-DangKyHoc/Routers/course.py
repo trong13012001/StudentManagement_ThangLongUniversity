@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder
 from datetime import date
 from auth.auth_bearer import JWTBearer
 from auth.auth_handler import signJWT,decodeJWT,refresh_access_token
-from model import CourseSchema, TeacherSchema, termSchema, SubjectSchema,ClassSchema   
+from model import CourseSchema, TeacherSchema, TermSchema, SubjectSchema,ClassSchema   
 from model import CourseSchema
 import schema
 from database import SessionLocal, engine
@@ -107,10 +107,10 @@ async def update_course(
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin chương trình!"})
 
-@router.post("/delete_course")
+@router.delete("/delete_course/{courseID}")
 async def delete_course(
     db: Session = Depends(get_database_session),
-    courseID: int = Form(...)
+    courseID = int
 ):
     course_exists = db.query(exists().where(CourseSchema.courseID == courseID)).scalar()
     if course_exists:
@@ -141,7 +141,7 @@ def get_courses_with_subject_info(
             CourseSchema.courseRoom,
             CourseSchema.teacherID,
             TeacherSchema.teacherName,
-            CourseSchema.termID 
+            TermSchema.termID 
         )
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
         .join(TeacherSchema, CourseSchema.teacherID==TeacherSchema.teacherID)
