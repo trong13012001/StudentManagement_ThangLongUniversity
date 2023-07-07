@@ -17,7 +17,7 @@ const Header = ({ hasBackButton, title }) => {
        
             
             <><StatusBar barStyle={statusBarStyle} />
-            <View style={{ height: "16%",top:"10%" }}>
+            <View style={{ height: "14%",top:"10%" }}>
             <View style={{  justifyContent: 'center'}}>
                 {hasBackButton ? (
                     <TouchableOpacity

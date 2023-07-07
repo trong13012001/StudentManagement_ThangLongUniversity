@@ -2,7 +2,7 @@ from fastapi import Depends, FastAPI, Request, Form,status,Header,APIRouter,HTTP
 from fastapi.responses import HTMLResponse, JSONResponse
 from sqlalchemy import exists,Integer
 import base64
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session,joinedload
 from fastapi.encoders import jsonable_encoder
 from datetime import date
 from auth.auth_bearer import JWTBearer
@@ -136,19 +136,15 @@ def get_courses_with_subject_info(
     courses = (
         db.query(
             CourseSchema.courseID,
-            CourseSchema.subjectID,
             SubjectSchema.subjectName,
             CourseSchema.className,
             CourseSchema.courseDate,
             CourseSchema.courseShiftStart,
             CourseSchema.courseShiftEnd,
             CourseSchema.courseRoom,
-            CourseSchema.teacherID,
-            TeacherSchema.teacherName,
             CourseSchema.termID 
         )
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
-        .join(TeacherSchema, CourseSchema.teacherID==TeacherSchema.teacherID)
         .filter(CourseSchema.termID==termID).all()
     )
 
@@ -157,16 +153,13 @@ def get_courses_with_subject_info(
         result.append(
             {   
                 "courseID":course[0],
-                "subjectID": course[1],
-                "subjectName": course[2],
-                "className": course[3],
-                "courseDate": course[4],
-                "courseShiftStart": course[5],
-                "courseShiftEnd": course[6],
-                "courseRoom": course[7],
-                "teacherID": course[8],
-                "teacherName":course[9],
-                "termID": course[10],
+                "subjectName": course[1],
+                "className": course[2],
+                "courseDate": course[3],
+                "courseShiftStart": course[4],
+                "courseShiftEnd": course[5],
+                "courseRoom": course[6],
+                "termID": course[7],
             }
         )
     return {"courses": result}
