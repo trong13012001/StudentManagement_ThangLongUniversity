@@ -114,6 +114,7 @@ def get_courses_with_subject_info(
         .join(ClassSchema, CourseSchema.courseID == ClassSchema.courseID)
         .join(StudentSchema, ClassSchema.studentID == StudentSchema.studentID)
         .filter(ClassSchema.studentID == studentID, ClassSchema.termID == termID).all()
+
     )
 
     result = []

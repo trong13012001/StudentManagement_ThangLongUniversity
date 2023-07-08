@@ -45,7 +45,7 @@ async def update_student(
     if student and branch and (status == 0 or status == 1):
         branchFilter = db.query(BranchSchema).filter(BranchSchema.branchID==branchID).first()
         getGroup = branchFilter.groupEnd
-        today = date.today()
+        today= date.today()
 
         yearFilter = db.query(YearSchema).filter(YearSchema.yearID==date.today().year-1).first()
         if(today>yearFilter.yearEnd):

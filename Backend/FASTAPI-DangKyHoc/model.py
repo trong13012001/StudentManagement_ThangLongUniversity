@@ -85,7 +85,7 @@ class CourseSchema(Base):
     courseShiftEnd = Column(Integer)
     courseRoom = Column(String(15))
     termID = Column(String(8))
-    teacherID = Column(String(6), ForeignKey("teacher.teacherID"))
+    teacherID = Column(String(6))
 
 
 #Phiếu báo điểm

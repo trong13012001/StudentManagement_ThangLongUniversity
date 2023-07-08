@@ -17,7 +17,6 @@ const SplashScreen=({navigation}) => {
         const accessToken = await SecureStore.getItemAsync("accessToken");
         
         const authorization = `Bearer ${accessToken}`
-        console.log(authorization)
         // Calling API
         await axios.get(`${BASE_URL}/user`,
           {
@@ -29,14 +28,12 @@ const SplashScreen=({navigation}) => {
           .then(function (response) {
             if(response.data.user.userRole==1){
             // Checking if user is on the onsite list or not
-            console.log(response.data.student)
               SecureStore.setItemAsync("studentId", `${response.data.student.studentID}`)
               SecureStore.setItemAsync("fullName", `${response.data.student.studentName}`)
               SecureStore.setItemAsync("email", `${response.data.student.studentEmail}`)
               navigation.replace("StudentMainScreen");
               }
             if(response.data.user.userRole==2){
-              console.log(response.data.teacher)
               SecureStore.setItemAsync("teacherId", `${response.data.teacher.teacherID}`)
               SecureStore.setItemAsync("fullName", `${response.data.teacher.teacherName}`)
               SecureStore.setItemAsync("email", `${response.data.teacher.teacherEmail}`)
@@ -66,14 +63,12 @@ const SplashScreen=({navigation}) => {
         if (isLoggedin === "true") {
             // If user's logged in already, refresh current accesss token by using refreshToken in SecureStore
             const refreshToken = await SecureStore.getItemAsync("refreshToken");
-            console.log(refreshToken)
             await axios.post(`${BASE_URL}/refresh`,refreshToken
             , {
                 params: { 'refresh_token': refreshToken},
               })
               
                 .then(function (response) {
-                    console.log(response)
                     if(response.data.code==400){
                         setLoading(false);
                         navigation.replace("LoginScreen");
