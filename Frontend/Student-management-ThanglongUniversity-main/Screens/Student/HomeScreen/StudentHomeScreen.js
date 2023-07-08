@@ -17,7 +17,7 @@ let windowWidth = Dimensions.get('window').width;
 const StudentHomeScreen=({navigation})=>{
   const [user_id, setUserID] = useState("");
   const [userName, setUserName] = useState("");
-
+  const [dataUser,setDataUser]=useState("")
 
   const load = async () => {
     // Variables used for calling API....
@@ -35,8 +35,9 @@ const StudentHomeScreen=({navigation})=>{
       .then(function (response) {
         setUserID(response.data.user.userName);
         setUserName(response.data.student.studentName);
-
-      })
+        setDataUser(response.data.branch.branchID)
+        SecureStore.setItemAsync("branch",response.data.student.branch);
+        })
       .catch(function (error) {
         console.log(error);
       })
@@ -97,7 +98,8 @@ const StudentHomeScreen=({navigation})=>{
                       {
                         title: 'Chương trình đào tạo',
                         icon: 'school',
-                        onPress: () => {navigation.dispatch(CommonActions.navigate({ name: 'Chương trình đào tạo' }));}
+                        onPress: () => {navigation.navigate('Chương trình đào tạo', { dataUser });
+                      }
                       },
                     ]}
                     renderItem={renderItem}

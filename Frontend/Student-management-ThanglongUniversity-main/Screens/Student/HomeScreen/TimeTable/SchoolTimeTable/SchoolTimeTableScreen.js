@@ -48,7 +48,7 @@ const SchoolTimeTableScreen = () => {
   const load = useCallback(async () => {
   
     try {
-       await axios.get(`${BASE_URL}/course`, {
+       await axios.get(`${BASE_URL}/course/`, {
         headers: {
           "Content-Type": "application/json",
           termID: termID,

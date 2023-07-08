@@ -48,7 +48,7 @@ const InformationScreen=()=>{
             setPhone(response.data.student.studentPhone)
             setEmail(response.data.user.userEmail);
             setMajor(response.data.major)
-            setBranch(response.data.branch)
+            setBranch(response.data.branch.branchName)
             setAddress(response.data.student.studentAddress)
             setStatus(response.data.student.status)
         
