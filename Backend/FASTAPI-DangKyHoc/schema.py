@@ -79,7 +79,6 @@ class GradeSchema(BaseModel):
     termID=str
     classID=int
     progressGrade=float
-    bonusGrade=float
     examGrade1=float
     examGrade2=float
     finalGrade=float

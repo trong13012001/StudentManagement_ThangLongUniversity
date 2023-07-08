@@ -99,7 +99,7 @@ async def delete_term(
 #Lấy thông tin học kỳ   
 @router.get("/term_info/{termID}")
 def get_term_info(
-    termID: str=Header(...),
+    termID = str,
     db: Session = Depends(get_database_session)
     ):
     get_term = (
@@ -130,7 +130,7 @@ def get_term_info(
 #Lấy thông tin học kỳ trong năm học
 @router.get("/term_info_by_year/{yearID}")
 def get_term_info_by_year(
-    yearID: str=Header(...),
+    yearID = int,
     db: Session = Depends(get_database_session)
     ):
     get_term = (

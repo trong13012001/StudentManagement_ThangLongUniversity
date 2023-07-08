@@ -93,10 +93,9 @@ class GradeSchema(Base):
     __tablename__="grade"
     gradeID=Column(Integer, primary_key=True)
     studentID=Column(String(6), ForeignKey("student.studentID"))
-    termID=Column(String(8), ForeignKey("term.termID"))
+    termID=Column(String(9), ForeignKey("term.termID"))
     classID=Column(Integer, ForeignKey("class.classID"))
     progressGrade=Column(Float)
-    bonusGrade=Column(Float)
     examGrade1=Column(Float)
     examGrade2=Column(Float)
     finalGrade=Column(Float)

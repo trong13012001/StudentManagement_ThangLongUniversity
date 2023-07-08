@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder
 from datetime import date
 from auth.auth_bearer import JWTBearer
 from auth.auth_handler import decodeJWT
-from model import UserSchema,StudentSchema, BranchSchema, YearSchema, MajorSchema
+from model import StudentSchema, BranchSchema, YearSchema, BranchSubjectSchema
 import schema
 from database import SessionLocal, engine
 import model
@@ -137,3 +137,4 @@ async def update_student(
         }
     else:
         return JSONResponse(status_code=400, content={"message": "Thông tin sinh viên không có trong dữ liệu "})
+

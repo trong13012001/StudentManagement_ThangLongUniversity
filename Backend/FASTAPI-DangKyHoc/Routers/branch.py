@@ -47,7 +47,7 @@ async def create_branch(
         "data:" "Tạo chuyên ngành thành công!"
     }
 
-@router.post("/update_branch")
+@router.put("/update_branch")
 async def update_branch(
     db: Session = Depends(get_database_session),
     branchID: str = Form(...),
