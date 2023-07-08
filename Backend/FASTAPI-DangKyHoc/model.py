@@ -91,11 +91,11 @@ class CourseSchema(Base):
 #Phiếu báo điểm
 class GradeSchema(Base):
     __tablename__="grade"
-    studentID=Column(String(6), primary_key=True)
-    groupID=Column(String(10))
-    courseID=Column(String(5))
+    gradeID=Column(Integer, primary_key=True)
+    studentID=Column(String(6), ForeignKey("student.studentID"))
+    termID=Column(String(9), ForeignKey("term.termID"))
+    classID=Column(Integer, ForeignKey("class.classID"))
     progressGrade=Column(Float)
-    bonusGrade=Column(Float)
     examGrade1=Column(Float)
     examGrade2=Column(Float)
     finalGrade=Column(Float)
@@ -131,3 +131,10 @@ class TermSchema(Base):
     termEnd=Column(Date)
     groupID=Column(Integer)
     yearID=Column(Integer, ForeignKey("year.yearID"))
+
+#Môn thuộc ngành
+class BranchSubjectSchema(Base):
+    __tablename__="branchsubject"
+    id=Column(Integer, primary_key=True)
+    subjectID=Column(String, ForeignKey("subject.SubjectID"))
+    branchID=Column(Integer, ForeignKey("branch.BranchID"))

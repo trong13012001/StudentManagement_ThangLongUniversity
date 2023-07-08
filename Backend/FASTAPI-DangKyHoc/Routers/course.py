@@ -63,7 +63,7 @@ async def create_course(
         "data:" "Tạo chương trình học thành công!"
     }
 
-@router.post("/update_course")
+@router.put("/update_course")
 async def update_course(
     db: Session = Depends(get_database_session),
     courseID: int = Form(...),
@@ -107,11 +107,10 @@ async def update_course(
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin chương trình!"})
 
-
-@router.delete("/delete_course")
+@router.delete("/delete_course/{courseID}")
 async def delete_course(
     db: Session = Depends(get_database_session),
-    courseID: int = Form(...)
+    courseID = int
 ):
     course_exists = db.query(exists().where(CourseSchema.courseID == courseID)).scalar()
     if course_exists:
@@ -127,11 +126,28 @@ async def delete_course(
             detail="Không tồn tại lớp học!"
         )
 
+#Xóa TKB theo kỳ
+@router.delete("/delete_course_by_term/{termID}")
+async def delete_course_by_term(
+    db: Session = Depends(get_database_session),
+    termID = str
+):
+    term_exists = db.query(exists().where(CourseSchema.termID == termID)).scalar()
+    delete_term = db.query(CourseSchema).filter(CourseSchema.termID == termID).all()
+    if term_exists:
+        for term in delete_term:
+            db.delete(term)
+        db.commit()
+        return{
+        "data": "Xóa danh sách TKB trường {termID} thành công!"
+        }
+    return JSONResponse(status_code=400, content={"message": "Không tồn tại học kỳ!"})
+
 #Danh sách lớp theo học kỳ  
-@router.get("/course")
+@router.get("/course_by_term/{termID}")
 def get_courses_with_subject_info(
     db: Session = Depends(get_database_session),
-    termID: str=Header(...)
+    termID = str
 ):
     courses = (
         db.query(
@@ -142,7 +158,9 @@ def get_courses_with_subject_info(
             CourseSchema.courseShiftStart,
             CourseSchema.courseShiftEnd,
             CourseSchema.courseRoom,
-            CourseSchema.termID 
+            CourseSchema.teacherID,
+            TeacherSchema.teacherName,
+            TermSchema.termID 
         )
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
         .filter(CourseSchema.termID==termID).all()

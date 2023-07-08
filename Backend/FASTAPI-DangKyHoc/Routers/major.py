@@ -62,7 +62,7 @@ async def update_major(
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin khoa!"})
     
-@router.post("/delete_major")
+@router.delete("/delete_major")
 async def delete_major(
     db: Session = Depends(get_database_session),
     majorID: str = Form(...)

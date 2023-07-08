@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder
 from datetime import date
 from auth.auth_bearer import JWTBearer
 from auth.auth_handler import signJWT,decodeJWT,refresh_access_token
-from model import SubjectSchema, MajorSchema
+from model import SubjectSchema, MajorSchema, BranchSubjectSchema
 import schema
 from database import SessionLocal, engine
 import model
@@ -42,7 +42,7 @@ async def create_subject(
             "data": "Tạo môn học thành công!"
         }
 
-@router.post("/update_subject")
+@router.put("/update_subject")
 async def update_subject(
     db: Session = Depends(get_database_session),
     subjectID: str = Form(...),
@@ -69,7 +69,7 @@ async def update_subject(
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin môn học!"})
     
-@router.post("/delete_subject")
+@router.delete("/delete_subject")
 async def delete_subject(
     db: Session = Depends(get_database_session),
     subjectID: str = Form(...)
@@ -84,3 +84,27 @@ async def delete_subject(
         }
     else:
         return JSONResponse(status_code=400, content={"message": "Không tồn tại môn học!"})
+    
+#Lớp theo ID
+@router.get("/get_subject_by_branch/{branchID}")
+def get_subject_by_branch(branchID: int,
+    db: Session = Depends(get_database_session)):
+    subjects = (
+        db.query(
+            SubjectSchema.subjectID,
+            SubjectSchema.subjectName
+        )
+        .join(BranchSubjectSchema, SubjectSchema.subjectID == BranchSubjectSchema.subjectID)
+        .filter(BranchSubjectSchema.branchID == branchID).all()
+    )
+
+    result = []
+    for subject in subjects:
+        result.append(
+            {
+                "ID": subject[0],
+                "Name": subject[1]
+            }
+        )
+
+    return {"courses": result}
