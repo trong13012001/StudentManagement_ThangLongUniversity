@@ -23,12 +23,12 @@ const CustomPicker = ({ value, onValueChange, items }) => {
     <View>
       <TouchableOpacity onPress={toggleModal}>
         <View>
-          <Text style={{fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 20 : 20*0.6,fontWeight:"600",color:GlobalStyle.themeColor.color}}>{selectedLabel}</Text>
+          <Text allowFontScaling={false} style={{fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 20 : 20*0.6,fontWeight:"600",color:GlobalStyle.themeColor.color}}>{selectedLabel}</Text>
         </View>
       </TouchableOpacity>
         <Modal animationType="slide" visible={modalVisible} transparent={true} onRequestClose={toggleModal}>
         
-            <View style={{backgroundColor:"#00000020",flex:1}}>
+            <View style={{backgroundColor:"#00000050",flex:1}}>
 
             <View style={{ top: "60%",flex:0.4,backgroundColor:"white",borderRadius:16}}>
             <TouchableOpacity onPress={toggleModal} style={{marginLeft:"4%",top:"3%",marginBottom:"5%"}}><FontAwesome5 name='times' size={36} color={GlobalStyle.textColor.color}></FontAwesome5></TouchableOpacity>

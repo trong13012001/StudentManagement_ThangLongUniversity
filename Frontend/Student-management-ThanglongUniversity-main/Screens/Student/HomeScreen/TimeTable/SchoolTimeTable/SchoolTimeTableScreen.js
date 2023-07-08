@@ -98,15 +98,17 @@ const SchoolTimeTableScreen = () => {
 
         }}
         items={[
-          { label: "Học kỳ 1 - Nhóm 1 2022 - 2023 ", value: "2223HK1N1" },
-          { label: "Học kỳ 1 - Nhóm 2 2022 - 2023", value: "2223HK1N2" },
-          { label: "Học kỳ 1 - Nhóm 3 2022 - 2023", value: "2223HK1N3" },          
-          { label: "Học kỳ 2 - Nhóm 1 2022 - 2023", value: "2223HK2N1" },
-          { label: "Học kỳ 2 - Nhóm 2 2022 - 2023", value: "2223HK2N2" },
-          { label: "Học kỳ 2 - Nhóm 3 2022 - 2023", value: "2223HK2N3" },
+          { label: "Học kỳ 1 - Nhóm 1 2023 - 2024", value: "2324HK1N1" },
+          { label: "Học kỳ 1 - Nhóm 2 2023 - 2024", value: "2324HK1N2" },
           { label: "Học kỳ 3 - Nhóm 1 2022 - 2023", value: "2223HK3N1" },
           { label: "Học kỳ 3 - Nhóm 2 2022 - 2023", value: "2223HK3N2" },
           { label: "Học kỳ 3 - Nhóm 3 2022 - 2023", value: "2223HK3N3" },
+          { label: "Học kỳ 2 - Nhóm 1 2022 - 2023", value: "2223HK2N1" },
+          { label: "Học kỳ 2 - Nhóm 2 2022 - 2023", value: "2223HK2N2" },
+          { label: "Học kỳ 2 - Nhóm 3 2022 - 2023", value: "2223HK2N3" },
+          { label: "Học kỳ 1 - Nhóm 1 2022 - 2023 ", value: "2223HK1N1" },
+          { label: "Học kỳ 1 - Nhóm 2 2022 - 2023", value: "2223HK1N2" },
+          { label: "Học kỳ 1 - Nhóm 3 2022 - 2023", value: "2223HK1N3" },          
         ]}
 
       />

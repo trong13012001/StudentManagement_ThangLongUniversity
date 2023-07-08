@@ -52,18 +52,21 @@ const SubjectViewer = (props) => {
             visible={showModal}
             
         >
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                    <View style={{ width: '100%',backgroundColor:"white",height:"100%",top:"10%",borderRadius:16}}><View>
-                        <TouchableOpacity onPress={onRequestClose} style={{marginLeft:"4%",top:"10%"}}><FontAwesome5 name='times' size={36} color={GlobalStyle.textColor.color}></FontAwesome5></TouchableOpacity></View>
-                        <View style={{marginLeft:"5%",marginTop:"3%"}}>
-                        <Text style={styles.headerText}>Mã môn: {subjectID}</Text>
-                        <Text style={styles.headerText}>Tên môn: {subjectName}</Text>
-                        <Text style={styles.headerText}>Tên lớp: {className}</Text>
-                        <Text style={styles.headerText}>Phòng học: {courseRoom}</Text>
-                        <Text style={styles.headerText}>Thứ: {courseDate}</Text>
-                        <Text style={styles.headerText}>Ca: {courseShiftStart}-{courseShiftEnd}</Text>
-                        <Text style={styles.headerText}>Giáo viên: {teacherName}( {teacherID} )</Text>
-                        </View>
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor:"#00000050"}}>
+                  
+                    <View style={{ width: '100%',backgroundColor:"white",height:"50%",top:"25%",borderRadius:16}}><View>
+                        <TouchableOpacity onPress={onRequestClose} style={{marginLeft:"4%",top:"10%"}}
+                        ><FontAwesome5 name='times' size={36} color={GlobalStyle.textColor.color}></FontAwesome5></TouchableOpacity></View>
+
+                        <ScrollView style={{marginLeft:"5%",marginTop:"3%",alignContent:"flex-start"}}>
+                        <View style={{flexDirection:"row"}}><Text style={styles.headerText}>Mã môn: </Text><Text style={styles.text}>{subjectID}</Text></View>
+                        <View style={{flexDirection:"row"}}><Text style={styles.headerText}>Tên môn: </Text><Text style={styles.text}>{subjectName}</Text></View>
+                        <View style={{flexDirection:"row"}}><Text style={styles.headerText}>Tên lớp: </Text><Text style={styles.text}>{className}</Text></View>
+                        <View style={{flexDirection:"row"}}><Text style={styles.headerText}>Phòng học: </Text><Text style={styles.text}>{courseRoom}</Text></View>
+                        {courseDate===1?(<View style={{flexDirection:"row"}}><Text style={styles.headerText}>Thứ: </Text><Text style={styles.text}>Chủ nhật</Text></View>):(<View style={{flexDirection:"row"}}><Text style={styles.headerText}>Thứ: </Text><Text style={styles.text}>{courseDate}</Text></View>)}
+                        <View style={{flexDirection:"row"}}><Text style={styles.headerText}>Ca:  </Text><Text style={styles.text}>{courseShiftStart}-{courseShiftEnd}</Text></View>
+                        <View style={{flexDirection:"row"}}><Text style={styles.headerText}>Giáo viên: </Text><Text style={styles.text}>{teacherName}( {teacherID} )</Text></View>
+                        </ScrollView>
                     </View>
                 </View>
         </Modal>
@@ -78,7 +81,12 @@ const styles = StyleSheet.create({
       color: GlobalStyle.textColor.color,
       fontSize: 20,
       paddingVertical: 8,
-      fontWeight: 'bold',
-      textAlign:"center"
+      fontWeight: '600',
+    },
+    text: {
+      color: GlobalStyle.textColor.color,
+      fontSize: 20,
+      paddingVertical: 8,
+      marginRight:"20%"
     },
 })

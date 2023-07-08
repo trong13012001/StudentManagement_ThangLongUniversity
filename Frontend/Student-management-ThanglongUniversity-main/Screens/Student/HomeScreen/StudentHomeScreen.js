@@ -8,6 +8,7 @@ import { BASE_URL } from "../../../env/url";
 import * as SecureStore from "expo-secure-store";
 import { CommonActions } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import * as Icon2 from "phosphor-react-native";
 
 import GlobalStyle from "../../../GlobalStyle";
 const statusBarStyle = Platform.OS === 'ios' ? 'dark-content':'light-content';
