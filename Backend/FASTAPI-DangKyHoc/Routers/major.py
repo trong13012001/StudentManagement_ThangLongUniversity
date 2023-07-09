@@ -22,7 +22,7 @@ def get_database_session():
     finally:
         db.close()
 
-@router.post("/create_major")
+@router.post("/create_major",dependencies=[Depends(JWTBearer())])
 async def create_major(
     db: Session = Depends(get_database_session),
     majorID: str = Form(...),
@@ -40,7 +40,7 @@ async def create_major(
         "data:" "Tạo khoa thành công!"
     }
 
-@router.post("/update_major")
+@router.post("/update_major",dependencies=[Depends(JWTBearer())])
 async def update_major(
     db: Session = Depends(get_database_session),
     majorID: str = Form(...),
@@ -62,7 +62,7 @@ async def update_major(
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin khoa!"})
     
-@router.delete("/delete_major")
+@router.delete("/delete_major",dependencies=[Depends(JWTBearer())])
 async def delete_major(
     db: Session = Depends(get_database_session),
     majorID: str = Form(...)

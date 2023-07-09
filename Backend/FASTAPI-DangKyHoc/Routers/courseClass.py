@@ -24,7 +24,7 @@ def get_database_session():
         db.close()
 
 #Đăng ký
-@router.post("/create_class")
+@router.post("/create_class",dependencies=[Depends(JWTBearer())])
 async def create_class(
     db: Session = Depends(get_database_session),
     classID: int = Form(...),
@@ -49,7 +49,7 @@ async def create_class(
     }
 
 #Hủy đăng ký
-@router.delete("/delete_class")
+@router.delete("/delete_class",dependencies=[Depends(JWTBearer())])
 async def delete_class(
     db: Session = Depends(get_database_session),
     classID: int = Form(...)
@@ -61,12 +61,12 @@ async def delete_class(
         db.commit()
         return{
          "data": "Đã hủy đăng ký!"
-        }
+        }   
     else:
         return JSONResponse(status_code=400, content={"message": "Không tồn tại lớp học!"})
 
 #Lấy danh sách lớp
-@router.get("/class_by_course/")
+@router.get("/class_by_course/",dependencies=[Depends(JWTBearer())])
 def get_class_by_course(
     courseID: int=Header(),
     termID: str=Header(),
@@ -96,7 +96,7 @@ def get_class_by_course(
     return {"courses": result}
 
 #Lấy TKB sinh viên
-@router.get("/class_by_student/")
+@router.get("/class_by_student/",dependencies=[Depends(JWTBearer())])
 def get_courses_with_subject_info(
     studentID: str=Header(),
     termID: str=Header(),

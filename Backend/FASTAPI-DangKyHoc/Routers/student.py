@@ -24,7 +24,7 @@ def get_database_session():
     finally:
         db.close()
 
-@router.post("/update_student_information")
+@router.post("/update_student_information",dependencies=[Depends(JWTBearer())])
 async def update_student(
     db: Session = Depends(get_database_session),
     student_ID: str = Form(...),
@@ -91,7 +91,7 @@ async def update_student(
 
 
 
-@router.post("/update_student_major_information")
+@router.post("/update_student_major_information",dependencies=[Depends(JWTBearer())])
 async def update_student(
     db: Session = Depends(get_database_session),
     student_ID: str = Form(...),

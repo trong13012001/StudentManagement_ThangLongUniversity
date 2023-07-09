@@ -48,6 +48,7 @@ class TeacherSchema(Base):
 #Avatar
 class ImageSchema(Base):
     __tablename__="image"
+    imageID=Column(Integer,primary_key=True,index=True)
     userName=Column(String(6),primary_key=True, index=True)
     image=Column(String)
 

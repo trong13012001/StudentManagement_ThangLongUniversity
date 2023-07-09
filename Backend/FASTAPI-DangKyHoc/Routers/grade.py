@@ -25,7 +25,7 @@ def get_database_session():
         db.close()
 
 #Tạo điểm môn học
-@router.post("/create_grade")
+@router.post("/create_grade",dependencies=[Depends(JWTBearer())])
 async def create_grade(
     db: Session = Depends(get_database_session),
     studentID: str = Form(...),
@@ -67,7 +67,7 @@ async def create_grade(
         return JSONResponse(status_code=400, content={"message": "Dữ liệu đã tồn tại!"})
 
 #Sửa điểm môn học
-@router.put("/update_grade")
+@router.put("/update_grade",dependencies=[Depends(JWTBearer())])
 async def update_grade(
     db: Session = Depends(get_database_session),
     gradeID: int = Form(...),
@@ -117,7 +117,7 @@ async def update_grade(
         return JSONResponse(status_code=400, content={"message": "Không có thông tin!"})
 
 #Xóa điểm
-@router.delete("/delete_grade/{gradeID}")
+@router.delete("/delete_grade/{gradeID}",dependencies=[Depends(JWTBearer())])
 async def delete_grade(
     db: Session = Depends(get_database_session),
     gradeID = int
@@ -134,7 +134,7 @@ async def delete_grade(
         return JSONResponse(status_code=400, content={"message": "Không có thông tin!"})
 
 #Phiếu báo điểm
-@router.get("/grade_by_student_and_term/{termID}/{studentID}")
+@router.get("/grade_by_student_and_term/{termID}/{studentID}",dependencies=[Depends(JWTBearer())])
 def get_grade_by_student_and_term(
     db: Session = Depends(get_database_session),
     studentID = str,
@@ -182,7 +182,7 @@ def get_grade_by_student_and_term(
         return {"courses": result}
     
 #Bảng điểm
-@router.get("/get_final_grade_by_student")
+@router.get("/get_final_grade_by_student",dependencies=[Depends(JWTBearer())])
 def get_gfinal_grade_by_student(
     db: Session = Depends(get_database_session),
     studentID: str=Header(...)

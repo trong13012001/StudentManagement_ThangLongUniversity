@@ -2,6 +2,7 @@ from fastapi import Depends, FastAPI, Request, Form,status,Header,APIRouter
 from fastapi.responses import HTMLResponse, JSONResponse
 from sqlalchemy import exists
 from sqlalchemy.orm import Session
+from auth.auth_bearer import JWTBearer
 from model import YearSchema
 from database import SessionLocal, engine
 import model
@@ -17,7 +18,7 @@ def get_database_session():
     finally:
         db.close()
 
-@router.post("/create_year")
+@router.post("/create_year",dependencies=[Depends(JWTBearer())])
 async def create_year(
     db: Session = Depends(get_database_session),
     yearID: int = Form(...)
@@ -33,7 +34,7 @@ async def create_year(
         "data": "Tạo năm học thành công!"
     }
 
-@router.post("/delete_year")
+@router.post("/delete_year",dependencies=[Depends(JWTBearer())])
 async def delete_year(
     db: Session = Depends(get_database_session),
     yearID: int = Form(...)
