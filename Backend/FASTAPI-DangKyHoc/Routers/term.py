@@ -160,11 +160,12 @@ def get_term_info_by_year(
 
     return {"term": result}
 
-@router.get("/term_list/")
+@router.get("/term_list/",dependencies=[Depends(JWTBearer())])
 def get_term_list(
     db: Session = Depends(get_database_session)
     ):
-    get_term = (db.query(TermSchema.termID,
+    get_term = (db.query(TermSchema.id,
+                         TermSchema.termID,
                          TermSchema.termName,
                          TermSchema.groupID,
                          TermSchema.yearID).all())
@@ -172,11 +173,11 @@ def get_term_list(
     result = []
     for term in get_term:
         result.append(
-            {
-                "termID": term[0],
-                "termName": term[1],
-                "groupID": term[2],
-                "yearID": term[3]
+            {   "id":term[0],
+                "termID": term[1],
+                "termName": term[2],
+                "groupID": term[3],
+                "yearID": term[4],
             }
         )
 

@@ -126,6 +126,7 @@ class ClassSchema(Base):
 #Học kỳ
 class TermSchema(Base):
     __tablename__="term"
+    id=Column(Integer,primary_key=True)
     termID=Column(String, primary_key=True)
     termName=Column(String)
     termStart=Column(Date)

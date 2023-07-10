@@ -60,7 +60,7 @@ async def create_course(
     db.commit()
     db.refresh(courseSchema)
     return {
-        "data:" "Tạo chương trình học thành công!"
+        "data": "Tạo chương trình học thành công!"
     }
 
 @router.put("/update_course",dependencies=[Depends(JWTBearer())])
