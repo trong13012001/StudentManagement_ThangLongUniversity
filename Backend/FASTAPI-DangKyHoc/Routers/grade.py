@@ -53,8 +53,8 @@ async def create_grade(
             finalGrade = (progressGrade*0.3) + (((examGrade1 + examGrade2)/2)*0.7)
         if student_exists and class_exists and term_exists:
 
-            gradeSchema = GradeSchema(studentID = studentID, termID = termID, classID = classID,
-                                    progressGrade = progressGrade, examGrade1 = examGrade1, examGrade2 = examGrade2, finalGrade = finalGrade)
+
+            gradeSchema = GradeSchema(studentID = studentID, termID = termID, classID = classID,progressGrade = progressGrade, examGrade1 = examGrade1, examGrade2 = examGrade2, finalGrade = finalGrade)
             db.add(gradeSchema)
             db.commit()
             db.refresh(gradeSchema)
@@ -134,7 +134,9 @@ async def delete_grade(
         return JSONResponse(status_code=400, content={"message": "Không có thông tin!"})
 
 #Phiếu báo điểm
+
 @router.get("/grade_by_student_and_term/{termID}/{studentID}",dependencies=[Depends(JWTBearer())])
+
 def get_grade_by_student_and_term(
     db: Session = Depends(get_database_session),
     studentID = str,
@@ -174,9 +176,11 @@ def get_grade_by_student_and_term(
                     "progressGrade": grade[2],
                     "examGrade1": grade[3],
                     "examGrade2": grade[4],
+
                     "finalGrade": grade[5],
                     "subjectName":grade[6],
                     "subjectID":grade[7],
+
                 }
             )
         return {"courses": result}
