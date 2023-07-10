@@ -48,6 +48,7 @@ class TeacherSchema(Base):
 #Avatar
 class ImageSchema(Base):
     __tablename__="image"
+    imageID=Column(Integer,primary_key=True,index=True)
     userName=Column(String(6),primary_key=True, index=True)
     image=Column(String)
 
@@ -85,7 +86,7 @@ class CourseSchema(Base):
     courseShiftEnd = Column(Integer)
     courseRoom = Column(String(15))
     termID = Column(String(8))
-    teacherID = Column(String(6), ForeignKey("teacher.teacherID"))
+    teacherID = Column(String(6))
 
 
 #Phiếu báo điểm
@@ -94,7 +95,7 @@ class GradeSchema(Base):
     gradeID=Column(Integer, primary_key=True)
     studentID=Column(String(6), ForeignKey("student.studentID"))
     termID=Column(String(9), ForeignKey("term.termID"))
-    classID=Column(Integer, ForeignKey("class.classID"))
+    courseID=Column(Integer)
     progressGrade=Column(Float)
     examGrade1=Column(Float)
     examGrade2=Column(Float)
@@ -118,8 +119,8 @@ class YearSchema(Base):
 class ClassSchema(Base):
     __tablename__="class"
     classID=Column(Integer, primary_key=True)
-    courseID=Column(Integer, ForeignKey("course.CourseID"))
-    studentID=Column(String(5), ForeignKey("student.StudentID"))
+    courseID=Column(Integer)
+    studentID=Column(String(5))
     termID=Column(String)
 
 #Học kỳ

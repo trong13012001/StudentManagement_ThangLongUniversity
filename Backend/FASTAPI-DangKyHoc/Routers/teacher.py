@@ -24,7 +24,7 @@ def get_database_session():
         db.close()
 
 
-@router.post("/update_teacher_information")
+@router.post("/update_teacher_information",dependencies=[Depends(JWTBearer())])
 async def update_teacher(
     db: Session = Depends(get_database_session),
     teacher_ID: str = Form(...),

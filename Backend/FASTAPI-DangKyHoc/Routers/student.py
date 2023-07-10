@@ -24,7 +24,7 @@ def get_database_session():
     finally:
         db.close()
 
-@router.post("/update_student_information")
+@router.post("/update_student_information",dependencies=[Depends(JWTBearer())])
 async def update_student(
     db: Session = Depends(get_database_session),
     student_ID: str = Form(...),
@@ -45,7 +45,7 @@ async def update_student(
     if student and branch and (status == 0 or status == 1):
         branchFilter = db.query(BranchSchema).filter(BranchSchema.branchID==branchID).first()
         getGroup = branchFilter.groupEnd
-        today = date.today()
+        today= date.today()
 
         yearFilter = db.query(YearSchema).filter(YearSchema.yearID==date.today().year-1).first()
         if(today>yearFilter.yearEnd):
@@ -91,7 +91,7 @@ async def update_student(
 
 
 
-@router.post("/update_student_major_information")
+@router.post("/update_student_major_information",dependencies=[Depends(JWTBearer())])
 async def update_student(
     db: Session = Depends(get_database_session),
     student_ID: str = Form(...),

@@ -5,7 +5,8 @@ from sqlalchemy.orm import Session
 from model import YearSchema, TermSchema
 from database import SessionLocal, engine
 import model
-
+from auth.auth_bearer import JWTBearer
+from auth.auth_handler import decodeJWT
 router = APIRouter()  
 model.Base.metadata.create_all(bind=engine)
 
@@ -17,7 +18,7 @@ def get_database_session():
     finally:
         db.close()
 
-@router.post("/create_term")
+@router.post("/create_term",dependencies=[Depends(JWTBearer())])
 async def create_term(
     db: Session = Depends(get_database_session),
     termID: int = Form(...),
@@ -46,7 +47,7 @@ async def create_term(
     else:
         return JSONResponse(status_code=400, content={"message": "Không tồn tại năm học!"})
 
-@router.post("/update_term")
+@router.post("/update_term",dependencies=[Depends(JWTBearer())])
 async def create_term(
     db: Session = Depends(get_database_session),
     termID: int = Form(...),
@@ -80,7 +81,7 @@ async def create_term(
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin học kỳ!"})
     
-@router.post("/delete_term")
+@router.post("/delete_term",dependencies=[Depends(JWTBearer())])
 async def delete_term(
     db: Session = Depends(get_database_session),
     termID: str = Form(...)
@@ -97,7 +98,7 @@ async def delete_term(
         return JSONResponse(status_code=400, content={"message": "Không tồn tại học kỳ!"})
 
 #Lấy thông tin học kỳ   
-@router.get("/term_info/{termID}")
+@router.get("/term_info/{termID}",dependencies=[Depends(JWTBearer())])
 def get_term_info(
     termID = str,
     db: Session = Depends(get_database_session)
@@ -128,7 +129,7 @@ def get_term_info(
     return {"term": result}
 
 #Lấy thông tin học kỳ trong năm học
-@router.get("/term_info_by_year/{yearID}")
+@router.get("/term_info_by_year/{yearID}",dependencies=[Depends(JWTBearer())])
 def get_term_info_by_year(
     yearID = int,
     db: Session = Depends(get_database_session)

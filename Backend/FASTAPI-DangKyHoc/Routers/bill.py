@@ -25,15 +25,15 @@ def get_database_session():
         db.close()
 @router.get("/bills/{StudentID}",dependencies=[Depends(JWTBearer())])
 def get_bill(StudentID: str, db: Session = Depends(get_database_session)):
-    courses = (
+    bills = (
         db.query(
-            ClassSchema.className,
+            ClassSchema.courseID,
             ClassSchema.studentID,
             SubjectSchema.subjectName,
             ClassSchema.termID,
-            (SubjectSchema.subjectCredit * SubjectSchema.Coefficient * 400000).cast(Integer)
+            (SubjectSchema.subjectCredit * SubjectSchema.Coefficient * 450000).cast(Integer)
         )
-        .join(CourseSchema, ClassSchema.className == CourseSchema.className)
+        .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
         .filter(ClassSchema.studentID == StudentID)
         .all()
@@ -43,7 +43,7 @@ def get_bill(StudentID: str, db: Session = Depends(get_database_session)):
     for bill in bills:
         result.append(
             {
-                "subjectID": bill[0],
+                "courseID": bill[0],
                 "studentID": bill[1],
                 "subjectName": bill[2],
                 "termID": bill[3],

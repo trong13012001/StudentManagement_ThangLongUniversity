@@ -35,7 +35,7 @@ def get_database_session():
         db.close()
 
 
-@router.post("/uploadfile/")
+@router.post("/uploadfile/",dependencies=[Depends(JWTBearer())])
 async def create_upload_file(
     user_id: str = Form(...),
     image: UploadFile = File(...),

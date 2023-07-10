@@ -22,7 +22,7 @@ def get_database_session():
     finally:
         db.close()
 
-@router.post("/create_subject")
+@router.post("/create_subject",dependencies=[Depends(JWTBearer())])
 async def create_subject(
     db: Session = Depends(get_database_session),
     subjectID: str = Form(...),
@@ -42,7 +42,7 @@ async def create_subject(
             "data": "Tạo môn học thành công!"
         }
 
-@router.put("/update_subject")
+@router.put("/update_subject",dependencies=[Depends(JWTBearer())])
 async def update_subject(
     db: Session = Depends(get_database_session),
     subjectID: str = Form(...),
@@ -69,7 +69,7 @@ async def update_subject(
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin môn học!"})
     
-@router.delete("/delete_subject")
+@router.delete("/delete_subject",dependencies=[Depends(JWTBearer())])
 async def delete_subject(
     db: Session = Depends(get_database_session),
     subjectID: str = Form(...)
@@ -86,13 +86,14 @@ async def delete_subject(
         return JSONResponse(status_code=400, content={"message": "Không tồn tại môn học!"})
     
 #Lớp theo ID
-@router.get("/get_subject_by_branch/{branchID}")
+@router.get("/get_subject_by_branch/{branchID}",dependencies=[Depends(JWTBearer())])
 def get_subject_by_branch(branchID: int,
     db: Session = Depends(get_database_session)):
     subjects = (
         db.query(
             SubjectSchema.subjectID,
-            SubjectSchema.subjectName
+            SubjectSchema.subjectName,
+            SubjectSchema.subjectCredit
         )
         .join(BranchSubjectSchema, SubjectSchema.subjectID == BranchSubjectSchema.subjectID)
         .filter(BranchSubjectSchema.branchID == branchID).all()
@@ -102,9 +103,10 @@ def get_subject_by_branch(branchID: int,
     for subject in subjects:
         result.append(
             {
-                "ID": subject[0],
-                "Name": subject[1]
+                "subjectId": subject[0],
+                "subjectName": subject[1],
+                "credit":subject[2]
             }
         )
 
-    return {"courses": result}
+    return {"subject": result}

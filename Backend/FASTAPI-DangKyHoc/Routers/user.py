@@ -59,7 +59,7 @@ async def get_user(
 
 
 
-        return {"user": user, "student": get_student,"image":image.image,"branch":branch.branchName,"major":major.majorName}
+        return {"user": user, "student": get_student,"image":image.image,"branch":branch,"major":major.majorName}
     elif(user.userRole==2):
         teacher = db.query(TeacherSchema).get(userID) or None
         if teacher is None:

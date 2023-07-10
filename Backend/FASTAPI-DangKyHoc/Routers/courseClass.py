@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder
 from datetime import date
 from auth.auth_bearer import JWTBearer
 from auth.auth_handler import signJWT,decodeJWT,refresh_access_token
-from model import ClassSchema, CourseSchema, StudentSchema, TermSchema, SubjectSchema, BranchSubjectSchema
+from model import ClassSchema, CourseSchema, StudentSchema, TermSchema, SubjectSchema, BranchSubjectSchema,GradeSchema
 import schema
 from database import SessionLocal, engine
 import model
@@ -24,32 +24,37 @@ def get_database_session():
         db.close()
 
 #Đăng ký
-@router.post("/create_class")
+@router.post("/create_class",dependencies=[Depends(JWTBearer())])
 async def create_class(
     db: Session = Depends(get_database_session),
-    classID: int = Form(...),
     studentID: str = Form(...),
     courseID: int = Form(...),
     termID: str = Form(...)
 ):
     #Check có tồn tại lớp không
-    course_exists = db.query(exists().where(CourseSchema.courseID == courseID)).sclar()
+    course_exists = db.query(exists().where(ClassSchema.courseID == courseID)).scalar()
     #Check có tồn tại MSV không
     student_exists = db.query(exists().where(StudentSchema.studentID == studentID)).scalar()
     
     if course_exists and student_exists:
-        return {"data": "Đã đăng ký!"}
-    
-    classSchema = ClassSchema(classID = classID, courseID = courseID, studentID = studentID, termID = termID)
+            return {"data": "Môn học đã đăng ký!"}
+    classSchema = ClassSchema( courseID = courseID, studentID = studentID, termID = termID)
     db.add(classSchema)
     db.commit()
     db.refresh(classSchema)
+    gradeSchema = GradeSchema(courseID=courseID, studentID = studentID, termID = termID)
+    db.add(gradeSchema)
+    db.commit()
+    db.refresh(gradeSchema)
+
+
+
     return {
-        "data:" "Đăng ký học thành công!"
+        "data": "Đăng ký môn học thành công"
     }
 
 #Hủy đăng ký
-@router.delete("/delete_class")
+@router.delete("/delete_class",dependencies=[Depends(JWTBearer())])
 async def delete_class(
     db: Session = Depends(get_database_session),
     classID: int = Form(...)
@@ -61,15 +66,15 @@ async def delete_class(
         db.commit()
         return{
          "data": "Đã hủy đăng ký!"
-        }
+        }   
     else:
         return JSONResponse(status_code=400, content={"message": "Không tồn tại lớp học!"})
 
 #Lấy danh sách lớp
-@router.get("/class_by_course/")
+@router.get("/class_by_course/",dependencies=[Depends(JWTBearer())])
 def get_class_by_course(
-    courseID: int=Header(),
-    termID: str=Header(),
+    courseID: int,
+    termID: str,
     db: Session = Depends(get_database_session)
 ):
     classes = (
@@ -93,13 +98,13 @@ def get_class_by_course(
                 "studentName": get_class[2]
             }
         )
-    return {"courses": result}
+    return {"classCourse": result}
 
 #Lấy TKB sinh viên
-@router.get("/class_by_student/")
+@router.get("/class_by_student/",dependencies=[Depends(JWTBearer())])
 def get_courses_with_subject_info(
-    studentID: str=Header(),
-    termID: str=Header(),
+    studentID: str=Form(...),
+    termID: str=Form(...),
     db: Session = Depends(get_database_session)
     ):
     classes = (
@@ -114,6 +119,7 @@ def get_courses_with_subject_info(
         .join(ClassSchema, CourseSchema.courseID == ClassSchema.courseID)
         .join(StudentSchema, ClassSchema.studentID == StudentSchema.studentID)
         .filter(ClassSchema.studentID == studentID, ClassSchema.termID == termID).all()
+
     )
 
     result = []
