@@ -125,7 +125,7 @@ def get_term_info(
             }
         )
 
-    return {"courses": result}
+    return {"term": result}
 
 #Lấy thông tin học kỳ trong năm học
 @router.get("/term_info_by_year/{yearID}")
@@ -157,4 +157,26 @@ def get_term_info_by_year(
             }
         )
 
-    return {"courses": result}
+    return {"term": result}
+
+@router.get("/term_list/")
+def get_term_list(
+    db: Session = Depends(get_database_session)
+    ):
+    get_term = (db.query(TermSchema.termID,
+                         TermSchema.termName,
+                         TermSchema.groupID,
+                         TermSchema.yearID).all())
+
+    result = []
+    for term in get_term:
+        result.append(
+            {
+                "termID": term[0],
+                "termName": term[1],
+                "groupID": term[2],
+                "yearID": term[3]
+            }
+        )
+
+    return {"term": result}
