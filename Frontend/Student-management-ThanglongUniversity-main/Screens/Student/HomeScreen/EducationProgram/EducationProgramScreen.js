@@ -51,7 +51,16 @@ const EducationProgramScreen = () => {
   const load = useCallback(async () => {
   
     try {
-       await axios.get(`${BASE_URL}/get_subject_by_branch/${branchID}`)
+      const accessToken = await SecureStore.getItemAsync("accessToken");
+      const authorization = `Bearer ${accessToken}`
+       await axios.get(`${BASE_URL}/get_subject_by_branch/${branchID}`,
+       {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": authorization,
+        },
+      }
+       )
          .then(function (response) {
           setDataset(response.data.subject)
           setRefreshing(false)
@@ -82,7 +91,7 @@ const EducationProgramScreen = () => {
 
   return (
     <>
-      <Header hasBackButton={true} title={"Thời khóa biểu toàn trường"} />
+      <Header hasBackButton={true} title={"Chương trình đào tạo"} />
       <Loader loading={loadingLoader} />
       <View style={{marginLeft:"15%"}}>
       </View>

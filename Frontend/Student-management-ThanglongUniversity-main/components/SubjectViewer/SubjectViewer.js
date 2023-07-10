@@ -6,6 +6,8 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import GlobalStyle from "../../GlobalStyle";
 import axios from "axios";
 import { BASE_URL } from "../../env/url";
+import * as SecureStore from "expo-secure-store";
+
 // Get window's width, height to style view
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height
@@ -25,7 +27,16 @@ const SubjectViewer = (props) => {
     const [teacherID,setTeacherID]=useState("")
     const [teacherName, setTeacherName]=useState("")
     const load = async(courseID)=>{
-        await axios.get(`${BASE_URL}/course/${courseID}`)
+      const accessToken = await SecureStore.getItemAsync("accessToken");
+      const authorization = `Bearer ${accessToken}`
+        await axios.get(`${BASE_URL}/course/${courseID}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": authorization,
+          },
+        }
+        )
           .then(function (response) {
             setSubjectID(response.data.courses[0].subjectID)
             setSubjectName(response.data.courses[0].subjectName)
@@ -54,7 +65,7 @@ const SubjectViewer = (props) => {
         >
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor:"#00000050"}}>
                   
-                    <View style={{ width: '100%',backgroundColor:"white",height:"50%",top:"25%",borderRadius:16}}><View>
+                    <View style={{ width: '100%',backgroundColor:"white",height:"50%",top:"30%",borderRadius:16}}><View>
                         <TouchableOpacity onPress={onRequestClose} style={{marginLeft:"4%",top:"10%"}}
                         ><FontAwesome5 name='times' size={36} color={GlobalStyle.textColor.color}></FontAwesome5></TouchableOpacity></View>
 

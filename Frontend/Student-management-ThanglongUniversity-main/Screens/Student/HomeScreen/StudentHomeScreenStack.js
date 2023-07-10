@@ -1,7 +1,6 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack';
 import StudentHomeScreen from '../HomeScreen/StudentHomeScreen';
-import SchoolTimeTableScreen from '../HomeScreen/TimeTable/SchoolTimeTable/SchoolTimeTableScreen';
 import SchoolReExaminationScheduleScreen from '../HomeScreen/ExamSchedule/SchoolReExaminationScheduleScreen/SchoolReExaminationScheduleScreen';
 import EducationProgramScreen from '../HomeScreen/EducationProgram/EducationProgramScreen';
 import CourseRegistrationScreen from '../HomeScreen/Registration/CourseRegistration/CourseRegistrationScreen'
@@ -13,7 +12,7 @@ import ExpectedExamSchedule from '../HomeScreen/ExamSchedule/ExpectedExamSchedul
 import ScoreReportCard from '../HomeScreen/ScoreReport/ScoreReportCard/ScoreReportCard';
 import OriginalBookSigningScheduleScreen from '../HomeScreen/ExamSchedule/OriginalBookSigningSchedule/OriginalBookSigningScheduleScreen';
 import LearningOrientation from '../HomeScreen/LearningOrientation/LearningOrientation';
-
+import SchooleTimeTableStack from './TimeTable/SchoolTimeTable/SchooleTimeTableStack';
 
 
 const Stack = createStackNavigator();
@@ -22,7 +21,7 @@ const StudentHomeScreenStack = () => {
   return (
     <Stack.Navigator initialRouteName='Thông tin trang chủ'>
       <Stack.Screen name='Thông tin trang chủ' component={StudentHomeScreen}  options={{headerShown: false}} />
-      <Stack.Screen name='Thời khóa biểu toàn trường' component={SchoolTimeTableScreen} options={{headerShown: false, unmountOnBlur: true}}/>
+      <Stack.Screen name='Thời khóa biểu toàn trường' component={SchooleTimeTableStack} options={{headerShown: false, unmountOnBlur: true}}/>
       <Stack.Screen name='Lịch thi lại toàn trường' component={SchoolReExaminationScheduleScreen} options={{headerShown: false, unmountOnBlur: true}}/>
       <Stack.Screen name='Chương trình đào tạo' component={EducationProgramScreen} options={{headerShown: false, unmountOnBlur: true}}/>
       <Stack.Screen name='Đăng ký học' component={CourseRegistrationScreen} options={{headerShown: false, unmountOnBlur: true}}/>

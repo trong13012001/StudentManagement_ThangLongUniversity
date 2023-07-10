@@ -26,17 +26,19 @@ import SubjectViewer from "../../../../../components/SubjectViewer/SubjectViewer
 import Loader from "../../../../../components/Loader/Loader";
 import CustomPicker from "../../../../../components/Picker/CustomPicker";
 import * as SecureStore from "expo-secure-store";
+import { useRoute } from '@react-navigation/native';
 
 let windowWidth = Dimensions.get("window").width;
 
 const SchoolTimeTableScreen = () => {
+  const route = useRoute();
+  const dataTerm = route.params.data; 
   const [loading, setLoading] = useState(true);
   const [loadingLoader, setLoadingLoader] = useState(true);
   const [dataset, setDataset] = useState([]);
   const [courseID, setCourseID] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [refreshing, setRefreshing] = useState(false);
-  const [termID, setTermID] = useState("2223HK1N1");
   const [showModal, setShowModal] = useState(false);
 
 
@@ -51,7 +53,7 @@ const SchoolTimeTableScreen = () => {
        await axios.get(`${BASE_URL}/course/`, {
         headers: {
           "Content-Type": "application/json",
-          termID: termID,
+          termID: dataTerm.termID,
         },
       })  .then(function (response) {
           setDataset(response.data.courses)
@@ -60,12 +62,16 @@ const SchoolTimeTableScreen = () => {
     })
     } catch (error) {
       console.log(error);
+      console.log('Response data:', error.response.data);
+      console.log('Response status:', error.response.status);
+      console.log('Response headers:', error.response.headers);    
+
       Alert.alert("Error", "Failed to load data. Please try again.");
     } finally {
       setLoading(false);
       setLoadingLoader(false);
     }
-  }, [termID]);
+  }, [dataTerm.termID]);
   
   useEffect(() => {
     load();
@@ -86,32 +92,8 @@ const SchoolTimeTableScreen = () => {
       <Header hasBackButton={true} title={"Thời khóa biểu toàn trường"} />
       <Loader loading={loadingLoader} />
       <View style={{marginLeft:"15%"}}>
-        <CustomPicker
-        value={termID}
-        onValueChange={(itemValue, itemIndex) => {
-          setTermID(itemValue);          
-          setRefreshing(true);
-          setLoadingLoader(true); // Show loading loader when changing termID
-          load().then(() => {
-            setLoadingLoader(false);
-          });
+      <Text allowFontScaling={false} style={styles.header2}>{dataTerm.termName}</Text>
 
-        }}
-        items={[
-          { label: "Học kỳ 1 - Nhóm 1 2023 - 2024", value: "2324HK1N1" },
-          { label: "Học kỳ 1 - Nhóm 2 2023 - 2024", value: "2324HK1N2" },
-          { label: "Học kỳ 3 - Nhóm 1 2022 - 2023", value: "2223HK3N1" },
-          { label: "Học kỳ 3 - Nhóm 2 2022 - 2023", value: "2223HK3N2" },
-          { label: "Học kỳ 3 - Nhóm 3 2022 - 2023", value: "2223HK3N3" },
-          { label: "Học kỳ 2 - Nhóm 1 2022 - 2023", value: "2223HK2N1" },
-          { label: "Học kỳ 2 - Nhóm 2 2022 - 2023", value: "2223HK2N2" },
-          { label: "Học kỳ 2 - Nhóm 3 2022 - 2023", value: "2223HK2N3" },
-          { label: "Học kỳ 1 - Nhóm 1 2022 - 2023 ", value: "2223HK1N1" },
-          { label: "Học kỳ 1 - Nhóm 2 2022 - 2023", value: "2223HK1N2" },
-          { label: "Học kỳ 1 - Nhóm 3 2022 - 2023", value: "2223HK1N3" },          
-        ]}
-
-      />
       </View>
       <TextInput
         style={styles.searchInput}
@@ -247,7 +229,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
   },
-  tableHeader: {},
   headerText: {
     color: GlobalStyle.textColor.color,
     fontSize: 12,
@@ -280,4 +261,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: "gray",
   },
+  header2:{
+    fontSize: (Platform.OS === 'ios' && windowWidth>400) ?20 : 20*(windowWidth/428),
+    fontWeight:"600",
+    color:GlobalStyle.themeColor.color
+  }
 });
