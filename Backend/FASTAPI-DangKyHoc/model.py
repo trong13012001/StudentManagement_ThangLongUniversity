@@ -95,7 +95,7 @@ class GradeSchema(Base):
     gradeID=Column(Integer, primary_key=True)
     studentID=Column(String(6), ForeignKey("student.studentID"))
     termID=Column(String(9), ForeignKey("term.termID"))
-    classID=Column(Integer, ForeignKey("class.classID"))
+    courseID=Column(Integer)
     progressGrade=Column(Float)
     examGrade1=Column(Float)
     examGrade2=Column(Float)
@@ -119,8 +119,8 @@ class YearSchema(Base):
 class ClassSchema(Base):
     __tablename__="class"
     classID=Column(Integer, primary_key=True)
-    courseID=Column(Integer, ForeignKey("course.CourseID"))
-    studentID=Column(String(5), ForeignKey("student.StudentID"))
+    courseID=Column(Integer)
+    studentID=Column(String(5))
     termID=Column(String)
 
 #Học kỳ

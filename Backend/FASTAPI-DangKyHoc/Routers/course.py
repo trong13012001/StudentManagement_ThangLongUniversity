@@ -144,7 +144,7 @@ async def delete_course_by_term(
     return JSONResponse(status_code=400, content={"message": "Không tồn tại học kỳ!"})
 
 #Danh sách lớp theo học kỳ  
-@router.get("/course",dependencies=[Depends(JWTBearer())])
+@router.get("/course")
 def get_courses_with_subject_info(
     db: Session = Depends(get_database_session),
     termID: str=Header(...)
