@@ -14,7 +14,7 @@ from model import UserSchema,StudentSchema,TeacherSchema
 import schema
 from database import SessionLocal, engine
 import model
-from Routers import login,student,teacher,user,image, subject, major, branch, course, bill , year, term, grade,courseClass
+from Routers import login,student,teacher,user,image, subject, major, branch, course, bill , year, term, grade,courseClass,exam
 import uuid
 
 app = FastAPI()
@@ -29,6 +29,8 @@ app.include_router(image.router, tags=['Image Controller'], prefix='')
 app.include_router(subject.router, tags=['Subject Controller'], prefix='')
 app.include_router(course.router, tags=['Course Controller'], prefix='')
 app.include_router(grade.router, tags=['Grade Controller'], prefix='')
+app.include_router(exam.router, tags=['Exam Controller'], prefix='')
+
 app.include_router(major.router, tags=['Major Controller'], prefix='')
 app.include_router(branch.router, tags=['Branch Controller'], prefix='')
 app.include_router(bill.router, tags=['Bill Controller'], prefix='')
