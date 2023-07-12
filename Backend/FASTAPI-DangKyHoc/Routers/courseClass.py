@@ -136,5 +136,39 @@ def get_courses_with_subject_info(
 
     return {"courses": result}
 
-    
+#Lấy TKB sinh viên theo ngày trong tuần
+@router.get("/class_by_student/",dependencies=[Depends(JWTBearer())])
+def get_courses_with_subject_info(
+    studentID: str=Form(...),
+    termID: str=Form(...),
+    courseDate: int=Form(...),
+    db: Session = Depends(get_database_session)
+    ):
+    classes = (
+        db.query(
+            StudentSchema.studentID,
+            CourseSchema.className,
+            CourseSchema.courseShiftStart,
+            CourseSchema.courseShiftEnd,
+            CourseSchema.courseRoom
+        )
+        .join(ClassSchema, CourseSchema.courseID == ClassSchema.courseID)
+        .join(StudentSchema, ClassSchema.studentID == StudentSchema.studentID)
+        .filter(ClassSchema.studentID == studentID, ClassSchema.termID == termID, CourseSchema.courseDate == courseDate).all()
+
+    )
+
+    result = []
+    for get_class in classes:
+        result.append(
+            {
+                "className": get_class[0],
+                "courseShiftStart": get_class[1],
+                "courseShiftEnd": get_class[2],
+                "courseRoom": get_class[3]
+            }
+        )
+
+    return {"courses": result}
+
 #Hiện các môn chưa học
