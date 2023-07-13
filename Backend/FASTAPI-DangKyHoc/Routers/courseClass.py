@@ -211,3 +211,44 @@ def get_courses_with_subject_info(
     return {"term": result}
 
 #Hiện các môn chưa học
+@router.get("/unlearned_subject/{studentID}",dependencies=[Depends(JWTBearer())])
+def get_unlearned_subject(
+    studentID = str,
+    db: Session = Depends(get_database_session)
+    ):
+    
+    learned = (
+        db.query(
+                CourseSchema.subjectID
+            )
+            .select_from(GradeSchema)
+            .join(CourseSchema, GradeSchema.courseID == CourseSchema.courseID)
+            .join(BranchSubjectSchema, CourseSchema.subjectID == BranchSubjectSchema.subjectID)
+            .join(SubjectSchema, BranchSubjectSchema.subjectID == SubjectSchema.subjectID)
+            .distinct()
+            .all()
+    )
+    learned_subject_id = [subject.subjectID for subject in learned]
+
+    unlearnedSubject = (
+        db.query(
+            BranchSubjectSchema.subjectID,
+            SubjectSchema.subjectName
+        )
+        .select_from(StudentSchema)
+        .join(BranchSubjectSchema, StudentSchema.branchID == BranchSubjectSchema.branchID)
+        .join(SubjectSchema, BranchSubjectSchema.subjectID == SubjectSchema.subjectID)
+        .filter(StudentSchema.studentID == studentID, ~SubjectSchema.subjectID.in_(learned_subject_id))
+        .all()
+    )
+
+    result = []
+    for unlearned in unlearnedSubject:
+        result.append(
+            {
+                "subjectid": unlearned[0],
+                "name": unlearned[1]
+                }
+        )
+
+    return {"term": result}
