@@ -151,7 +151,7 @@ def get_grade_by_student_and_term(
         grades = (
             db.query(
                 GradeSchema.gradeID,
-                GradeSchema.classID,
+                GradeSchema.courseID,
                 GradeSchema.progressGrade,
                 GradeSchema.examGrade1,
                 GradeSchema.examGrade2,
@@ -176,7 +176,6 @@ def get_grade_by_student_and_term(
                     "progressGrade": grade[2],
                     "examGrade1": grade[3],
                     "examGrade2": grade[4],
-
                     "finalGrade": grade[5],
                     "subjectName":grade[6],
                     "subjectID":grade[7],
@@ -198,7 +197,7 @@ def get_gfinal_grade_by_student(
         grades = (
             db.query(
                 GradeSchema.gradeID,
-                GradeSchema.classID,
+                GradeSchema.courseID,
                 GradeSchema.finalGrade
             )
             .filter(GradeSchema.studentID == studentID).all()

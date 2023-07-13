@@ -23,7 +23,8 @@ def get_database_session():
         yield db
     finally:
         db.close()
-        #Danh sách lớp theo học kỳ  
+
+#Lịch thi toàn trường 
 @router.get("/exam",summary="Lấy thông tin lịch thi toàn trường")
 def get_exam_with_subject_info(
     db: Session = Depends(get_database_session),
