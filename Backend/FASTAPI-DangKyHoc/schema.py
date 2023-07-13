@@ -77,7 +77,7 @@ class GradeSchema(BaseModel):
     gradeID=int
     studentID=str
     termID=str
-    classID=int
+    courseID=int
     progressGrade=float
     examGrade1=float
     examGrade2=float

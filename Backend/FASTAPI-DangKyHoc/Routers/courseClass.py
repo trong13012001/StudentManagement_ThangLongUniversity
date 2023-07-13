@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder
 from datetime import date
 from auth.auth_bearer import JWTBearer
 from auth.auth_handler import signJWT,decodeJWT,refresh_access_token
-from model import ClassSchema, CourseSchema, StudentSchema, TermSchema, SubjectSchema, BranchSubjectSchema,GradeSchema
+from model import ClassSchema, CourseSchema, StudentSchema, TermSchema, SubjectSchema, BranchSubjectSchema,GradeSchema, BranchSchema
 import schema
 from database import SessionLocal, engine
 import model
@@ -133,15 +133,14 @@ def get_courses_with_subject_info(
                 "courseRoom": get_class[4]
             }
         )
-
     return {"courses": result}
 
 #Lấy TKB sinh viên theo ngày trong tuần
-@router.get("/class_by_student/",dependencies=[Depends(JWTBearer())])
+@router.get("/class_by_student/{courseDate}",dependencies=[Depends(JWTBearer())])
 def get_courses_with_subject_info(
     studentID: str=Form(...),
     termID: str=Form(...),
-    courseDate: int=Form(...),
+    courseDate = int,
     db: Session = Depends(get_database_session)
     ):
     classes = (
@@ -170,5 +169,45 @@ def get_courses_with_subject_info(
         )
 
     return {"courses": result}
+
+#Hiện học kỳ hiện tại
+@router.get("/current_term/{studentID}",dependencies=[Depends(JWTBearer())])
+def get_courses_with_subject_info(
+    studentID = str,
+    db: Session = Depends(get_database_session)
+    ):
+    today = date.today()
+    termDate = db.query(TermSchema.termStart, TermSchema.termEnd).filter(StudentSchema.studentID == studentID,
+                                        TermSchema.groupID == StudentSchema.group).all()
+    lastTerm = termDate[-1]
+    start = lastTerm.termStart
+    end = lastTerm.termEnd
+
+    terms = (
+        db.query(
+            TermSchema.id,
+            TermSchema.termID,
+            TermSchema.termName,
+            TermSchema.termStart,
+            TermSchema.termEnd
+        )
+        .filter(StudentSchema.studentID == studentID, StudentSchema.group == TermSchema.groupID,
+                TermSchema.termStart == start, TermSchema.termEnd == end, start < today < end).all()
+    )
+
+    print(termDate)
+    result = []
+    for term in terms:
+        result.append(
+            {
+                "id": term[0],
+                "termid": term[1],
+                "termname": term[2],
+                "termstart": term[3],
+                "termend": term[4],
+            }
+        )
+
+    return {"term": result}
 
 #Hiện các môn chưa học
