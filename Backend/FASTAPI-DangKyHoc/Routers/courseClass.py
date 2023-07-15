@@ -145,11 +145,11 @@ def get_courses_with_subject_info(
     for get_class in classes:
         result.append(
             {
-                "className": get_class[0],
-                "courseDate": get_class[1],
-                "courseShiftStart": get_class[2],
-                "courseShiftEnd": get_class[3],
-                "courseRoom": get_class[4]
+                "className": get_class[1],
+                "courseDate": get_class[2],
+                "courseShiftStart": get_class[3],
+                "courseShiftEnd": get_class[4],
+                "courseRoom": get_class[5]
             }
         )
     return {"courses": result}
