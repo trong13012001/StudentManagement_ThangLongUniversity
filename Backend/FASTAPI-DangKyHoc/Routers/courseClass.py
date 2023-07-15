@@ -31,18 +31,37 @@ async def create_class(
     courseID: int = Form(...),
     termID: str = Form(...)
 ):
+    course_add = (
+        db.query(
+            CourseSchema.courseDate,
+            CourseSchema.courseShiftStart,
+            CourseSchema.courseShiftEnd,
+            CourseSchema.termID
+        )
+        .select_from(ClassSchema)
+        .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
+        .filter(CourseSchema.courseID == courseID)
+        .all()
+    )
+    course_add_date = [course.courseDate for course in course_add]
+    print(course_add_date)
+
+    course_in_class = db.query(ClassSchema).filter(ClassSchema.courseID == CourseSchema.courseID, CourseSchema.termID == termID).all()
     #Check có tồn tại lớp không
     course_exists = db.query(exists().where(ClassSchema.courseID == courseID)).scalar()
     #Check có tồn tại MSV không
     student_exists = db.query(exists().where(StudentSchema.studentID == studentID)).scalar()
+    #Check có tồn tại học kỳ không
     
     if course_exists and student_exists:
-            return {"data": "Môn học đã đăng ký!"}
-    classSchema = ClassSchema( courseID = courseID, studentID = studentID, termID = termID)
+            return JSONResponse(status_code=400, content={"message": "Môn học đã đăng ký!"})
+    # if dupl_diff and student_exists:
+    #         return JSONResponse(status_code=400, content={"message": "Trùng lịch học!"})
+    classSchema = ClassSchema(courseID = courseID, studentID = studentID, termID = termID)
     db.add(classSchema)
     db.commit()
     db.refresh(classSchema)
-    gradeSchema = GradeSchema(courseID=courseID, studentID = studentID, termID = termID)
+    gradeSchema = GradeSchema(studentID = studentID, termID = termID, courseID = courseID)
     db.add(gradeSchema)
     db.commit()
     db.refresh(gradeSchema)
@@ -103,8 +122,8 @@ def get_class_by_course(
 #Lấy TKB sinh viên
 @router.get("/class_by_student/",dependencies=[Depends(JWTBearer())])
 def get_courses_with_subject_info(
-    studentID: str=Form(...),
-    termID: str=Form(...),
+    studentID: str,
+    termID: str,
     db: Session = Depends(get_database_session)
     ):
     classes = (
@@ -138,8 +157,8 @@ def get_courses_with_subject_info(
 #Lấy TKB sinh viên theo ngày trong tuần
 @router.get("/class_by_student/{courseDate}",dependencies=[Depends(JWTBearer())])
 def get_courses_with_subject_info(
-    studentID: str=Form(...),
-    termID: str=Form(...),
+    studentID: str,
+    termID: str,
     courseDate = int,
     db: Session = Depends(get_database_session)
     ):
@@ -147,12 +166,14 @@ def get_courses_with_subject_info(
         db.query(
             StudentSchema.studentID,
             CourseSchema.className,
+            SubjectSchema.subjectName,
             CourseSchema.courseShiftStart,
             CourseSchema.courseShiftEnd,
             CourseSchema.courseRoom
         )
         .join(ClassSchema, CourseSchema.courseID == ClassSchema.courseID)
         .join(StudentSchema, ClassSchema.studentID == StudentSchema.studentID)
+        .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
         .filter(ClassSchema.studentID == studentID, ClassSchema.termID == termID, CourseSchema.courseDate == courseDate).all()
 
     )
@@ -161,10 +182,11 @@ def get_courses_with_subject_info(
     for get_class in classes:
         result.append(
             {
-                "className": get_class[0],
-                "courseShiftStart": get_class[1],
-                "courseShiftEnd": get_class[2],
-                "courseRoom": get_class[3]
+                "className": get_class[1],
+                "subjectName": get_class[2],
+                "courseShiftStart": get_class[3],
+                "courseShiftEnd": get_class[4],
+                "courseRoom": get_class[5]
             }
         )
 

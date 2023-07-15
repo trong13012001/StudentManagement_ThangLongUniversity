@@ -1,6 +1,6 @@
 from fastapi import Depends, FastAPI, Request, Form,status,Header,APIRouter
 from fastapi.responses import HTMLResponse, JSONResponse
-from sqlalchemy import exists,Integer
+from sqlalchemy import exists,Integer, func
 import base64
 from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder
@@ -23,8 +23,10 @@ def get_database_session():
         yield db
     finally:
         db.close()
-@router.get("/bills/{StudentID}",dependencies=[Depends(JWTBearer())])
-def get_bill(StudentID: str, db: Session = Depends(get_database_session)):
+
+#Tổng tiền từng môn
+@router.get("/bill_by_subject/{StudentID}",dependencies=[Depends(JWTBearer())])
+def get_bill_by_subject(StudentID: str, db: Session = Depends(get_database_session)):
     bills = (
         db.query(
             ClassSchema.courseID,
@@ -48,6 +50,67 @@ def get_bill(StudentID: str, db: Session = Depends(get_database_session)):
                 "subjectName": bill[2],
                 "termID": bill[3],
                 "bill": bill[4],
+            }
+        )
+
+    return {"bills": result}
+
+#Tổng tiền theo kỳ
+@router.get("/bill_by_term/{StudentID}/{termID}",dependencies=[Depends(JWTBearer())])
+def get_bill_by_term(
+            StudentID: str,
+            termID: str,
+            db: Session = Depends(get_database_session)):
+    bills = (
+        db.query(
+            ClassSchema.studentID,
+            ClassSchema.termID,
+            func.sum(SubjectSchema.subjectCredit * SubjectSchema.Coefficient * 450000).cast(Integer)
+        )
+        .select_from(ClassSchema)
+        .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
+        .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
+        .filter(ClassSchema.studentID == StudentID, CourseSchema.termID == termID)
+        .group_by(ClassSchema.studentID, ClassSchema.termID)
+        .all()
+    )
+
+    result = []
+    for bill in bills:
+        result.append(
+            {
+                "studentID": bill[0],
+                "termID": bill[1],
+                "termSum": bill[2]
+            }
+        )
+
+    return {"bills": result}
+
+#Tổng tiền
+@router.get("/bill_total/{StudentID}",dependencies=[Depends(JWTBearer())])
+def get_bill_total(
+            StudentID: str,
+            db: Session = Depends(get_database_session)):
+    bills = (
+        db.query(
+            ClassSchema.studentID,
+            func.sum(SubjectSchema.subjectCredit * SubjectSchema.Coefficient * 450000).cast(Integer)
+        )
+        .select_from(ClassSchema)
+        .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
+        .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
+        .filter(ClassSchema.studentID == StudentID)
+        .group_by(ClassSchema.studentID)
+        .all()
+    )
+
+    result = []
+    for bill in bills:
+        result.append(
+            {
+                "studentID": bill[0],
+                "termSum": bill[1]
             }
         )
 
