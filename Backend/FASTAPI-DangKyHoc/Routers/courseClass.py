@@ -183,24 +183,23 @@ def get_courses_with_subject_info(
         result.append(
             {
                 "className": get_class[1],
+
                 "subjectName": get_class[2],
                 "courseShiftStart": get_class[3],
                 "courseShiftEnd": get_class[4],
                 "courseRoom": get_class[5]
+
             }
         )
 
     return {"courses": result}
 
 #Hiện học kỳ hiện tại
-@router.get("/current_term/{studentID}",dependencies=[Depends(JWTBearer())])
-def get_courses_with_subject_info(
-    studentID = str,
-    db: Session = Depends(get_database_session)
-    ):
+@router.get("/current_term/{studentID}", dependencies=[Depends(JWTBearer())])
+def get_courses_with_subject_info(studentID: str, db: Session = Depends(get_database_session)):
     today = date.today()
     termDate = db.query(TermSchema.termStart, TermSchema.termEnd).filter(StudentSchema.studentID == studentID,
-                                        TermSchema.groupID == StudentSchema.group).all()
+                                                                         TermSchema.groupID == StudentSchema.group).all()
     lastTerm = termDate[-1]
     start = lastTerm.termStart
     end = lastTerm.termEnd
@@ -218,19 +217,18 @@ def get_courses_with_subject_info(
     )
 
     print(termDate)
-    result = []
-    for term in terms:
-        result.append(
-            {
-                "id": term[0],
-                "termid": term[1],
-                "termname": term[2],
-                "termstart": term[3],
-                "termend": term[4],
-            }
-        )
+    if terms:
+        term = terms[0]
+        return {
+            "id": term[0],
+            "termid": term[1],
+            "termname": term[2],
+            "termstart": term[3],
+            "termend": term[4]
+        }
+    else:
+        return {"term": None}
 
-    return {"term": result}
 
 #Hiện các môn chưa học
 @router.get("/unlearned_subject/{studentID}",dependencies=[Depends(JWTBearer())])

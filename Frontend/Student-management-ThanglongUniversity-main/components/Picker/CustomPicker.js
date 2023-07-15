@@ -1,18 +1,20 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { View, Text, TouchableOpacity, Modal,Dimensions, TurboModuleRegistry,ScrollView } from "react-native";
 import GlobalStyle from "../../GlobalStyle";
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 let windowWidth = Dimensions.get("window").width;
 
-const CustomPicker = ({ value, onValueChange, items }) => {
+const CustomPicker = ({onValueChange, items,term }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState("Học kỳ 1 - Nhóm 1 2022 - 2023");
-
+  const [selectedLabel, setSelectedLabel] = useState(term);
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
 
+  useEffect(() => {
+    setSelectedLabel(term);
+  }, [term]);
   const handleValueChange = (itemValue, itemLabel) => {
     setSelectedLabel(itemLabel);
     onValueChange(itemValue);
@@ -33,12 +35,12 @@ const CustomPicker = ({ value, onValueChange, items }) => {
             <View style={{ top: "60%",flex:0.4,backgroundColor:"white",borderRadius:16}}>
             <TouchableOpacity onPress={toggleModal} style={{marginLeft:"4%",top:"3%",marginBottom:"5%"}}><FontAwesome5 name='times' size={36} color={GlobalStyle.textColor.color}></FontAwesome5></TouchableOpacity>
             <ScrollView >
-            {items.map((item) => (
-            <TouchableOpacity key={item.value}  onPress={() => handleValueChange(item.value, item.label)}>
+            {items.sort((a, b) => b.id - a.id).map((item) => (
+            <TouchableOpacity key={item.id}  onPress={() => handleValueChange(item.termID, item.termName)}>
                 
                
                 <View style={{height: (Platform.OS === 'ios' && windowWidth > 400) ? 50 : 50 * (windowWidth / 428), justifyContent: "center", borderBottomColor: "black", borderBottomWidth: 0.5}}>
-                    <Text style={{marginLeft: "5%",fontSize:16,color:GlobalStyle.textColor.color,fontWeight:"400"}}>{item.label}</Text>
+                    <Text style={{marginLeft: "5%",fontSize:16,color:GlobalStyle.textColor.color,fontWeight:"400"}}>{item.termName}</Text>
                 </View>                            
             </TouchableOpacity>
           ))}</ScrollView>
