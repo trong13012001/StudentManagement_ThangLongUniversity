@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     color: GlobalStyle.textColor.color,
     fontSize: 12,
     paddingVertical: 6,
-    fontWeight: "bold",
+    fontWeight: "600",
     textAlign: "center",
   },
   tableRow: {

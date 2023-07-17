@@ -5,16 +5,17 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 let windowWidth = Dimensions.get("window").width;
 
-const CustomPicker = ({onValueChange, items,term }) => {
+const CustomPicker = ({onValueChange, items,termName,termID }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState(term);
+  const [selectedLabel, setSelectedLabel] = useState("");
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
 
   useEffect(() => {
-    setSelectedLabel(term);
-  }, [term]);
+    setSelectedLabel(termName);
+    onValueChange(termID)
+  }, [termID,termName]);
   const handleValueChange = (itemValue, itemLabel) => {
     setSelectedLabel(itemLabel);
     onValueChange(itemValue);
