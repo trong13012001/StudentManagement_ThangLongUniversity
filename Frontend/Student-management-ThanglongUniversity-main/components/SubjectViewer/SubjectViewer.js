@@ -1,7 +1,8 @@
 import {
     StyleSheet, TextInput, View, Text, ScrollView,ActivityIndicator, Platform,Dimensions,
-    Image, Keyboard, TouchableOpacity, Modal
-  } from "react-native"; import React,{useState,useEffect} from 'react'
+    Image, Keyboard, TouchableOpacity, Modal, TouchableWithoutFeedback
+  } from "react-native";
+   import React,{useState,useEffect} from 'react'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import GlobalStyle from "../../GlobalStyle";
 import axios from "axios";
@@ -63,10 +64,12 @@ const SubjectViewer = (props) => {
             visible={showModal}
             
         >
+            <TouchableWithoutFeedback onPress={onRequestClose} style={{marginRight:"5%"}}>
+
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor:"#00000050"}}>
-                  
+
                     <View style={{ width: '100%',backgroundColor:"white",height:"50%",top:"30%",borderRadius:16}}><View>
-                        <TouchableOpacity onPress={onRequestClose} style={{marginLeft:"4%",top:"10%"}}
+                        <TouchableOpacity onPress={onRequestClose} style={{marginLeft:"90%",top:"10%"}}
                         ><FontAwesome5 name='times' size={36} color={GlobalStyle.textColor.color}></FontAwesome5></TouchableOpacity></View>
 
                         <ScrollView style={{marginLeft:"5%",marginTop:"3%",alignContent:"flex-start"}}>
@@ -79,7 +82,10 @@ const SubjectViewer = (props) => {
                         <View style={{flexDirection:"row"}}><Text style={styles.headerText}>Giáo viên: </Text><Text style={styles.text}>{teacherName}( {teacherID} )</Text></View>
                         </ScrollView>
                     </View>
+
                 </View>
+                </TouchableWithoutFeedback>
+
         </Modal>
     )
 }
