@@ -73,7 +73,7 @@ async def update_grade(
     gradeID: int = Form(...),
     studentID: str = Form(...),
     termID: str = Form(...),
-    classID: int = Form(...),
+    courseID: int = Form(...),
     progressGrade: float = Form(...),
     examGrade1: float = Form(...),
     examGrade2: float = Form(...),
@@ -83,25 +83,24 @@ async def update_grade(
     #Check có tồn tại môn học không
     student_exists = db.query(exists().where(GradeSchema.studentID == studentID)).scalar()
     #Check có bị trùng tên lớp không
-    class_exists = db.query(exists().where(GradeSchema.classID == classID)).scalar()
+    course_exists = db.query(exists().where(GradeSchema.courseID == courseID)).scalar()
     #Check có học kỳ không
     term_exists = db.query(exists().where(GradeSchema.termID == termID)).scalar()
     finalGrade = (progressGrade*0.3) + (examGrade1*0.7)
-
     #Nếu điểm QT không đủ
     if (progressGrade < 4):
         finalGrade = -1
     #Nếu có điểm thi 2
     elif (examGrade2 > 0):
         finalGrade = (progressGrade*0.3) + (((examGrade1 + examGrade2)/2)*0.7)
-    if grade_exist and class_exists and term_exists:
+    if grade_exist and course_exists and term_exists:
         grade = db.query(GradeSchema).get(gradeID)
 
-        if student_exists and class_exists and term_exists:
+        if student_exists and course_exists and term_exists:
             grade.gradeID = gradeID
             grade.studentID = studentID
             grade.termID = termID
-            grade.classID = classID
+            grade.courseID = courseID
             grade.progressGrade = progressGrade
             grade.examGrade1 = examGrade1
             grade.examGrade2 = examGrade2
@@ -159,7 +158,7 @@ def get_grade_by_student_and_term(
                 SubjectSchema.subjectName,
                 SubjectSchema.subjectID,
             )
-            .join(ClassSchema, ClassSchema.classID == GradeSchema.classID)
+            .join(ClassSchema, ClassSchema.courseID == GradeSchema.courseID)
             .join(CourseSchema, CourseSchema.courseID == ClassSchema.courseID)
             .join(SubjectSchema, SubjectSchema.subjectID == CourseSchema.subjectID)
 
@@ -172,7 +171,7 @@ def get_grade_by_student_and_term(
             result.append(
                 {   
                     "gradeID":grade[0],
-                    "classID": grade[1],
+                    "courseID": grade[1],
                     "progressGrade": grade[2],
                     "examGrade1": grade[3],
                     "examGrade2": grade[4],
@@ -182,7 +181,7 @@ def get_grade_by_student_and_term(
 
                 }
             )
-        return {"courses": result}
+        return {"studentTermGrade": result}
     
 #Bảng điểm
 @router.get("/get_final_grade_by_student",dependencies=[Depends(JWTBearer())])
@@ -198,8 +197,14 @@ def get_gfinal_grade_by_student(
             db.query(
                 GradeSchema.gradeID,
                 GradeSchema.courseID,
-                GradeSchema.finalGrade
+                GradeSchema.finalGrade,
+                SubjectSchema.subjectName,
+                SubjectSchema.subjectID,
+                SubjectSchema.subjectCredit
             )
+            .join(ClassSchema, ClassSchema.courseID == GradeSchema.courseID)
+            .join(CourseSchema, CourseSchema.courseID == ClassSchema.courseID)
+            .join(SubjectSchema, SubjectSchema.subjectID == CourseSchema.subjectID)
             .filter(GradeSchema.studentID == studentID).all()
         )
 
@@ -208,8 +213,11 @@ def get_gfinal_grade_by_student(
             result.append(
                 {   
                     "gradeID":grade[0],
-                    "classID": grade[1],
-                    "finalGrade": grade[2]
+                    "courseID": grade[1],
+                    "finalGrade": grade[2],
+                    "subjectName":grade[3],
+                    "subjectID":grade[4],
+                    "subjectCredit":grade[5]
                 }
             )
-        return {"courses": result}
+        return {"studentGrade": result}

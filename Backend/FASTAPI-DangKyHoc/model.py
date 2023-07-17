@@ -1,6 +1,6 @@
 from typing import Text
 from sqlalchemy import Column,Date,BLOB,ForeignKey
-from sqlalchemy.types import String, Integer, Text, Float
+from sqlalchemy.types import String, Integer, Text, Float,Double
 
 from database import Base
 from sqlalchemy.orm import  relationship
@@ -96,10 +96,10 @@ class GradeSchema(Base):
     studentID=Column(String(6), ForeignKey("student.studentID"))
     termID=Column(String(9), ForeignKey("term.termID"))
     courseID=Column(Integer)
-    progressGrade=Column(Float)
-    examGrade1=Column(Float)
-    examGrade2=Column(Float)
-    finalGrade=Column(Float)
+    progressGrade=Column(Double)
+    examGrade1=Column(Double)
+    examGrade2=Column(Double)
+    finalGrade=Column(Double)
 
 #Nhóm
 class GroupSchema(Base):
