@@ -42,7 +42,7 @@ async def create_account(
         return {"data": "Email bị trùng!"}
     
     userSchema = UserSchema(userName = userName, userEmail =userEmail, userPassword=base64.b64encode(userPassword.encode("utf-8")),userRole=userRole)
-    imageSchema=ImageSchema(userID=userName)
+    imageSchema=ImageSchema(userName=userName)
     db.add(imageSchema)
     if(userRole==1):
         studentSchema = StudentSchema(studentID=userName, studentEmail=userEmail)
