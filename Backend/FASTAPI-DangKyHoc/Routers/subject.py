@@ -22,7 +22,8 @@ def get_database_session():
     finally:
         db.close()
 
-@router.post("/create_subject",dependencies=[Depends(JWTBearer())])
+#Tạo môn
+@router.post("/create_subject",dependencies=[Depends(JWTBearer())], summary="Tạo môn")
 async def create_subject(
     db: Session = Depends(get_database_session),
     subjectID: str = Form(...),
@@ -42,7 +43,8 @@ async def create_subject(
             "data": "Tạo môn học thành công!"
         }
 
-@router.put("/update_subject",dependencies=[Depends(JWTBearer())])
+#Sửa môn
+@router.put("/update_subject",dependencies=[Depends(JWTBearer())], summary="Sửa môn")
 async def update_subject(
     db: Session = Depends(get_database_session),
     subjectID: str = Form(...),
@@ -68,8 +70,9 @@ async def update_subject(
         }
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin môn học!"})
-    
-@router.delete("/delete_subject",dependencies=[Depends(JWTBearer())])
+
+#Xóa môn
+@router.delete("/delete_subject",dependencies=[Depends(JWTBearer())], summary="Xóa môn")
 async def delete_subject(
     db: Session = Depends(get_database_session),
     subjectID: str = Form(...)
@@ -85,8 +88,8 @@ async def delete_subject(
     else:
         return JSONResponse(status_code=400, content={"message": "Không tồn tại môn học!"})
     
-#Lớp theo ID
-@router.get("/get_subject_by_branch/{branchID}",dependencies=[Depends(JWTBearer())])
+#Lấy môn
+@router.get("/get_subject_by_branch/{branchID}",dependencies=[Depends(JWTBearer())], summary="Lấy môn")
 def get_subject_by_branch(branchID: int,
     db: Session = Depends(get_database_session)):
     subjects = (

@@ -18,7 +18,8 @@ def get_database_session():
     finally:
         db.close()
 
-@router.post("/create_term",dependencies=[Depends(JWTBearer())])
+#Tạo học kỳ
+@router.post("/create_term",dependencies=[Depends(JWTBearer())], summary="Tạo học kỳ")
 async def create_term(
     db: Session = Depends(get_database_session),
     termID: int = Form(...),
@@ -47,7 +48,8 @@ async def create_term(
     else:
         return JSONResponse(status_code=400, content={"message": "Không tồn tại năm học!"})
 
-@router.post("/update_term",dependencies=[Depends(JWTBearer())])
+#Sửa học kỳ
+@router.put("/update_term",dependencies=[Depends(JWTBearer())], summary="Sửa học kỳ")
 async def create_term(
     db: Session = Depends(get_database_session),
     termID: int = Form(...),
@@ -80,8 +82,9 @@ async def create_term(
         }
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin học kỳ!"})
-    
-@router.post("/delete_term",dependencies=[Depends(JWTBearer())])
+
+#Xóa học kỳ
+@router.delete("/delete_term",dependencies=[Depends(JWTBearer())], summary="Xóa học kỳ")
 async def delete_term(
     db: Session = Depends(get_database_session),
     termID: str = Form(...)
@@ -98,7 +101,7 @@ async def delete_term(
         return JSONResponse(status_code=400, content={"message": "Không tồn tại học kỳ!"})
 
 #Lấy thông tin học kỳ   
-@router.get("/term_info/{termID}",dependencies=[Depends(JWTBearer())])
+@router.get("/term_info/{termID}",dependencies=[Depends(JWTBearer())], summary="Lấy thông tin học kỳ")
 def get_term_info(
     termID = str,
     db: Session = Depends(get_database_session)
@@ -129,7 +132,7 @@ def get_term_info(
     return {"term": result}
 
 #Lấy thông tin học kỳ trong năm học
-@router.get("/term_info_by_year/{yearID}",dependencies=[Depends(JWTBearer())])
+@router.get("/term_info_by_year/{yearID}",dependencies=[Depends(JWTBearer())], summary="Lấy thông tin học kỳ trong năm học")
 def get_term_info_by_year(
     yearID = int,
     db: Session = Depends(get_database_session)
@@ -160,7 +163,8 @@ def get_term_info_by_year(
 
     return {"term": result}
 
-@router.get("/term_list/",dependencies=[Depends(JWTBearer())])
+#Lấy danh sách học kỳ
+@router.get("/term_list/",dependencies=[Depends(JWTBearer())], summary="Lấy danh sách học kỳ")
 def get_term_list(
     db: Session = Depends(get_database_session)
     ):

@@ -25,36 +25,22 @@ def get_database_session():
         db.close()
 
 #Tạo điểm môn học
-@router.post("/create_grade",dependencies=[Depends(JWTBearer())])
+@router.post("/create_grade",dependencies=[Depends(JWTBearer())], summary="Tạo điểm môn học")
 async def create_grade(
     db: Session = Depends(get_database_session),
     studentID: str = Form(...),
     termID: str = Form(...),
-    classID: int = Form(...),
-    progressGrade: float = Form(...),
-    examGrade1: float = Form(...),
-    examGrade2: float = Form(...),
+    subjectID: str = Form(...),
 ):
     #Check có tồn tại môn học không
     student_exists = db.query(exists().where(ClassSchema.studentID == studentID)).scalar()
-    #Check có bị trùng tên lớp không
-    class_exists = db.query(exists().where(ClassSchema.classID == classID)).scalar()
     #Check có học kỳ không
     term_exists = db.query(exists().where(ClassSchema.termID == termID)).scalar()
-    finalGrade = (progressGrade*0.3) + (examGrade1*0.7)
     duplicated = db.query(exists().where(GradeSchema.studentID == studentID,
-                                          GradeSchema.termID == termID, GradeSchema.classID == classID)).scalar()
+                                          GradeSchema.termID == termID, GradeSchema.subjectID == subjectID)).scalar()
     if not duplicated:
-    #Nếu điểm QT không đủ
-        if (progressGrade < 4):
-            finalGrade = -1
-        #Nếu có điểm thi 2
-        elif (examGrade2 > 0):
-            finalGrade = (progressGrade*0.3) + (((examGrade1 + examGrade2)/2)*0.7)
-        if student_exists and class_exists and term_exists:
-
-
-            gradeSchema = GradeSchema(studentID = studentID, termID = termID, classID = classID,progressGrade = progressGrade, examGrade1 = examGrade1, examGrade2 = examGrade2, finalGrade = finalGrade)
+        if student_exists and term_exists:
+            gradeSchema = GradeSchema(studentID = studentID, termID = termID, subjectID = subjectID)
             db.add(gradeSchema)
             db.commit()
             db.refresh(gradeSchema)
@@ -67,13 +53,13 @@ async def create_grade(
         return JSONResponse(status_code=400, content={"message": "Dữ liệu đã tồn tại!"})
 
 #Sửa điểm môn học
-@router.put("/update_grade",dependencies=[Depends(JWTBearer())])
+@router.put("/update_grade",dependencies=[Depends(JWTBearer())], summary="Sửa điểm môn học")
 async def update_grade(
     db: Session = Depends(get_database_session),
     gradeID: int = Form(...),
     studentID: str = Form(...),
     termID: str = Form(...),
-    classID: int = Form(...),
+    subjectID: str = Form(...),
     progressGrade: float = Form(...),
     examGrade1: float = Form(...),
     examGrade2: float = Form(...),
@@ -82,8 +68,8 @@ async def update_grade(
     grade_exist = db.query(exists().where(GradeSchema.gradeID == gradeID)).scalar()
     #Check có tồn tại môn học không
     student_exists = db.query(exists().where(GradeSchema.studentID == studentID)).scalar()
-    #Check có bị trùng tên lớp không
-    class_exists = db.query(exists().where(GradeSchema.classID == classID)).scalar()
+    #Check có bị trùng môn không
+    class_exists = db.query(exists().where(GradeSchema.subjectID == subjectID)).scalar()
     #Check có học kỳ không
     term_exists = db.query(exists().where(GradeSchema.termID == termID)).scalar()
     finalGrade = (progressGrade*0.3) + (examGrade1*0.7)
@@ -101,7 +87,7 @@ async def update_grade(
             grade.gradeID = gradeID
             grade.studentID = studentID
             grade.termID = termID
-            grade.classID = classID
+            grade.subjectID = subjectID
             grade.progressGrade = progressGrade
             grade.examGrade1 = examGrade1
             grade.examGrade2 = examGrade2
@@ -117,7 +103,7 @@ async def update_grade(
         return JSONResponse(status_code=400, content={"message": "Không có thông tin!"})
 
 #Xóa điểm
-@router.delete("/delete_grade/{gradeID}",dependencies=[Depends(JWTBearer())])
+@router.delete("/delete_grade/{gradeID}",dependencies=[Depends(JWTBearer())], summary="Xóa điểm")
 async def delete_grade(
     db: Session = Depends(get_database_session),
     gradeID = int
@@ -134,9 +120,7 @@ async def delete_grade(
         return JSONResponse(status_code=400, content={"message": "Không có thông tin!"})
 
 #Phiếu báo điểm
-
-@router.get("/grade_by_student_and_term/{termID}/{studentID}",dependencies=[Depends(JWTBearer())])
-
+@router.get("/grade_by_student_and_term/{termID}/{studentID}",dependencies=[Depends(JWTBearer())], summary="Phiếu báo điểm")
 def get_grade_by_student_and_term(
     db: Session = Depends(get_database_session),
     studentID = str,
@@ -181,7 +165,7 @@ def get_grade_by_student_and_term(
         return {"courses": result}
     
 #Bảng điểm
-@router.get("/get_final_grade_by_student",dependencies=[Depends(JWTBearer())])
+@router.get("/get_final_grade_by_student",dependencies=[Depends(JWTBearer())], summary="Bảng điểm")
 def get_gfinal_grade_by_student(
     db: Session = Depends(get_database_session),
     studentID: str=Header(...)
@@ -216,8 +200,8 @@ def get_gfinal_grade_by_student(
             )
         return {"grades": result}
     
-#Điểm TB và tín chỉ
-@router.get("/get_avg_grade_and_credit",dependencies=[Depends(JWTBearer())])
+#Điểm TB và tổng tín chỉ
+@router.get("/get_avg_grade_and_credit",dependencies=[Depends(JWTBearer())], summary="Điểm TB và tổng tín chỉ")
 def get_avg_grade_and_credit(
     db: Session = Depends(get_database_session),
     studentID: str=Header(...)
