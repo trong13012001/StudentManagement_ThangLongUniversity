@@ -95,11 +95,12 @@ class GradeSchema(Base):
     gradeID=Column(Integer, primary_key=True)
     studentID=Column(String(6), ForeignKey("student.studentID"))
     termID=Column(String(9), ForeignKey("term.termID"))
-    courseID=Column(Integer)
-    progressGrade=Column(Double)
-    examGrade1=Column(Double)
-    examGrade2=Column(Double)
-    finalGrade=Column(Double)
+    subjectID=Column(String(6), ForeignKey("subject.subjectID"))
+    progressGrade=Column(Float)
+    examGrade1=Column(Float)
+    examGrade2=Column(Float)
+    finalGrade=Column(Float)
+
 
 #Nhóm
 class GroupSchema(Base):
