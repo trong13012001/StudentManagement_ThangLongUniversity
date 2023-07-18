@@ -1,6 +1,6 @@
 from fastapi import Depends, FastAPI, Request, Form,status,Header,APIRouter
 from fastapi.responses import HTMLResponse, JSONResponse
-from sqlalchemy import exists,Integer
+from sqlalchemy import exists,Integer, func
 import base64
 from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder
@@ -151,19 +151,16 @@ def get_grade_by_student_and_term(
         grades = (
             db.query(
                 GradeSchema.gradeID,
-                GradeSchema.courseID,
+                GradeSchema.studentID,
                 GradeSchema.progressGrade,
                 GradeSchema.examGrade1,
                 GradeSchema.examGrade2,
                 GradeSchema.finalGrade,
                 SubjectSchema.subjectName,
-                SubjectSchema.subjectID,
             )
-            .join(ClassSchema, ClassSchema.classID == GradeSchema.classID)
-            .join(CourseSchema, CourseSchema.courseID == ClassSchema.courseID)
+            .select_from(GradeSchema)
+            .join(CourseSchema, GradeSchema.subjectID == CourseSchema.subjectID)
             .join(SubjectSchema, SubjectSchema.subjectID == CourseSchema.subjectID)
-
-
             .filter(GradeSchema.studentID == studentID, GradeSchema.termID == termID).all()
         )
 
@@ -177,8 +174,7 @@ def get_grade_by_student_and_term(
                     "examGrade1": grade[3],
                     "examGrade2": grade[4],
                     "finalGrade": grade[5],
-                    "subjectName":grade[6],
-                    "subjectID":grade[7],
+                    "subjectName":grade[6]
 
                 }
             )
@@ -190,14 +186,14 @@ def get_gfinal_grade_by_student(
     db: Session = Depends(get_database_session),
     studentID: str=Header(...)
 ):
-    #Check có tồn tại môn học không
+    #Check có tồn tại sinh viên không
     student_exists = db.query(exists().where(GradeSchema.studentID == studentID)).scalar()
 
     if student_exists:
         grades = (
             db.query(
                 GradeSchema.gradeID,
-                GradeSchema.courseID,
+                GradeSchema.subjectID,
                 GradeSchema.finalGrade
             )
             .filter(GradeSchema.studentID == studentID).all()
@@ -208,8 +204,42 @@ def get_gfinal_grade_by_student(
             result.append(
                 {   
                     "gradeID":grade[0],
-                    "classID": grade[1],
+                    "subjectID": grade[1],
                     "finalGrade": grade[2]
                 }
             )
         return {"courses": result}
+    
+#Điểm TB và tín chỉ
+@router.get("/get_avg_grade_and_credit",dependencies=[Depends(JWTBearer())])
+def get_avg_grade_and_credit(
+    db: Session = Depends(get_database_session),
+    studentID: str=Header(...)
+):
+    #Check có tồn tại sinh viên không
+    student_exists = db.query(exists().where(GradeSchema.studentID == studentID)).scalar()
+
+    if student_exists:
+        grades = (
+            db.query(
+                GradeSchema.studentID,
+                func.avg(GradeSchema.finalGrade),
+                func.sum(SubjectSchema.subjectCredit)
+            )
+            .select_from(GradeSchema)
+            .join(SubjectSchema, GradeSchema.subjectID == SubjectSchema.subjectID)
+            .filter(GradeSchema.studentID == studentID, GradeSchema.finalGrade >=0)
+            .group_by(GradeSchema.studentID)
+            .all()
+        )
+
+        result = []
+        for grade in grades:
+            result.append(
+                {   
+                    "studentID":grade[0],
+                    "avgGrade": grade[1],
+                    "totalCredit": grade[2]
+                }
+            )
+        return {"grade": result}
