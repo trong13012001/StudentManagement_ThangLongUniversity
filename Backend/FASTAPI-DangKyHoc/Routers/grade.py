@@ -194,8 +194,12 @@ def get_gfinal_grade_by_student(
             db.query(
                 GradeSchema.gradeID,
                 GradeSchema.subjectID,
+                SubjectSchema.subjectName,
+                SubjectSchema.subjectCredit,
                 GradeSchema.finalGrade
             )
+            .select_from(GradeSchema)
+            .join(SubjectSchema, GradeSchema.subjectID == SubjectSchema.subjectID)
             .filter(GradeSchema.studentID == studentID).all()
         )
 
@@ -205,10 +209,12 @@ def get_gfinal_grade_by_student(
                 {   
                     "gradeID":grade[0],
                     "subjectID": grade[1],
-                    "finalGrade": grade[2]
+                    "subjectName": grade[2],
+                    "subjectCredit": grade[4],
+                    "finalGrade": grade[5]
                 }
             )
-        return {"courses": result}
+        return {"grades": result}
     
 #Điểm TB và tín chỉ
 @router.get("/get_avg_grade_and_credit",dependencies=[Depends(JWTBearer())])
