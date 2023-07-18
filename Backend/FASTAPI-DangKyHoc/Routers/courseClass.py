@@ -23,6 +23,9 @@ def get_database_session():
     finally:
         db.close()
 
+@router.post("/")
+async def intro():
+    return {"data":"Hello"}
 #Đăng ký
 @router.post("/create_class",dependencies=[Depends(JWTBearer())])
 async def create_class(
@@ -169,7 +172,8 @@ def get_courses_with_subject_info(
             SubjectSchema.subjectName,
             CourseSchema.courseShiftStart,
             CourseSchema.courseShiftEnd,
-            CourseSchema.courseRoom
+            CourseSchema.courseRoom,
+            CourseSchema.courseID
         )
         .join(ClassSchema, CourseSchema.courseID == ClassSchema.courseID)
         .join(StudentSchema, ClassSchema.studentID == StudentSchema.studentID)
@@ -183,11 +187,11 @@ def get_courses_with_subject_info(
         result.append(
             {
                 "className": get_class[1],
-
                 "subjectName": get_class[2],
                 "courseShiftStart": get_class[3],
                 "courseShiftEnd": get_class[4],
-                "courseRoom": get_class[5]
+                "courseRoom": get_class[5],
+                "courseID":get_class[6]
 
             }
         )
