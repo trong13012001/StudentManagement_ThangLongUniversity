@@ -23,6 +23,9 @@ def get_database_session():
     finally:
         db.close()
 
+@router.post("/")
+async def intro():
+    return {"data":"Hello"}
 #Đăng ký
 @router.post("/create_class",dependencies=[Depends(JWTBearer())])
 async def create_class(
