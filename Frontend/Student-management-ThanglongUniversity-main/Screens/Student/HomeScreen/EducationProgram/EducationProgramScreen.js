@@ -41,7 +41,7 @@ const EducationProgramScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [termID, setTermID] = useState("2223HK1N1");
   const [showModal, setShowModal] = useState(false);
-
+  const [branchName,setBranchName]=useState("")
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -51,6 +51,8 @@ const EducationProgramScreen = () => {
   const load = useCallback(async () => {
   
     try {
+      const branchName = await SecureStore.getItemAsync("branchName");
+      setBranchName(branchName)
       const accessToken = await SecureStore.getItemAsync("accessToken");
       const authorization = `Bearer ${accessToken}`
        await axios.get(`${BASE_URL}/get_subject_by_branch/${branchID}`,
@@ -93,6 +95,8 @@ const EducationProgramScreen = () => {
     <>
       <Header hasBackButton={true} title={"Chương trình đào tạo"} />
       <Loader loading={loadingLoader} />
+      <Text allowFontScaling={false} style={styles.header2}>Ngành: {branchName}</Text>
+
       <View style={{marginLeft:"15%"}}>
       </View>
       <TextInput
@@ -244,4 +248,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: "gray",
   },
+  header2:{
+    fontSize: (Platform.OS === 'ios' && windowWidth>400) ?20 : 20*(windowWidth/428),
+    fontWeight:"600",
+    color:GlobalStyle.themeColor.color,
+    marginLeft:"15%"
+  }
 });

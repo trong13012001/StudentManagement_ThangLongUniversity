@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder
 from datetime import date
 from auth.auth_bearer import JWTBearer
 from auth.auth_handler import signJWT,decodeJWT,refresh_access_token
-from model import SubjectSchema, MajorSchema, BranchSubjectSchema
+from model import SubjectSchema, MajorSchema, BranchSubjectSchema,BranchSchema
 import schema
 from database import SessionLocal, engine
 import model
@@ -92,14 +92,16 @@ async def delete_subject(
 @router.get("/get_subject_by_branch/{branchID}",dependencies=[Depends(JWTBearer())], summary="Lấy môn")
 def get_subject_by_branch(branchID: int,
     db: Session = Depends(get_database_session)):
+
     subjects = (
         db.query(
             SubjectSchema.subjectID,
             SubjectSchema.subjectName,
-            SubjectSchema.subjectCredit
+            SubjectSchema.subjectCredit,
         )
         .join(BranchSubjectSchema, SubjectSchema.subjectID == BranchSubjectSchema.subjectID)
-        .filter(BranchSubjectSchema.branchID == branchID).all()
+        .filter(BranchSubjectSchema.branchID == branchID)
+
     )
 
     result = []
@@ -108,8 +110,9 @@ def get_subject_by_branch(branchID: int,
             {
                 "subjectId": subject[0],
                 "subjectName": subject[1],
-                "credit":subject[2]
+                "credit": subject[2]
             }
         )
 
+    # Return the result as a dictionary
     return {"subject": result}

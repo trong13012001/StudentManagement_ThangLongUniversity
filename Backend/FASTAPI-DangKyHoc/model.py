@@ -1,6 +1,6 @@
 from typing import Text
 from sqlalchemy import Column,Date,BLOB,ForeignKey
-from sqlalchemy.types import String, Integer, Text, Float
+from sqlalchemy.types import String, Integer, Text, Float,Double
 
 from database import Base
 from sqlalchemy.orm import  relationship
@@ -100,6 +100,7 @@ class GradeSchema(Base):
     examGrade1=Column(Float)
     examGrade2=Column(Float)
     finalGrade=Column(Float)
+
 
 #Nhóm
 class GroupSchema(Base):

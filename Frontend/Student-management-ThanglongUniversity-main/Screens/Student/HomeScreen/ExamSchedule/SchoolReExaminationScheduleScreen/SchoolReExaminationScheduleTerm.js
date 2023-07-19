@@ -29,13 +29,11 @@ import { useNavigation,CommonActions } from '@react-navigation/native';
 import TermList from "../../../../../components/TermList";
 let windowWidth = Dimensions.get("window").width;
 
-const SchoolTimeTableScreen = () => {
-
+const SchoolReExaminationScheduleTerm = () => {
 
   return (
-    <TermList title={"Thời khóa biểu toàn trường"} name={"Thời khóa biểu toàn trường"}/>
+      <TermList title={"Lịch thi toàn trường"} name={"Danh sách môn thi"}/>
   );
 };
 
-export default SchoolTimeTableScreen;
-
+export default SchoolReExaminationScheduleTerm;

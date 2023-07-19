@@ -29,6 +29,7 @@ const SplashScreen=({navigation}) => {
             if(response.data.user.userRole==1){
             // Checking if user is on the onsite list or not
               SecureStore.setItemAsync("studentId", `${response.data.student.studentID}`)
+              SecureStore.setItemAsync("branchName", `${response.data.branch.branchName}`)
               SecureStore.setItemAsync("fullName", `${response.data.student.studentName}`)
               SecureStore.setItemAsync("email", `${response.data.student.studentEmail}`)
               navigation.replace("StudentMainScreen");
