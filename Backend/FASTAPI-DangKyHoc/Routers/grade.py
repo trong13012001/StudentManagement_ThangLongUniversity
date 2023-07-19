@@ -147,10 +147,8 @@ def get_grade_by_student_and_term(
                 SubjectSchema.subjectName,
             )
             .select_from(GradeSchema)
-            .join(CourseSchema, GradeSchema.subjectID == CourseSchema.subjectID)
-
-            .join(SubjectSchema, SubjectSchema.subjectID == CourseSchema.subjectID)
-            .filter(GradeSchema.studentID == studentID, GradeSchema.termID == termID).all()
+            .join(SubjectSchema, SubjectSchema.subjectID == GradeSchema.subjectID)
+            .filter(GradeSchema.studentID == studentID, GradeSchema.termID == termID).all() 
         )
 
         result = []
@@ -189,8 +187,7 @@ def get_gfinal_grade_by_student(
             )
             .select_from(GradeSchema)
             .join(SubjectSchema, GradeSchema.subjectID == SubjectSchema.subjectID)
-
-            .filter(GradeSchema.studentID == studentID).all()
+            .filter(GradeSchema.studentID == studentID)
         )
 
         result = []
@@ -202,7 +199,6 @@ def get_gfinal_grade_by_student(
                     "finalGrade": grade[2],
                     "subjectName":grade[3],
                     "subjectCredit":grade[4]
-
                 }
             )
         return {"grades": result}
