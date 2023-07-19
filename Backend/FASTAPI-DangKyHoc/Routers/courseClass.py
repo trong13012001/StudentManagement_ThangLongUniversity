@@ -270,14 +270,14 @@ def get_unlearned_subject(
                 CourseSchema.subjectID
             )
             .select_from(GradeSchema)
-            .join(CourseSchema, GradeSchema.courseID == CourseSchema.courseID)
+            .join(CourseSchema, GradeSchema.subjectID == CourseSchema.subjectID)
             .join(BranchSubjectSchema, CourseSchema.subjectID == BranchSubjectSchema.subjectID)
             .join(SubjectSchema, BranchSubjectSchema.subjectID == SubjectSchema.subjectID)
             .distinct()
             .all()
     )
     learned_subject_id = [subject.subjectID for subject in learned]
-
+    print(learned_subject_id)
     unlearnedSubject = (
         db.query(
             BranchSubjectSchema.subjectID,

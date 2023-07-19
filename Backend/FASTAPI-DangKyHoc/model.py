@@ -139,8 +139,8 @@ class TermSchema(Base):
 class BranchSubjectSchema(Base):
     __tablename__="branchsubject"
     id=Column(Integer, primary_key=True)
-    subjectID=Column(String, ForeignKey("subject.SubjectID"))
-    branchID=Column(Integer, ForeignKey("branch.BranchID"))
+    subjectID=Column(String)
+    branchID=Column(Integer)
 class ExamSchema(Base):
     __tablename__="exam"
     examID=Column(Integer,primary_key=True)

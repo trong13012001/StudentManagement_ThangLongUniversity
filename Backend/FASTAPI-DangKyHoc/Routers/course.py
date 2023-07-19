@@ -225,8 +225,6 @@ def get_courses_with_subject_info(courseID: int,
                 "termID": course[10],
             }
         )
-    print(course[0])
-
     return {"courses": result}
 
 #Lấy lớp theo môn

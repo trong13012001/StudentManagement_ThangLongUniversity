@@ -19,7 +19,7 @@ const StudentHomeScreenStack = () => {
   return (
     <Stack.Navigator initialRouteName='Thông tin trang chủ'>
       <Stack.Screen name='Thông tin trang chủ' component={StudentHomeScreen}  options={{headerShown: false}} />
-      <Stack.Screen name='Thời khóa biểu toàn trường' component={SchooleTimeTableStack} options={{headerShown: false, unmountOnBlur: true}}/>
+      <Stack.Screen name='Thời khóa biểu toàn trường Stack' component={SchooleTimeTableStack} options={{headerShown: false, unmountOnBlur: true}}/>
       <Stack.Screen name='Lịch thi lại toàn trường' component={SchoolReExaminationScheduleStack} options={{headerShown: false, unmountOnBlur: true}}/>
       <Stack.Screen name='Chương trình đào tạo' component={EducationProgramScreen} options={{headerShown: false, unmountOnBlur: true}}/>
       <Stack.Screen name='Đăng ký học' component={CourseRegistrationScreen} options={{headerShown: false, unmountOnBlur: true}}/>

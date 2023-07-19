@@ -52,8 +52,8 @@ const getTimeTableDay = async(value,selectedTerm)=>
         "Authorization": authorization,
       },
       }).then(function (response) {
-        console.log(response.data.courses)
-        setListTimeTableDay(response.data.courses)        // setListTimeTableDay(response)
+        console.log(response.data.dateSchedule)
+        setListTimeTableDay(response.data.dateSchedule)        // setListTimeTableDay(response)
         setRefreshing(false)
         setLoadingLoader(false)        
   })
@@ -81,8 +81,8 @@ const getTimeTableDay = async(value,selectedTerm)=>
           "Authorization": authorization,
         },
         }).then(function (response) {
-          setCurrentTermName(response.data.termname)
-          setCurrentTermID(response.data.termid)
+          setCurrentTermName(response.data.termName)
+          setCurrentTermID(response.data.termID)
           setRefreshing(false)
           setLoadingLoader(false)        
     })
@@ -177,6 +177,8 @@ const getTimeTableDay = async(value,selectedTerm)=>
     setIsSaturdayPressed(false);
     setIsSundayPressed(false);
     getTimeTableDay(4,termID)  
+    scrollViewRef.current.scrollTo({ x: 0, animated: true });
+
 
 
   };  const handleThurdayPress = () => {

@@ -81,7 +81,7 @@ const StudentHomeScreen=({navigation})=>{
                         icon: 'calendar-month',
                         onPress: () => {
                           navigation.dispatch(
-                            CommonActions.navigate({ name: 'Thời khóa biểu toàn trường' })
+                            CommonActions.navigate({ name: 'Thời khóa biểu toàn trường Stack' })
                           );
                         }
                       },

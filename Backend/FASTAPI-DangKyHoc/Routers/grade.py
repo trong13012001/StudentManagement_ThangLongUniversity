@@ -82,10 +82,10 @@ async def update_grade(
     #Nếu có điểm thi 2
     elif (examGrade2 > 0):
         finalGrade = (progressGrade*0.3) + (((examGrade1 + examGrade2)/2)*0.7)
-    if grade_exist and course_exists and term_exists:
+    if grade_exist and class_exists and term_exists:
         grade = db.query(GradeSchema).get(gradeID)
 
-        if student_exists and course_exists and term_exists:
+        if student_exists and class_exists and term_exists:
             grade.gradeID = gradeID
             grade.studentID = studentID
             grade.termID = termID
@@ -182,11 +182,10 @@ def get_gfinal_grade_by_student(
         grades = (
             db.query(
                 GradeSchema.gradeID,
-
                 GradeSchema.subjectID,
+                GradeSchema.finalGrade,
                 SubjectSchema.subjectName,
                 SubjectSchema.subjectCredit,
-                GradeSchema.finalGrade
             )
             .select_from(GradeSchema)
             .join(SubjectSchema, GradeSchema.subjectID == SubjectSchema.subjectID)
@@ -200,7 +199,6 @@ def get_gfinal_grade_by_student(
                 {   
                     "gradeID":grade[0],
                     "subjectID": grade[1],
-
                     "finalGrade": grade[2],
                     "subjectName":grade[3],
                     "subjectCredit":grade[4]

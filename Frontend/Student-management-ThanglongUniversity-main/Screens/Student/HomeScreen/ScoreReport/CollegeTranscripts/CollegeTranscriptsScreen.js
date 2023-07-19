@@ -67,7 +67,8 @@ const CollegeTranscriptsScreen = () => {
                 },
       })  .then(function (response) {
         console.log(response)
-          setDataset(response.data.studentGrade)
+
+          setDataset(response.data.grades)
           setRefreshing(false)
           setLoadingLoader(false)        
     })
@@ -92,15 +93,11 @@ const CollegeTranscriptsScreen = () => {
     setShowModal(false);
   };
 
-  const filteredDataset = dataset.filter(
-    (data) =>
-      data.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      data.className.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+
 
   return (
     <>
-      <Header hasBackButton={true} title={"Phiếu báo điểm"} />
+      <Header hasBackButton={true} title={"Bảng điểm"} />
       <Loader loading={loadingLoader} />
       <View style={{marginLeft:"15%"}}>
       <Text allowFontScaling={false} style={styles.header2}><Text style={{textTransform: 'uppercase'}}>{studentID} </Text>{fullName}</Text>
@@ -153,10 +150,10 @@ const CollegeTranscriptsScreen = () => {
           ) : (
             <View>
               <View style={styles.tableContainer}>
-                {filteredDataset.length === 0 ? (
+                {dataset.length === 0 ? (
                   <Text style={styles.noResultsText}>No results found</Text>
                 ) : (
-                  filteredDataset?.map((data, index) => {
+                  dataset?.map((data, index) => {
                     return (
                       <View
                         key={data.id}
