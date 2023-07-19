@@ -48,11 +48,11 @@ async def create_course(
     and CourseSchema.courseRoom == courseRoom)).scalar()
     
     if subject_non_exists:
-        return {"data": "Không tìm thấy môn học!"}
+        return JSONResponse(status_code=400, content={"message": "Không tìm thấy môn học!"})
     elif class_exists:
-        return {"data": "Trùng tên lớp!"}
+        return JSONResponse(status_code=400, content={"message": "Trùng tên lớp!"})
     elif course_time:
-        return {"data": "Trùng thời gian học!"}
+        return JSONResponse(status_code=400, content={"message": "Trùng thời gian học!"})
 
     courseSchema = CourseSchema(courseID = courseID, subjectID = subjectID, className = className,
     courseDate = courseDate, courseShiftStart = courseShiftStart, courseShiftEnd = courseShiftEnd,
@@ -89,9 +89,9 @@ async def update_course(
         and CourseSchema.courseRoom == courseRoom)).scalar()
 
         if subject_non_exists:
-            return {"data": "Không tìm thấy môn học!"}
+            return JSONResponse(status_code=400, content={"message": "Không tìm thấy môn học!"})
         elif course_time:
-            return {"data": "Trùng thời gian học!"}
+            return JSONResponse(status_code=400, content={"message": "Trùng thời gian học!"})
 
         course.subjectID = subjectID
         course.className = className
