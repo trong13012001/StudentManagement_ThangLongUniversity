@@ -22,7 +22,8 @@ def get_database_session():
     finally:
         db.close()
 
-@router.post("/create_branch",dependencies=[Depends(JWTBearer())])
+#Tạo ngành
+@router.post("/create_branch",dependencies=[Depends(JWTBearer())], summary="Tạo ngành")
 async def create_branch(
     db: Session = Depends(get_database_session),
     branchID: str = Form(...),
@@ -47,7 +48,8 @@ async def create_branch(
         "data:" "Tạo chuyên ngành thành công!"
     }
 
-@router.put("/update_branch",dependencies=[Depends(JWTBearer())])
+#Sửa ngành
+@router.put("/update_branch",dependencies=[Depends(JWTBearer())], summary="Sửa ngành")
 async def update_branch(
     db: Session = Depends(get_database_session),
     branchID: str = Form(...),
@@ -74,8 +76,9 @@ async def update_branch(
         }
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin chuyên ngành!"})
-    
-@router.delete("/delete_branch",dependencies=[Depends(JWTBearer())])
+
+#Xóa ngành
+@router.delete("/delete_branch",dependencies=[Depends(JWTBearer())], summary="Xóa ngành")
 async def delete_branch(
     db: Session = Depends(get_database_session),
     branchID: str = Form(...)

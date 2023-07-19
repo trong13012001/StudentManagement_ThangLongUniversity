@@ -24,7 +24,8 @@ def get_database_session():
     finally:
         db.close()
 
-@router.post("/update_student_information",dependencies=[Depends(JWTBearer())])
+#Sửa thông tin sinh viên
+@router.put("/update_student_information",dependencies=[Depends(JWTBearer())], summary="Sửa thông tin sinh viên")
 async def update_student(
     db: Session = Depends(get_database_session),
     student_ID: str = Form(...),
@@ -39,7 +40,6 @@ async def update_student(
     status: int = Form(...)
 ):
     
-    # Retrieve existing student record
     student = db.query(StudentSchema).get(student_ID)
     branch = db.query(BranchSchema).get(branchID)
     if student and branch and (status == 0 or status == 1):
@@ -66,7 +66,6 @@ async def update_student(
         else:
             group = 0
            
-    # Update student information
         student.studentName = studentName
         student.studentDOB = studentDOB
         student.studentK = studentK
@@ -89,9 +88,8 @@ async def update_student(
     else:
         return JSONResponse(status_code=400, content={"message": "Kiểm tra lại mã sinh viên, mã khoa, mã ngành hoặc trạng thái (0 = Thôi học, 1 = Bình thường)"})
 
-
-
-@router.post("/update_student_major_information",dependencies=[Depends(JWTBearer())])
+#Sửa khoa của sinh viên
+@router.put("/update_student_major_information",dependencies=[Depends(JWTBearer())], summary="Sửa khoa của sinh viên")
 async def update_student(
     db: Session = Depends(get_database_session),
     student_ID: str = Form(...),
@@ -100,7 +98,6 @@ async def update_student(
 ):
     student_exists = db.query(exists().where(StudentSchema.studentID == student_ID)).scalar()
 
-    # Retrieve existing student record
     student = db.query(StudentSchema).get(student_ID)
     if student_exists:
         studentFilter = db.query(StudentSchema).filter(StudentSchema.studentID==student_ID).first()
@@ -125,10 +122,8 @@ async def update_student(
         else:
             group = 0
         
-    # Update student information
         student.branchID = branchID
         student.group = group
-        # Commit and refresh
         db.commit()
         db.refresh(student)
 

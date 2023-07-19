@@ -24,7 +24,8 @@ def get_database_session():
     finally:
         db.close()
 
-@router.post("/create_course",dependencies=[Depends(JWTBearer())])
+#Tạo chương trình học
+@router.post("/create_course",dependencies=[Depends(JWTBearer())], summary="Tạo chương trình học")
 async def create_course(
     db: Session = Depends(get_database_session),
     courseID: int = Form(...),
@@ -63,7 +64,8 @@ async def create_course(
         "data": "Tạo chương trình học thành công!"
     }
 
-@router.put("/update_course",dependencies=[Depends(JWTBearer())])
+#Sửa chương trình học
+@router.put("/update_course",dependencies=[Depends(JWTBearer())], summary="Sửa chương trình học")
 async def update_course(
     db: Session = Depends(get_database_session),
     courseID: int = Form(...),
@@ -107,7 +109,8 @@ async def update_course(
     else:
         return JSONResponse(status_code=400, content={"message": "Không có thông tin chương trình!"})
 
-@router.delete("/delete_course/{courseID}",dependencies=[Depends(JWTBearer())])
+#Xóa chương trình học
+@router.delete("/delete_course/{courseID}",dependencies=[Depends(JWTBearer())], summary="Xóa chương trình học")
 async def delete_course(
     db: Session = Depends(get_database_session),
     courseID = int
@@ -126,8 +129,8 @@ async def delete_course(
             detail="Không tồn tại lớp học!"
         )
 
-#Xóa TKB theo kỳ
-@router.delete("/delete_course_by_term/{termID}",dependencies=[Depends(JWTBearer())])
+#Xóa chương trình học theo kỳ
+@router.delete("/delete_course_by_term/{termID}",dependencies=[Depends(JWTBearer())], summary="Xóa chương trình học theo kỳ")
 async def delete_course_by_term(
     db: Session = Depends(get_database_session),
     termID = str
@@ -143,8 +146,8 @@ async def delete_course_by_term(
         }
     return JSONResponse(status_code=400, content={"message": "Không tồn tại học kỳ!"})
 
-#Danh sách lớp theo học kỳ  
-@router.get("/course")
+#Danh sách lớp theo kỳ  
+@router.get("/course", summary="Lấy danh sách lớp theo kỳ")
 def get_courses_with_subject_info(
     db: Session = Depends(get_database_session),
     termID: str=Header(...)
@@ -182,8 +185,8 @@ def get_courses_with_subject_info(
         )
     return {"courses": result}
 
-#Lớp theo ID
-@router.get("/course/{courseID}",dependencies=[Depends(JWTBearer())])
+#Lấy thông tin chương trình
+@router.get("/course/{courseID}",dependencies=[Depends(JWTBearer())], summary="Lấy thông tin chương trình")
 def get_courses_with_subject_info(courseID: int,
     db: Session = Depends(get_database_session)):
     courses = (
@@ -226,3 +229,31 @@ def get_courses_with_subject_info(courseID: int,
 
     return {"courses": result}
 
+#Lấy lớp theo môn
+@router.get("/courses_by_subject_term/{subjectID}/{termID}",dependencies=[Depends(JWTBearer())], summary="Lấy lớp theo môn")
+def get_courses_by_subject_term(
+    subjectID: str,
+    termID: str,
+    db: Session = Depends(get_database_session)):
+    courses = (
+        db.query(
+            CourseSchema.className,
+            CourseSchema.courseDate,
+            CourseSchema.courseShiftStart,
+            CourseSchema.courseShiftEnd
+        )
+        .filter(CourseSchema.subjectID == subjectID, CourseSchema.termID == termID).all()
+    )
+
+    result = []
+    for course in courses:
+        result.append(
+            {
+                "className": course[0],
+                "courseDate": course[1],
+                "courseShiftStart": course[2],
+                "courseShiftEnd": course[3]
+            }
+        )
+
+    return {"courses": result}
