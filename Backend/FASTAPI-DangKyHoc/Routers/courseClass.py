@@ -302,9 +302,10 @@ def get_unlearned_subject(
     return {"unlearnedSubject": result}
 
 #Hiện lớp theo môn
-@router.get("/class_by_subject/{subjectID}",dependencies=[Depends(JWTBearer())], summary="Hiện lớp theo môn")
+@router.get("/class_by_subject/{subjectID}/{termID}",dependencies=[Depends(JWTBearer())], summary="Hiện lớp theo môn")
 def get_class_by_subject(
     subjectID = str,
+    termID = str,
     db: Session = Depends(get_database_session)
     ):
     
@@ -319,7 +320,7 @@ def get_class_by_subject(
             .select_from(CourseSchema)
             .join(BranchSubjectSchema, CourseSchema.subjectID == BranchSubjectSchema.subjectID)
             .join(SubjectSchema, BranchSubjectSchema.subjectID == SubjectSchema.subjectID)
-            .filter(CourseSchema.subjectID == subjectID)
+            .filter(CourseSchema.subjectID == subjectID, CourseSchema.termID == termID)
             .all()
     )
 
