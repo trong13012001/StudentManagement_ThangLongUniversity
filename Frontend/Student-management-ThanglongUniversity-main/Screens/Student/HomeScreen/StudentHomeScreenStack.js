@@ -13,6 +13,7 @@ import LearningOrientation from '../HomeScreen/LearningOrientation/LearningOrien
 import SchooleTimeTableStack from './TimeTable/SchoolTimeTable/SchooleTimeTableStack';
 import SchoolReExaminationScheduleStack from './ExamSchedule/SchoolReExaminationScheduleScreen/SchoolReExaminationScheduleStack';
 import ScoreReportCardStack from './ScoreReport/ScoreReportCard/ScoreReportCardStack';
+import PaymentReceiptStack from './PaymentReceipt/PaymentReceiptStack';
 const Stack = createStackNavigator();
 
 const StudentHomeScreenStack = () => {
@@ -24,7 +25,7 @@ const StudentHomeScreenStack = () => {
       <Stack.Screen name='Chương trình đào tạo' component={EducationProgramScreen} options={{headerShown: false, unmountOnBlur: true}}/>
       <Stack.Screen name='Đăng ký học' component={CourseRegistrationScreen} options={{headerShown: false, unmountOnBlur: true}}/>
       <Stack.Screen name='Đăng ký thi lại' component={ReExaminationRegistrationScreen} options={{headerShown: false, unmountOnBlur: true}}/>
-      <Stack.Screen name='Phiếu báo thu tiền' component={PaymentReceiptScreen} options={{headerShown: false, unmountOnBlur: true}}/>
+      <Stack.Screen name='Phiếu báo thu tiền Stack' component={PaymentReceiptStack} options={{headerShown: false, unmountOnBlur: true}}/>
       <Stack.Screen name='Bảng điểm' component={CollegeTranscriptsScreen} options={{headerShown: false, unmountOnBlur: true}}/>
       <Stack.Screen name='Lịch thi chính thức' component={OfficialExamSchedule} options={{headerShown: false, unmountOnBlur: true}}/>
       <Stack.Screen name='Lịch thi dự kiến' component={ExpectedExamSchedule} options={{headerShown: false, unmountOnBlur: true}}/>

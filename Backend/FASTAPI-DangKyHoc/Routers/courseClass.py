@@ -265,33 +265,33 @@ def get_courses_with_subject_info(studentID: str, db: Session = Depends(get_data
         return {"term": None}
 
 #Hiện các môn chưa học
-@router.get("/unlearned_subject/{studentID}",dependencies=[Depends(JWTBearer())], summary="Hiện các môn chưa học")
+@router.get("/unlearned_subject/{termID}/{studentID}", dependencies=[Depends(JWTBearer())], summary="Hiện các môn chưa học")
 def get_unlearned_subject(
-    studentID = str,
+    studentID: str,
+    termID: str,
     db: Session = Depends(get_database_session)
     ):
+
+
     learned = (
-        db.query(
-                CourseSchema.subjectID
-            )
-            .select_from(GradeSchema)
-            .join(CourseSchema, GradeSchema.subjectID == CourseSchema.subjectID)
-            .join(BranchSubjectSchema, CourseSchema.subjectID == BranchSubjectSchema.subjectID)
-            .join(SubjectSchema, BranchSubjectSchema.subjectID == SubjectSchema.subjectID)
-            .distinct()
-            .all()
+        db.query(GradeSchema.subjectID)
+        .select_from(GradeSchema)
+        .filter(GradeSchema.studentID == studentID)
+        .distinct()
+        .all()
     )
     learned_subject_id = [subject.subjectID for subject in learned]
     print(learned_subject_id)
+
     unlearnedSubject = (
-        db.query(
-            BranchSubjectSchema.subjectID,
-            SubjectSchema.subjectName
+        db.query(BranchSubjectSchema.subjectID,SubjectSchema.subjectName)
+        .select_from(BranchSubjectSchema)
+        .join(SubjectSchema,BranchSubjectSchema.subjectID==SubjectSchema.subjectID)
+        .join(StudentSchema, StudentSchema.branchID == BranchSubjectSchema.branchID)
+        .filter(
+            StudentSchema.studentID == studentID,
+            ~BranchSubjectSchema.subjectID.in_(learned_subject_id)
         )
-        .select_from(StudentSchema)
-        .join(BranchSubjectSchema, StudentSchema.branchID == BranchSubjectSchema.branchID)
-        .join(SubjectSchema, BranchSubjectSchema.subjectID == SubjectSchema.subjectID)
-        .filter(StudentSchema.studentID == studentID, ~SubjectSchema.subjectID.in_(learned_subject_id))
         .all()
     )
 
@@ -301,7 +301,7 @@ def get_unlearned_subject(
             {
                 "subjectID": unlearned[0],
                 "subjectName": unlearned[1]
-                }
+            }
         )
 
     return {"unlearnedSubject": result}

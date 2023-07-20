@@ -22,7 +22,7 @@ import axios from "axios";
 import { BASE_URL } from "../../../../../env/url";
 import Header from "../../../../../components/Header/Header";
 import GlobalStyle from "../../../../../GlobalStyle";
-import SubjectViewer from "../../../../../components/SubjectViewer/SubjectViewer";
+import SubjectViewer from "../../../../../components/Viewer/SubjectViewer";
 import Loader from "../../../../../components/Loader/Loader";
 import CustomPicker from "../../../../../components/Picker/CustomPicker";
 import * as SecureStore from "expo-secure-store";
@@ -38,8 +38,8 @@ const SchoolTimeTableScreen = () => {
   const [dataset, setDataset] = useState([]);
   const [courseID, setCourseID] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [refreshing, setRefreshing] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
 
   const onRefresh = useCallback(() => {
