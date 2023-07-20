@@ -38,8 +38,8 @@ const SchoolTimeTableScreen = () => {
   const [dataset, setDataset] = useState([]);
   const [courseID, setCourseID] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [refreshing, setRefreshing] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
 
   const onRefresh = useCallback(() => {

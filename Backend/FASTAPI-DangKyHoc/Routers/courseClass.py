@@ -268,7 +268,7 @@ def get_unlearned_subject(
     learned = (
         db.query(GradeSchema.subjectID)
         .select_from(GradeSchema)
-        .filter(GradeSchema.studentID == studentID, GradeSchema.termID == termID)
+        .filter(GradeSchema.studentID == studentID)
         .distinct()
         .all()
     )
