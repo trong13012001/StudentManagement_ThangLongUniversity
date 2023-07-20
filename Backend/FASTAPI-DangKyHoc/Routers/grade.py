@@ -213,7 +213,7 @@ def get_avg_grade_and_credit(
     student_exists = db.query(exists().where(GradeSchema.studentID == studentID)).scalar()
 
     if student_exists:
-        grades = (
+        grade = (
             db.query(
                 GradeSchema.studentID,
                 func.avg(GradeSchema.finalGrade),
@@ -226,13 +226,13 @@ def get_avg_grade_and_credit(
             .all()
         )
 
-        result = []
-        for grade in grades:
-            result.append(
-                {   
+        if grade is None:
+            return {"grade": {}}
+        
+        result =  {   
                     "studentID":grade[0],
                     "avgGrade": grade[1],
                     "totalCredit": grade[2]
                 }
-            )
+
         return {"grade": result}

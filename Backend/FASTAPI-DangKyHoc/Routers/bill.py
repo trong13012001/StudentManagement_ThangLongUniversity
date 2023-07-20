@@ -64,7 +64,7 @@ def get_bill_by_term(
             StudentID: str,
             termID: str,
             db: Session = Depends(get_database_session)):
-    bills = (
+    bill = (
         db.query(
             ClassSchema.studentID,
             ClassSchema.termID,
@@ -77,22 +77,24 @@ def get_bill_by_term(
         .group_by(ClassSchema.studentID, ClassSchema.termID)
         .first()
     )
-
+    if bill is None:
+        return {"bill": {}}
+    
     result = {
-                "studentID": bills[0],
-                "termID": bills[1],
-                "termSum": bills[2]
+                "studentID": bill[0],
+                "termID": bill[1],
+                "termSum": bill[2]
             }
         
 
-    return {"bills": result}
+    return {"bill": result}
 
 #Tổng tiền
 @router.get("/bill_total/{StudentID}",dependencies=[Depends(JWTBearer())])
 def get_bill_total(
             StudentID: str,
             db: Session = Depends(get_database_session)):
-    bills = (
+    bill = (
         db.query(
             ClassSchema.studentID,
             func.sum(SubjectSchema.subjectCredit * SubjectSchema.Coefficient * 450000).cast(Integer)
@@ -104,17 +106,15 @@ def get_bill_total(
         .group_by(ClassSchema.studentID)
         .all()
     )
-
-    result = []
-    for bill in bills:
-        result.append(
-            {
+    if bill is None:
+        return {"bill": {}}
+    
+    result =  {
                 "studentID": bill[0],
                 "termSum": bill[1]
             }
-        )
-
-    return {"bills": result}
+    
+    return {"bill": result}
 
 
 
@@ -135,9 +135,8 @@ def get_courses_bill_info(courseID: int, db: Session = Depends(get_database_sess
         .first()
     )
 
-    # Check if bill is not None, if it's None, return an empty dictionary
     if bill is None:
-        return {"courses": {}}
+        return {"bill": {}}
 
     result = {
         "courseID": bill[0],
@@ -149,4 +148,4 @@ def get_courses_bill_info(courseID: int, db: Session = Depends(get_database_sess
         "bill": bill[5],
     }
 
-    return {"courses": result}
+    return {"bill": result}
