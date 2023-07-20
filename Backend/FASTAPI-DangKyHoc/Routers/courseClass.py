@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder
 from datetime import date
 from auth.auth_bearer import JWTBearer
 from auth.auth_handler import signJWT,decodeJWT,refresh_access_token
-from model import ClassSchema, CourseSchema, StudentSchema, TermSchema, SubjectSchema, BranchSubjectSchema,GradeSchema, BranchSchema
+from model import ClassSchema, CourseSchema, StudentSchema, TermSchema, SubjectSchema, BranchSubjectSchema,GradeSchema, ExamSchema, StudentExamSchema
 import schema
 from database import SessionLocal, engine
 import model
@@ -36,7 +36,7 @@ async def create_class(
     course_exists = db.query(exists().where(CourseSchema.courseID == courseID)).scalar()
     #Check có tồn tại MSV không
     student_exists = db.query(exists().where(StudentSchema.studentID == studentID)).scalar()
-
+    
     if course_exists and student_exists:
         #Lấy mã môn từ course
         subjectFilter = db.query(CourseSchema).filter(CourseSchema.courseID == courseID).first()
@@ -68,13 +68,19 @@ async def create_class(
             
         classSchema = ClassSchema(courseID = courseID, studentID = studentID, termID = termID)
         gradeSchema = GradeSchema(studentID = studentID, termID = termID, subjectID = subjectID)
+        examFilter = db.query(ExamSchema).filter(ExamSchema.subjectID == subjectID).first()
+        examid = examFilter.examID
+        examSchema = StudentExamSchema(studentID = studentID, examID = examid)
+
         db.add(classSchema)
         db.add(gradeSchema)
+        db.add(examSchema)
         db.commit()
         db.refresh(classSchema)
         db.refresh(gradeSchema)
+        db.refresh(examSchema)
         return {
-            "data": "Đăng ký môn học thành công"
+            "data": "Đăng ký môn học thành công!"
         }
 
     else:
@@ -264,7 +270,9 @@ def get_unlearned_subject(
     studentID: str,
     termID: str,
     db: Session = Depends(get_database_session)
-):
+    ):
+
+
     learned = (
         db.query(GradeSchema.subjectID)
         .select_from(GradeSchema)

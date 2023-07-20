@@ -7,15 +7,13 @@ from fastapi.encoders import jsonable_encoder
 from datetime import date
 from auth.auth_bearer import JWTBearer
 from auth.auth_handler import signJWT,decodeJWT,refresh_access_token
-from model import StudentSchema, TermSchema, ClassSchema, GradeSchema, SubjectSchema, StudentExamSchema, ExamSchema
-from model import CourseSchema
+from model import ClassSchema, GradeSchema, SubjectSchema, StudentExamSchema, ExamSchema
 import schema
 from database import SessionLocal, engine
 import model
 
 router = APIRouter()  
 model.Base.metadata.create_all(bind=engine)
-
 
 def get_database_session():
     try:
@@ -24,8 +22,8 @@ def get_database_session():
     finally:
         db.close()
 
-#Đăng ký thi
-@router.post("/create_student_exam",dependencies=[Depends(JWTBearer())], summary="Đăng ký thi")
+#Đăng ký thi lại
+@router.post("/create_student_re_exam",dependencies=[Depends(JWTBearer())], summary="Đăng ký thi lại")
 async def create_student_exam(
     db: Session = Depends(get_database_session),
     studentID: str = Form(...),
@@ -34,10 +32,12 @@ async def create_student_exam(
     #Check có tồn tại môn học không
     student_exists = db.query(exists().where(ClassSchema.studentID == studentID)).scalar()
     exam_exists = db.query(exists().where(ExamSchema.examID == examID)).scalar()
+    subject_exists = db.query(exists().where(ExamSchema.examID == examID, ExamSchema.subjectID == GradeSchema.subjectID,
+                                             ExamSchema.termID != GradeSchema.termID)).scalar()
 
     duplicated = db.query(exists().where(StudentExamSchema.studentID == studentID,
                                           StudentExamSchema.examID == examID)).scalar()
-    if not duplicated:
+    if not (duplicated and subject_exists):
         if student_exists and exam_exists:
             studentExamSchema = StudentExamSchema(studentID = studentID, examID = examID)
             db.add(studentExamSchema)
@@ -49,8 +49,8 @@ async def create_student_exam(
     else:
         return JSONResponse(status_code=400, content={"message": "Dữ liệu đã tồn tại!"})
     
-#Hủy đăng ký
-@router.delete("/delete_student_exam/{id}",dependencies=[Depends(JWTBearer())], summary="Hủy đăng ký thi")
+#Hủy đăng ký thi lại
+@router.delete("/delete_student_re_exam/{id}",dependencies=[Depends(JWTBearer())], summary="Hủy đăng ký thi lại")
 async def delete_student_exam(
     db: Session = Depends(get_database_session),
     id = int
@@ -66,7 +66,7 @@ async def delete_student_exam(
 
 #Lịch thi
 @router.get("/student_exam_by_student/{studentID}/{termID}",dependencies=[Depends(JWTBearer())], summary="Lịch thi")
-def get_grade_by_student_and_term(
+def get_student_exam_by_student(
     db: Session = Depends(get_database_session),
     studentID = str,
     termID = str
@@ -80,13 +80,11 @@ def get_grade_by_student_and_term(
         return JSONResponse(status_code=400, content={"message": "Không có thông tin!"})
     studentExams = (
         db.query(
-            StudentExamSchema.studentID,
             ExamSchema.subjectID,
             SubjectSchema.subjectName,
             ExamSchema.examShiftStart,
             ExamSchema.examShiftEnd,
-            ExamSchema.examDate,
-            ExamSchema.termID
+            ExamSchema.examDate
         )
         .select_from(StudentExamSchema)
         .join(ExamSchema, StudentExamSchema.examID == ExamSchema.examID)
@@ -98,13 +96,45 @@ def get_grade_by_student_and_term(
     for studentExam in studentExams:
         result.append(
             {   
-                "studentID": studentExam[0],
-                "subjectID": studentExam[1],
-                "subjectName": studentExam[2],
-                "examShiftStart": studentExam[3],
-                "examShiftEnd": studentExam[4],
-                "examDate": studentExam[5],
-                "termID": studentExam[6],
+                "subjectID": studentExam[0],
+                "subjectName": studentExam[1],
+                "examShiftStart": studentExam[2],
+                "examShiftEnd": studentExam[3],
+                "examDate": studentExam[4],
+            }
+        )
+    return {"studentExam": result}
+
+#Danh sách môn thi lại
+@router.get("/student_re_exam_by_student/{studentID}",dependencies=[Depends(JWTBearer())], summary="Danh sách môn thi lại")
+def get_student_re_exam_by_student(
+    db: Session = Depends(get_database_session),
+    studentID = str
+):
+    #Check có tồn tại sinh viên không
+    student_exists = db.query(exists().where(StudentExamSchema.studentID == studentID)).scalar()
+
+    if not (student_exists):
+        return JSONResponse(status_code=400, content={"message": "Không có thông tin!"})
+    studentExams = (
+        db.query(
+            ExamSchema.subjectID,
+            SubjectSchema.subjectName,
+        )
+        .select_from(GradeSchema)
+        .join(ExamSchema, GradeSchema.subjectID == ExamSchema.subjectID)
+        .join(SubjectSchema, ExamSchema.subjectID == SubjectSchema.subjectID)
+        .filter(GradeSchema.studentID == studentID, GradeSchema.finalGrade >= 0)
+        .distinct()
+        .all() 
+    )
+
+    result = []
+    for studentExam in studentExams:
+        result.append(
+            {   
+                "subjectID": studentExam[0],
+                "subjectName": studentExam[1]
             }
         )
     return {"studentExam": result}
