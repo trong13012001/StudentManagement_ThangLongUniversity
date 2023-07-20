@@ -32,7 +32,7 @@ async def create_grade(
     termID: str = Form(...),
     subjectID: str = Form(...),
 ):
-    #Check có tồn tại môn học không
+    #Check có tồn tại sinh viên không
     student_exists = db.query(exists().where(ClassSchema.studentID == studentID)).scalar()
     #Check có học kỳ không
     term_exists = db.query(exists().where(ClassSchema.termID == termID)).scalar()

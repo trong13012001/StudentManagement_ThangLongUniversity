@@ -111,3 +111,16 @@ class BranchSubjectSchema(BaseModel):
     id=int
     subjectID=str
     branchID=int
+
+class ExamSchema(BaseModel):
+    examID=int
+    subjectID=str
+    examShiftStart=int
+    examShiftEnd=int
+    examDate=date
+    termID=str
+    
+class StudentExamSchema(BaseModel):
+    id=int
+    studentID=str
+    examID=int
