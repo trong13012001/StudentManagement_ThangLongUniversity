@@ -114,7 +114,8 @@ def get_term_info(
             TermSchema.groupID,
             TermSchema.yearID
         )
-        .filter(TermSchema.termID == termID).all()
+        .filter(TermSchema.termID == termID)
+        .first()
     )
 
     if term is None:

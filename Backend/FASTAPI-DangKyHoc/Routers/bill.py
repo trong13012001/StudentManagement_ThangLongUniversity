@@ -104,7 +104,7 @@ def get_bill_total(
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
         .filter(ClassSchema.studentID == StudentID)
         .group_by(ClassSchema.studentID)
-        .all()
+        .first()
     )
     if bill is None:
         return {"bill": {}}

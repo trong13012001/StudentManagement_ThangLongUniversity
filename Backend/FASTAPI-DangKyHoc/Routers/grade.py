@@ -223,7 +223,7 @@ def get_avg_grade_and_credit(
             .join(SubjectSchema, GradeSchema.subjectID == SubjectSchema.subjectID)
             .filter(GradeSchema.studentID == studentID, GradeSchema.finalGrade >=0)
             .group_by(GradeSchema.studentID)
-            .all()
+            .first()
         )
 
         if grade is None:

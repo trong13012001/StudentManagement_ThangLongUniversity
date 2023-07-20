@@ -204,11 +204,10 @@ def get_courses_with_subject_info(courseID: int,
         )
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
         .join(TeacherSchema, CourseSchema.teacherID==TeacherSchema.teacherID)
-        .filter(CourseSchema.courseID==courseID).all()
+        .filter(CourseSchema.courseID==courseID).first()
     )
     if course is None:
         return {"course": {}}
-    
     result = {
                 "courseID":course[0],
                 "subjectID": course[1],
