@@ -10,10 +10,11 @@ from sqlalchemy.orm import  relationship
 class UserSchema(Base):
     __tablename__="user"
     userID = Column(Integer, primary_key=True, index=True)
-    userName=Column(String(45),unique=True)
+    userName=Column(String(45), unique=True)
     userEmail=Column(String(45),unique=True)
     userPassword=Column(String(45))
     userRole=Column(Integer)
+
 #Sinh viên
 class StudentSchema(Base):
     __tablename__="student"
@@ -86,7 +87,7 @@ class CourseSchema(Base):
     courseShiftEnd = Column(Integer)
     courseRoom = Column(String(15))
     termID = Column(String(8))
-    teacherID = Column(String(6))
+    teacherID = Column(String(6), ForeignKey("teacher.teacherID"))
 
 
 #Phiếu báo điểm
@@ -116,12 +117,13 @@ class YearSchema(Base):
     yearID=Column(Integer, primary_key=True)
     yearStart=Column(Date)
     yearEnd=Column(Date)
+
 #Lớp học
 class ClassSchema(Base):
     __tablename__="class"
     classID=Column(Integer, primary_key=True)
-    courseID=Column(Integer)
-    studentID=Column(String(5))
+    courseID=Column(Integer, ForeignKey("course.courseID"))
+    studentID=Column(String(5), ForeignKey("student.studentID"))
     termID=Column(String)
 
 #Học kỳ
@@ -139,13 +141,22 @@ class TermSchema(Base):
 class BranchSubjectSchema(Base):
     __tablename__="branchsubject"
     id=Column(Integer, primary_key=True)
-    subjectID=Column(String)
-    branchID=Column(Integer)
+    subjectID=Column(String, ForeignKey("subject.subjectID"))
+    branchID=Column(Integer, ForeignKey("branch.branchID"))
+
+#Lịch thi
 class ExamSchema(Base):
     __tablename__="exam"
     examID=Column(Integer,primary_key=True)
-    subjectID=Column(String)
+    subjectID=Column(String(5))
     examShiftStart=Column(String)
     examShiftEnd=Column(String)
     examDate=Column(Date)
-    term=Column(String)
+    termID=Column(String)
+
+#Đăng ký thi
+class StudentExamSchema(Base):
+    __tablename__="studentexam"
+    id=Column(Integer, primary_key=True)
+    studentID=Column(String(5))
+    examID=Column(Integer)
