@@ -118,3 +118,38 @@ def get_bill_total(
         )
 
     return {"bills": result}
+
+
+
+@router.get("/courseBill/{courseID}", dependencies=[Depends(JWTBearer())], summary="Lấy thông tin hóa đơn môn")
+def get_courses_bill_info(courseID: int, db: Session = Depends(get_database_session)):
+    bill = (
+        db.query(
+            ClassSchema.courseID,
+            SubjectSchema.subjectID,
+            SubjectSchema.subjectName,
+            SubjectSchema.subjectCredit * SubjectSchema.Coefficient,
+            ClassSchema.termID,
+            (SubjectSchema.subjectCredit * SubjectSchema.Coefficient * 450000).cast(Integer)
+        )
+        .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
+        .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
+        .filter(ClassSchema.courseID == courseID)
+        .first()
+    )
+
+    # Check if bill is not None, if it's None, return an empty dictionary
+    if bill is None:
+        return {"courses": {}}
+
+    result = {
+        "courseID": bill[0],
+        "subjectID": bill[1],
+        "subjectName": bill[2],
+        "quantity": bill[3],
+        "unit": 450000,
+        "termID": bill[4],
+        "bill": bill[5],
+    }
+
+    return {"courses": result}
