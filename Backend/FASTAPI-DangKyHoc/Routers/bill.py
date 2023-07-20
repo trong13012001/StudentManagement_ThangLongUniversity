@@ -25,19 +25,20 @@ def get_database_session():
         db.close()
 
 #Tổng tiền từng môn
-@router.get("/bill_by_subject/{StudentID}",dependencies=[Depends(JWTBearer())])
-def get_bill_by_subject(StudentID: str, db: Session = Depends(get_database_session)):
+@router.get("/bill_by_subject/{StudentID}/{termID}",dependencies=[Depends(JWTBearer())])
+def get_bill_by_subject(StudentID: str,termID:str, db: Session = Depends(get_database_session)):
     bills = (
         db.query(
             ClassSchema.courseID,
-            ClassSchema.studentID,
+            SubjectSchema.subjectID,
             SubjectSchema.subjectName,
+            SubjectSchema.subjectCredit * SubjectSchema.Coefficient,
             ClassSchema.termID,
             (SubjectSchema.subjectCredit * SubjectSchema.Coefficient * 450000).cast(Integer)
         )
         .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
-        .filter(ClassSchema.studentID == StudentID)
+        .filter(ClassSchema.studentID == StudentID,ClassSchema.termID==termID)
         .all()
     )
 
@@ -46,10 +47,12 @@ def get_bill_by_subject(StudentID: str, db: Session = Depends(get_database_sessi
         result.append(
             {
                 "courseID": bill[0],
-                "studentID": bill[1],
+                "subjectID": bill[1],
                 "subjectName": bill[2],
-                "termID": bill[3],
-                "bill": bill[4],
+                "quantity":bill[3],
+                "unit":450000,
+                "termID": bill[4],
+                "bill": bill[5],
             }
         )
 
