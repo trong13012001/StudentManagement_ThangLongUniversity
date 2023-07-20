@@ -37,10 +37,11 @@ async def create_account(
     user_exists = db.query(exists().where(UserSchema.userName == userName)).scalar()
     email_exists = db.query(exists().where(UserSchema.userEmail == userEmail)).scalar()
     if user_exists:
-        return {"data": "Username bị trùng!"}
+        return JSONResponse(status_code=400, content={"message": "Tài khoản bị trùng"})
     elif email_exists:
-        return {"data": "Email bị trùng!"}
-    
+        return JSONResponse(status_code=400, content={"message": "Email bị trùng"})
+    elif len(userPassword)<6:
+        return JSONResponse(status_code=400, content={"message": "Mật khẩu tối thiếu là 6 ký tự"})
     userSchema = UserSchema(userName = userName, userEmail =userEmail, userPassword=base64.b64encode(userPassword.encode("utf-8")),userRole=userRole)
     imageSchema=ImageSchema(userName=userName)
     db.add(imageSchema)
