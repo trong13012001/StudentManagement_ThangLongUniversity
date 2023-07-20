@@ -318,8 +318,6 @@ def get_class_by_subject(
                 CourseSchema.courseRoom
             )
             .select_from(CourseSchema)
-            .join(BranchSubjectSchema, CourseSchema.subjectID == BranchSubjectSchema.subjectID)
-            .join(SubjectSchema, BranchSubjectSchema.subjectID == SubjectSchema.subjectID)
             .filter(CourseSchema.subjectID == subjectID, CourseSchema.termID == termID)
             .all()
     )
@@ -336,4 +334,4 @@ def get_class_by_subject(
                 }
         )
 
-    return {"class": result}
+    return {"courseClass": result}
