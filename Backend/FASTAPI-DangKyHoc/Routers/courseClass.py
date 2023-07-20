@@ -297,3 +297,38 @@ def get_unlearned_subject(
         )
 
     return {"unlearnedSubject": result}
+
+#Hiện lớp theo môn
+@router.get("/class_by_subject/{subjectID}/{termID}",dependencies=[Depends(JWTBearer())], summary="Hiện lớp theo môn")
+def get_class_by_subject(
+    subjectID = str,
+    termID = str,
+    db: Session = Depends(get_database_session)
+    ):
+    
+    classes = (
+        db.query(
+                CourseSchema.className,
+                CourseSchema.courseDate,
+                CourseSchema.courseShiftStart,
+                CourseSchema.courseShiftEnd,
+                CourseSchema.courseRoom
+            )
+            .select_from(CourseSchema)
+            .filter(CourseSchema.subjectID == subjectID, CourseSchema.termID == termID)
+            .all()
+    )
+
+    result = []
+    for courseClass in classes:
+        result.append(
+            {
+                "className": courseClass[0],
+                "courseDate": courseClass[1],
+                "courseShiftStart": courseClass[2],
+                "courseShiftEnd": courseClass[3],
+                "courseRoom": courseClass[4]
+                }
+        )
+
+    return {"courseClass": result}
