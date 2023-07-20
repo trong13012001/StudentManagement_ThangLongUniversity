@@ -75,18 +75,15 @@ def get_bill_by_term(
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
         .filter(ClassSchema.studentID == StudentID, CourseSchema.termID == termID)
         .group_by(ClassSchema.studentID, ClassSchema.termID)
-        .all()
+        .first()
     )
 
-    result = []
-    for bill in bills:
-        result.append(
-            {
-                "studentID": bill[0],
-                "termID": bill[1],
-                "termSum": bill[2]
+    result = {
+                "studentID": bills[0],
+                "termID": bills[1],
+                "termSum": bills[2]
             }
-        )
+        
 
     return {"bills": result}
 
