@@ -179,7 +179,6 @@ def get_courses_with_subject_info(
                 "courseShiftStart": course[4],
                 "courseShiftEnd": course[5],
                 "courseRoom": course[6],
-
                 "termID": course[7],
             }
         )
@@ -189,7 +188,7 @@ def get_courses_with_subject_info(
 @router.get("/course/{courseID}",dependencies=[Depends(JWTBearer())], summary="Lấy thông tin chương trình")
 def get_courses_with_subject_info(courseID: int,
     db: Session = Depends(get_database_session)):
-    courses = (
+    course = (
         db.query(
             CourseSchema.courseID,
             CourseSchema.subjectID,
@@ -205,13 +204,11 @@ def get_courses_with_subject_info(courseID: int,
         )
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
         .join(TeacherSchema, CourseSchema.teacherID==TeacherSchema.teacherID)
-        .filter(CourseSchema.courseID==courseID).all()
+        .filter(CourseSchema.courseID==courseID).first()
     )
-
-    result = []
-    for course in courses:
-        result.append(
-            {
+    if course is None:
+        return {"course": {}}
+    result = {
                 "courseID":course[0],
                 "subjectID": course[1],
                 "subjectName": course[2],
@@ -224,8 +221,7 @@ def get_courses_with_subject_info(courseID: int,
                 "teacherName":course[9],
                 "termID": course[10],
             }
-        )
-    return {"courses": result}
+    return {"course": result}
 
 #Lấy lớp theo môn
 @router.get("/courses_by_subject_term/{subjectID}/{termID}",dependencies=[Depends(JWTBearer())], summary="Lấy lớp theo môn")

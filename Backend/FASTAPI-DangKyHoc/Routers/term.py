@@ -106,7 +106,7 @@ def get_term_info(
     termID = str,
     db: Session = Depends(get_database_session)
     ):
-    get_term = (
+    term = (
         db.query(
             TermSchema.termName,
             TermSchema.termStart,
@@ -114,20 +114,20 @@ def get_term_info(
             TermSchema.groupID,
             TermSchema.yearID
         )
-        .filter(TermSchema.termID == termID).all()
+        .filter(TermSchema.termID == termID)
+        .first()
     )
 
-    result = []
-    for term in get_term:
-        result.append(
-            {
+    if term is None:
+        return {"term": {}}
+    
+    result = {
                 "termName": term[0],
                 "termStart": term[1],
                 "termEnd": term[2],
                 "groupID": term[3],
                 "yearID": term[4]
             }
-        )
 
     return {"term": result}
 
