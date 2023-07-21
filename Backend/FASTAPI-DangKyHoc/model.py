@@ -125,6 +125,7 @@ class ClassSchema(Base):
     courseID=Column(Integer, ForeignKey("course.courseID"))
     studentID=Column(String(5), ForeignKey("student.studentID"))
     termID=Column(String)
+    status=Column(Integer)
 
 #Học kỳ
 class TermSchema(Base):

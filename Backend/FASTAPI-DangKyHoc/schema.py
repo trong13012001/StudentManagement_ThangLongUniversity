@@ -93,11 +93,13 @@ class YearSchema(BaseModel):
     yearID=int
     yearStart=date
     yearEnd=date
+
 class ClassSchema(BaseModel):
     classID=int
     courseID=int
     studentID=str
     termID=str
+    status=int
 
 class TermSchema(BaseModel):
     termID=str
