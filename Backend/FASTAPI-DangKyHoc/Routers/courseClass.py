@@ -47,10 +47,35 @@ async def create_class(
             .select_from(ClassSchema)
             .filter(ClassSchema.courseID == courseID, ClassSchema.termID == termID).first()
         )
+        examid1 = (db.query
+                   (
+                    StudentExamSchema.id,
+                   )
+                   .select_from(StudentExamSchema)
+                   .join(ExamSchema, StudentExamSchema.examID == ExamSchema.examID)
+                   .join(CourseSchema, ExamSchema.subjectID == CourseSchema.subjectID)
+                   .filter(CourseSchema.courseID == courseID, ExamSchema.termID == termID).first()
+        )
+        gradeid = (db.query
+                   (
+                    GradeSchema.gradeID,
+                   )
+                   .select_from(GradeSchema)
+                   .join(SubjectSchema, SubjectSchema.subjectID == GradeSchema.subjectID)
+                   .join(CourseSchema, SubjectSchema.subjectID == CourseSchema.subjectID)
+                   .filter(CourseSchema.courseID == courseID, GradeSchema.termID == termID).first()
+        )
         get_class = db.query(ClassSchema).get(classid)
+        get_exam = db.query(StudentExamSchema).get(examid1)
+        get_grade = db.query(GradeSchema).get(gradeid)
+
         get_class.status = 1
+        get_exam.status = 1
+        get_grade.status = 1
         db.commit()
         db.refresh(get_class)
+        db.refresh(get_exam)
+        db.refresh(get_grade)
         return JSONResponse(status_code=200, content={"message": "Đăng ký môn thành công!"})
     
     if course_exists and student_exists:
@@ -83,10 +108,10 @@ async def create_class(
                 return JSONResponse(status_code=400, content={"message": "Trùng lịch!"})
             
         classSchema = ClassSchema(courseID = courseID, studentID = studentID, termID = termID, status = 1)
-        gradeSchema = GradeSchema(studentID = studentID, termID = termID, subjectID = subjectID)
+        gradeSchema = GradeSchema(studentID = studentID, termID = termID, subjectID = subjectID, status = 1)
         examFilter = db.query(ExamSchema).filter(ExamSchema.subjectID == subjectID).first()
         examid = examFilter.examID
-        examSchema = StudentExamSchema(studentID = studentID, examID = examid)
+        examSchema = StudentExamSchema(studentID = studentID, examID = examid, status = 1)
 
         db.add(classSchema)
         db.add(gradeSchema)
@@ -108,12 +133,40 @@ async def update_class(
     studentID: str = Form(...),
 ):
     student_exists = db.query(exists().where(StudentSchema.studentID == studentID)).scalar()
-    courseClass = db.query(ClassSchema).get(classID)
+    examid = (db.query
+            (
+            StudentExamSchema.id,
+            )
+            .select_from(ClassSchema)
+            .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
+            .join(ExamSchema, CourseSchema.subjectID == ExamSchema.subjectID)
+            .join(StudentExamSchema, ExamSchema.examID == StudentExamSchema.examID)
+            .filter(ClassSchema.classID == classID).first()
+            )
+    gradeid = (db.query
+            (
+            GradeSchema.gradeID,
+            )
+            .select_from(ClassSchema)
+            .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
+            .join(GradeSchema, CourseSchema.subjectID == GradeSchema.subjectID)
+            .filter(ClassSchema.classID == classID).first()
+        )
+    
+    get_class = db.query(ClassSchema).get(classID)
+    get_exam = db.query(StudentExamSchema).get(examid)
+    get_grade = db.query(GradeSchema).get(gradeid)
+    
+    
 
     if student_exists:
-        courseClass.status = 0
+        get_class.status = 0
+        get_exam.status = 0
+        get_grade.status = 0
         db.commit()
-        db.refresh(courseClass)
+        db.refresh(get_class)
+        db.refresh(get_exam)
+        db.refresh(get_grade)
         return JSONResponse(status_code=200, content={"message": "Hủy đăng ký môn thành công!"})
     else:
         return JSONResponse(status_code=400, content={"message": "Kiểm tra lại thông tin!"})
@@ -163,10 +216,37 @@ async def delete_class(
     classID: int = Form(...)
 ):
     class_exists = db.query(exists().where(ClassSchema.classID == classID)).scalar()
+    examid = (db.query
+            (
+            StudentExamSchema.id,
+            )
+            .select_from(ClassSchema)
+            .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
+            .join(ExamSchema, CourseSchema.subjectID == ExamSchema.subjectID)
+            .join(StudentExamSchema, ExamSchema.examID == StudentExamSchema.examID)
+            .filter(ClassSchema.classID == classID).first()
+            )
+    gradeid = (db.query
+            (
+            GradeSchema.gradeID,
+            )
+            .select_from(ClassSchema)
+            .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
+            .join(GradeSchema, CourseSchema.subjectID == GradeSchema.subjectID)
+            .filter(ClassSchema.classID == classID).first()
+        )
+    
     if class_exists:
         class_delete = db.query(ClassSchema).get(classID)
+        exam_delete = db.query(StudentExamSchema).get(examid)
+        grade_delete = db.query(GradeSchema).get(gradeid)
         db.delete(class_delete)
+        db.delete(exam_delete)
+        db.delete(grade_delete)
         db.commit()
+        db.refresh(class_delete)
+        db.refresh(exam_delete)
+        db.refresh(grade_delete)
         return JSONResponse(status_code=200, content={"message": "Xóa lớp thành công!"})
     else:
         return JSONResponse(status_code=400, content={"message": "Không tồn tại lớp học!"})
@@ -176,10 +256,19 @@ async def delete_class(
 async def delete_class(
     db: Session = Depends(get_database_session)
 ):
-    courseClass = db.query(ClassSchema).filter(ClassSchema.status == 0).all()
-    for status in courseClass:
-        db.delete(courseClass)
+    course_delete = db.query(ClassSchema).filter(ClassSchema.status == 0).all()
+    exam_delete = db.query(StudentExamSchema).filter(StudentExamSchema.status == 0).all()
+    grade_delete = db.query(GradeSchema).filter(GradeSchema.status == 0).all()
+    for course in course_delete:
+        db.delete(course)
         db.commit()
+    for exam in exam_delete:
+        db.delete(exam)
+        db.commit()
+    for grade in grade_delete:
+        db.delete(grade)
+        db.commit()
+        
         return JSONResponse(status_code=200, content={"message": "Xóa sinh viên thành công!"})
     else:
         return JSONResponse(status_code=400, content={"message": "Error!"})

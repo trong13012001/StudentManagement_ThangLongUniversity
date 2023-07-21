@@ -82,6 +82,7 @@ class GradeSchema(BaseModel):
     examGrade1=float
     examGrade2=float
     finalGrade=float
+    status=int
 
 class GroupSchema(BaseModel):
     groupID=str
@@ -121,8 +122,10 @@ class ExamSchema(BaseModel):
     examShiftEnd=int
     examDate=date
     termID=str
+
     
 class StudentExamSchema(BaseModel):
     id=int
     studentID=str
     examID=int
+    status=int
