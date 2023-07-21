@@ -101,7 +101,7 @@ class GradeSchema(Base):
     examGrade1=Column(Float)
     examGrade2=Column(Float)
     finalGrade=Column(Float)
-
+    status=Column(Integer)
 
 #Nhóm
 class GroupSchema(Base):
@@ -125,6 +125,7 @@ class ClassSchema(Base):
     courseID=Column(Integer, ForeignKey("course.courseID"))
     studentID=Column(String(5), ForeignKey("student.studentID"))
     termID=Column(String)
+    status=Column(Integer)
 
 #Học kỳ
 class TermSchema(Base):
@@ -153,6 +154,7 @@ class ExamSchema(Base):
     examShiftEnd=Column(String)
     examDate=Column(Date)
     termID=Column(String)
+    
 
 #Đăng ký thi
 class StudentExamSchema(Base):
@@ -160,3 +162,4 @@ class StudentExamSchema(Base):
     id=Column(Integer, primary_key=True)
     studentID=Column(String(5))
     examID=Column(Integer)
+    status=Column(Integer)

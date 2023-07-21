@@ -224,8 +224,9 @@ def get_courses_with_subject_info(courseID: int,
     return {"course": result}
 
 #Lấy lớp theo môn
-@router.get("/courses_by_subject_term/{subjectID}/{termID}",dependencies=[Depends(JWTBearer())], summary="Lấy lớp theo môn")
+@router.get("/courses_by_subject_term/{studentID}/{subjectID}/{termID}",dependencies=[Depends(JWTBearer())], summary="Lấy lớp theo môn")
 def get_courses_by_subject_term(
+    studentID: str,
     subjectID: str,
     termID: str,
     db: Session = Depends(get_database_session)):
@@ -234,19 +235,25 @@ def get_courses_by_subject_term(
             CourseSchema.className,
             CourseSchema.courseDate,
             CourseSchema.courseShiftStart,
-            CourseSchema.courseShiftEnd
+            CourseSchema.courseShiftEnd,
+            CourseSchema.courseID
         )
+        .select_from(CourseSchema)
         .filter(CourseSchema.subjectID == subjectID, CourseSchema.termID == termID).all()
     )
 
     result = []
+    
     for course in courses:
+        is_registered = db.query(exists().where(ClassSchema.studentID == studentID, ClassSchema.courseID == course[4])).scalar()
+    
         result.append(
             {
                 "className": course[0],
                 "courseDate": course[1],
                 "courseShiftStart": course[2],
-                "courseShiftEnd": course[3]
+                "courseShiftEnd": course[3],
+                "is_registered": is_registered
             }
         )
 

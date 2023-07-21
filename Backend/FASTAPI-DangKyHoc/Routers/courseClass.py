@@ -32,10 +32,51 @@ async def create_class(
     courseID: int = Form(...),
     termID: str = Form(...)
 ):
-    #Check có tồn tại lớp không
+    #Check có tồn tại chương trình không
     course_exists = db.query(exists().where(CourseSchema.courseID == courseID)).scalar()
     #Check có tồn tại MSV không
     student_exists = db.query(exists().where(StudentSchema.studentID == studentID)).scalar()
+    #Check đã từng đăng ký chưa
+    class_exists = db.query(exists().where(ClassSchema.courseID == courseID, ClassSchema.termID == termID, ClassSchema.status == 0)).scalar()
+
+    if class_exists:
+        classid = (db.query
+                   (
+            ClassSchema.classID
+            )
+            .select_from(ClassSchema)
+            .filter(ClassSchema.courseID == courseID, ClassSchema.termID == termID).first()
+        )
+        examid1 = (db.query
+                   (
+                    StudentExamSchema.id,
+                   )
+                   .select_from(StudentExamSchema)
+                   .join(ExamSchema, StudentExamSchema.examID == ExamSchema.examID)
+                   .join(CourseSchema, ExamSchema.subjectID == CourseSchema.subjectID)
+                   .filter(CourseSchema.courseID == courseID, ExamSchema.termID == termID).first()
+        )
+        gradeid = (db.query
+                   (
+                    GradeSchema.gradeID,
+                   )
+                   .select_from(GradeSchema)
+                   .join(SubjectSchema, SubjectSchema.subjectID == GradeSchema.subjectID)
+                   .join(CourseSchema, SubjectSchema.subjectID == CourseSchema.subjectID)
+                   .filter(CourseSchema.courseID == courseID, GradeSchema.termID == termID).first()
+        )
+        get_class = db.query(ClassSchema).get(classid)
+        get_exam = db.query(StudentExamSchema).get(examid1)
+        get_grade = db.query(GradeSchema).get(gradeid)
+
+        get_class.status = 1
+        get_exam.status = 1
+        get_grade.status = 1
+        db.commit()
+        db.refresh(get_class)
+        db.refresh(get_exam)
+        db.refresh(get_grade)
+        return JSONResponse(status_code=200, content={"message": "Đăng ký môn thành công!"})
     
     if course_exists and student_exists:
         #Lấy mã môn từ course
@@ -66,11 +107,11 @@ async def create_class(
             if (chosenCourseFilter.courseShiftStart in i or chosenCourseFilter.courseShiftEnd in i):
                 return JSONResponse(status_code=400, content={"message": "Trùng lịch!"})
             
-        classSchema = ClassSchema(courseID = courseID, studentID = studentID, termID = termID)
-        gradeSchema = GradeSchema(studentID = studentID, termID = termID, subjectID = subjectID)
+        classSchema = ClassSchema(courseID = courseID, studentID = studentID, termID = termID, status = 1)
+        gradeSchema = GradeSchema(studentID = studentID, termID = termID, subjectID = subjectID, status = 1)
         examFilter = db.query(ExamSchema).filter(ExamSchema.subjectID == subjectID).first()
         examid = examFilter.examID
-        examSchema = StudentExamSchema(studentID = studentID, examID = examid)
+        examSchema = StudentExamSchema(studentID = studentID, examID = examid, status = 1)
 
         db.add(classSchema)
         db.add(gradeSchema)
@@ -79,50 +120,158 @@ async def create_class(
         db.refresh(classSchema)
         db.refresh(gradeSchema)
         db.refresh(examSchema)
-        return {
-            "data": "Đăng ký môn học thành công!"
-        }
+        return JSONResponse(status_code=200, content={"message": "Đăng ký môn thành công!"})
 
     else:
         return JSONResponse(status_code=400, content={"message": "Error!"})
-
-#Đăng ký lớp khác
-@router.put("/update_class",dependencies=[Depends(JWTBearer())], summary="Đăng ký lớp khác")
-async def update_course(
+    
+#Hủy đăng ký
+@router.put("/update_class",dependencies=[Depends(JWTBearer())], summary="Hủy đăng ký")
+async def update_class(
     db: Session = Depends(get_database_session),
     classID: int = Form(...),
     studentID: str = Form(...),
-    courseID: int = Form(...)
+):
+    student_exists = db.query(exists().where(StudentSchema.studentID == studentID)).scalar()
+    examid = (db.query
+            (
+            StudentExamSchema.id,
+            )
+            .select_from(ClassSchema)
+            .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
+            .join(ExamSchema, CourseSchema.subjectID == ExamSchema.subjectID)
+            .join(StudentExamSchema, ExamSchema.examID == StudentExamSchema.examID)
+            .filter(ClassSchema.classID == classID).first()
+            )
+    gradeid = (db.query
+            (
+            GradeSchema.gradeID,
+            )
+            .select_from(ClassSchema)
+            .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
+            .join(GradeSchema, CourseSchema.subjectID == GradeSchema.subjectID)
+            .filter(ClassSchema.classID == classID).first()
+        )
+    
+    get_class = db.query(ClassSchema).get(classID)
+    get_exam = db.query(StudentExamSchema).get(examid)
+    get_grade = db.query(GradeSchema).get(gradeid)
+    
+    
+
+    if student_exists:
+        get_class.status = 0
+        get_exam.status = 0
+        get_grade.status = 0
+        db.commit()
+        db.refresh(get_class)
+        db.refresh(get_exam)
+        db.refresh(get_grade)
+        return JSONResponse(status_code=200, content={"message": "Hủy đăng ký môn thành công!"})
+    else:
+        return JSONResponse(status_code=400, content={"message": "Kiểm tra lại thông tin!"})
+
+#Đăng ký lớp khác (Suspended)
+@router.put("/update_new_class",dependencies=[Depends(JWTBearer())], summary="Đăng ký lớp khác (Tạm bỏ)")
+async def update_new_class(
+    db: Session = Depends(get_database_session),
+    classID: int = Form(...),
+    studentID: str = Form(...),
+    courseID: int = Form(...),
+    termID: str = Form(...),
 
 ):
     course_exists = db.query(exists().where(CourseSchema.courseID == courseID)).scalar()
     student_exists = db.query(exists().where(StudentSchema.studentID == studentID)).scalar()
     courseClass = db.query(ClassSchema).get(classID)
 
+    registered = (
+        db.query(CourseSchema.subjectID)
+        .select_from(ClassSchema)
+        .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
+        .all()
+    )
+
+    registering = db.query(CourseSchema).filter(CourseSchema.courseID == courseID, CourseSchema.termID == termID).first()
+
+    registeredCourse = [subject[0] for subject in registered]
+    print(registeredCourse)
+
+    if registering.subjectID not in registeredCourse:
+        print(registering.subjectID)
+        return JSONResponse(status_code=400, content={"message": "Error!"})
     if course_exists and student_exists:
         courseClass.courseID = courseID
+        courseClass.status = 1
         db.commit()
         db.refresh(courseClass)
-        return {
-            "data": "Thông tin chương trình học đã được cập nhật!"
-        }
+        return JSONResponse(status_code=200, content={"message": "Đăng ký môn thành công!"})
     else:
-        return JSONResponse(status_code=400, content={"message": "Không có thông tin chương trình!"})
+        return JSONResponse(status_code=400, content={"message": "Kiểm tra lại thông tin!"})
 
-#Hủy đăng ký
-@router.delete("/delete_class",dependencies=[Depends(JWTBearer())], summary="Hủy đăng ký")
+#Xóa sinh viên trong lớp
+@router.delete("/delete_class",dependencies=[Depends(JWTBearer())], summary="Xóa sinh viên trong lớp")
 async def delete_class(
     db: Session = Depends(get_database_session),
     classID: int = Form(...)
 ):
     class_exists = db.query(exists().where(ClassSchema.classID == classID)).scalar()
+    examid = (db.query
+            (
+            StudentExamSchema.id,
+            )
+            .select_from(ClassSchema)
+            .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
+            .join(ExamSchema, CourseSchema.subjectID == ExamSchema.subjectID)
+            .join(StudentExamSchema, ExamSchema.examID == StudentExamSchema.examID)
+            .filter(ClassSchema.classID == classID).first()
+            )
+    gradeid = (db.query
+            (
+            GradeSchema.gradeID,
+            )
+            .select_from(ClassSchema)
+            .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
+            .join(GradeSchema, CourseSchema.subjectID == GradeSchema.subjectID)
+            .filter(ClassSchema.classID == classID).first()
+        )
+    
     if class_exists:
         class_delete = db.query(ClassSchema).get(classID)
+        exam_delete = db.query(StudentExamSchema).get(examid)
+        grade_delete = db.query(GradeSchema).get(gradeid)
         db.delete(class_delete)
+        db.delete(exam_delete)
+        db.delete(grade_delete)
         db.commit()
+        db.refresh(class_delete)
+        db.refresh(exam_delete)
+        db.refresh(grade_delete)
         return JSONResponse(status_code=200, content={"message": "Xóa lớp thành công!"})
     else:
         return JSONResponse(status_code=400, content={"message": "Không tồn tại lớp học!"})
+
+#Xóa sinh viên hủy đăng ký
+@router.delete("/delete_class_no_register",dependencies=[Depends(JWTBearer())], summary="Xóa sinh viên hủy đăng ký")
+async def delete_class(
+    db: Session = Depends(get_database_session)
+):
+    course_delete = db.query(ClassSchema).filter(ClassSchema.status == 0).all()
+    exam_delete = db.query(StudentExamSchema).filter(StudentExamSchema.status == 0).all()
+    grade_delete = db.query(GradeSchema).filter(GradeSchema.status == 0).all()
+    for course in course_delete:
+        db.delete(course)
+        db.commit()
+    for exam in exam_delete:
+        db.delete(exam)
+        db.commit()
+    for grade in grade_delete:
+        db.delete(grade)
+        db.commit()
+        
+        return JSONResponse(status_code=200, content={"message": "Xóa sinh viên thành công!"})
+    else:
+        return JSONResponse(status_code=400, content={"message": "Error!"})
 
 #Lấy danh sách lớp
 @router.get("/class_by_course/",dependencies=[Depends(JWTBearer())], summary="Lấy danh sách lớp")
@@ -314,7 +463,7 @@ def get_class_by_subject(
     db: Session = Depends(get_database_session)
     ):
     
-    classes = (
+    courseClass = (
         db.query(
                 CourseSchema.className,
                 CourseSchema.courseDate,
@@ -327,16 +476,15 @@ def get_class_by_subject(
             .all()
     )
 
-    result = []
-    for courseClass in classes:
-        result.append(
-            {
+    if courseClass is None:
+        return {"courseClass": {}}
+    
+    result = {
                 "className": courseClass[0],
                 "courseDate": courseClass[1],
                 "courseShiftStart": courseClass[2],
                 "courseShiftEnd": courseClass[3],
                 "courseRoom": courseClass[4]
                 }
-        )
 
     return {"courseClass": result}
