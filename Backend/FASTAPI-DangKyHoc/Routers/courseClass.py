@@ -489,7 +489,6 @@ def get_unlearned_subject(
         .filter(
             StudentSchema.studentID == studentID,
             ~BranchSubjectSchema.subjectID.in_(learned_subject_id),
-            GradeSchema.status==1,
             
         )
         .all()
