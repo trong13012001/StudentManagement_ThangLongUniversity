@@ -273,6 +273,55 @@ async def delete_class(
     else:
         return JSONResponse(status_code=400, content={"message": "Error!"})
 
+#Đóng đăng ký học
+@router.put("/lock_class",dependencies=[Depends(JWTBearer())], summary="Đóng đăng ký học")
+async def lock_class(
+    db: Session = Depends(get_database_session),
+):
+    class_status_exists = db.query(exists().where(ClassSchema.status == 1)).scalar()
+    exam_status_exists = db.query(exists().where(StudentExamSchema.status == 1)).scalar()
+    grade_status_exists = db.query(exists().where(GradeSchema.status == 1)).scalar()
+
+    if class_status_exists and exam_status_exists and grade_status_exists:
+        classid = (db.query
+                (
+                ClassSchema.classID,
+                )
+                .select_from(ClassSchema)
+                .filter(ClassSchema.status == 1).all()
+                )
+        examid = (db.query
+                (
+                StudentExamSchema.id,
+                )
+                .select_from(StudentExamSchema)
+                .filter(StudentExamSchema.status == 1).all()
+                )
+        gradeid = (db.query
+                (
+                GradeSchema.gradeID,
+                )
+                .select_from(GradeSchema)
+                .filter(GradeSchema.status == 1).all()
+            )  
+            
+        for classC in classid:
+            get_class = db.query(ClassSchema).get(classC)
+            get_class.status = 2
+        for exam in examid:
+            get_exam = db.query(StudentExamSchema).get(exam)
+            get_exam.status = 2
+        for grade in gradeid:
+            get_grade = db.query(GradeSchema).get(grade) 
+            get_grade.status = 2
+        db.commit()
+        db.refresh(get_class)
+        db.refresh(get_exam)
+        db.refresh(get_grade)
+        return JSONResponse(status_code=200, content={"message": "Đã đóng đăng ký học!"})
+    else:
+        return JSONResponse(status_code=200, content={"message": "Không có dữ liệu!"})
+        
 #Lấy danh sách lớp
 @router.get("/class_by_course/",dependencies=[Depends(JWTBearer())], summary="Lấy danh sách lớp")
 def get_class_by_course(
