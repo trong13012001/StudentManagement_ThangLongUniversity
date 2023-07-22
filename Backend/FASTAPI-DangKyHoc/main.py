@@ -20,20 +20,24 @@ import uuid
 app = FastAPI()
 
 
-
+#Người dùng
 app.include_router(login.router, tags=['Login Controller'], prefix='')
 app.include_router(user.router, tags=['User Controller'], prefix='')
+app.include_router(image.router, tags=['Image Controller'], prefix='')
 app.include_router(student.router, tags=['Student Controller'], prefix='')
 app.include_router(teacher.router, tags=['Teacher Controller'], prefix='')
-app.include_router(image.router, tags=['Image Controller'], prefix='')
-app.include_router(subject.router, tags=['Subject Controller'], prefix='')
+
+#Đăng ký học
 app.include_router(course.router, tags=['Course Controller'], prefix='')
-app.include_router(grade.router, tags=['Grade Controller'], prefix='')
+app.include_router(courseClass.router, tags=['Class Controller'], prefix='')
 app.include_router(exam.router, tags=['Exam Controller'], prefix='')
 app.include_router(studentExam.router, tags=['Student Exam Controller'], prefix='')
+app.include_router(grade.router, tags=['Grade Controller'], prefix='')
+app.include_router(bill.router, tags=['Bill Controller'], prefix='')
+
+#Môn học và năm học
 app.include_router(major.router, tags=['Major Controller'], prefix='')
 app.include_router(branch.router, tags=['Branch Controller'], prefix='')
-app.include_router(bill.router, tags=['Bill Controller'], prefix='')
-app.include_router(courseClass.router, tags=['Class Controller'], prefix='')
+app.include_router(subject.router, tags=['Subject Controller'], prefix='')
 app.include_router(year.router, tags=['Year Controller'], prefix='')
 app.include_router(term.router, tags=['Term Controller'], prefix='')
