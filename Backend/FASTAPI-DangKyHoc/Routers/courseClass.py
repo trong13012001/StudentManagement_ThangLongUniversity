@@ -109,7 +109,7 @@ async def create_class(
             
         classSchema = ClassSchema(courseID = courseID, studentID = studentID, termID = termID, status = 1)
         gradeSchema = GradeSchema(studentID = studentID, termID = termID, subjectID = subjectID, status = 1)
-        examFilter = db.query(ExamSchema).filter(ExamSchema.subjectID == subjectID).first()
+        examFilter = db.query(ExamSchema).filter(ExamSchema.subjectID == subjectID, ExamSchema.termID == termID).first()
         examid = examFilter.examID
         examSchema = StudentExamSchema(studentID = studentID, examID = examid, status = 1)
 
@@ -129,10 +129,18 @@ async def create_class(
 @router.put("/update_class",dependencies=[Depends(JWTBearer())], summary="Hủy đăng ký")
 async def update_class(
     db: Session = Depends(get_database_session),
-    classID: int = Form(...),
+    courseID: int = Form(...),
     studentID: str = Form(...),
+    termID:str=Form(...)
 ):
     student_exists = db.query(exists().where(StudentSchema.studentID == studentID)).scalar()
+    classID=(
+            db.query(
+            ClassSchema.classID
+        )
+            .select_from(ClassSchema)
+            .filter(ClassSchema.studentID==studentID, ClassSchema.termID==termID, ClassSchema.courseID==courseID).first())
+
     examid = (db.query
             (
             StudentExamSchema.id,
@@ -141,7 +149,7 @@ async def update_class(
             .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
             .join(ExamSchema, CourseSchema.subjectID == ExamSchema.subjectID)
             .join(StudentExamSchema, ExamSchema.examID == StudentExamSchema.examID)
-            .filter(ClassSchema.classID == classID).first()
+            .filter(ClassSchema.studentID==studentID,ClassSchema.termID==termID,ClassSchema.courseID==courseID).first()
             )
     gradeid = (db.query
             (
@@ -150,9 +158,9 @@ async def update_class(
             .select_from(ClassSchema)
             .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
             .join(GradeSchema, CourseSchema.subjectID == GradeSchema.subjectID)
-            .filter(ClassSchema.classID == classID).first()
+            .filter(ClassSchema.studentID==studentID,ClassSchema.termID==termID,ClassSchema.courseID==courseID).first()
         )
-    
+
     get_class = db.query(ClassSchema).get(classID)
     get_exam = db.query(StudentExamSchema).get(examid)
     get_grade = db.query(GradeSchema).get(gradeid)
