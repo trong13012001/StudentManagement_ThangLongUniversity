@@ -369,7 +369,8 @@ def get_courses_with_subject_info(
             CourseSchema.courseDate,
             CourseSchema.courseShiftStart,
             CourseSchema.courseShiftEnd,
-            CourseSchema.courseRoom
+            CourseSchema.courseRoom,
+            ClassSchema.status
         )
         .join(ClassSchema, CourseSchema.courseID == ClassSchema.courseID)
         .join(StudentSchema, ClassSchema.studentID == StudentSchema.studentID)
@@ -385,7 +386,8 @@ def get_courses_with_subject_info(
                 "courseDate": get_class[2],
                 "courseShiftStart": get_class[3],
                 "courseShiftEnd": get_class[4],
-                "courseRoom": get_class[5]
+                "courseRoom": get_class[5],
+                "status":get_class[6]
             }
         )
     return {"schedule": result}
