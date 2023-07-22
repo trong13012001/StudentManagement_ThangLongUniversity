@@ -129,10 +129,13 @@ async def create_class(
 @router.put("/update_class",dependencies=[Depends(JWTBearer())], summary="Hủy đăng ký")
 async def update_class(
     db: Session = Depends(get_database_session),
-    classID: int = Form(...),
+    courseID: int = Form(...),
     studentID: str = Form(...),
+    termID:str=Form(...)
 ):
     student_exists = db.query(exists().where(StudentSchema.studentID == studentID)).scalar()
+    classID=db.query(ClassSchema.classID).select_from(ClassSchema).filter(ClassSchema.studentID==studentID,ClassSchema.termID==termID,ClassSchema.courseID==courseID).first()
+
     examid = (db.query
             (
             StudentExamSchema.id,
@@ -141,7 +144,7 @@ async def update_class(
             .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
             .join(ExamSchema, CourseSchema.subjectID == ExamSchema.subjectID)
             .join(StudentExamSchema, ExamSchema.examID == StudentExamSchema.examID)
-            .filter(ClassSchema.classID == classID).first()
+            .filter(ClassSchema.studentID==studentID,ClassSchema.termID==termID,ClassSchema.courseID==courseID).first()
             )
     gradeid = (db.query
             (
@@ -150,7 +153,7 @@ async def update_class(
             .select_from(ClassSchema)
             .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
             .join(GradeSchema, CourseSchema.subjectID == GradeSchema.subjectID)
-            .filter(ClassSchema.classID == classID).first()
+            .filter(ClassSchema.studentID==studentID,ClassSchema.termID==termID,ClassSchema.courseID==courseID).first()
         )
     
     get_class = db.query(ClassSchema).get(classID)
@@ -474,7 +477,7 @@ def get_unlearned_subject(
     learned = (
         db.query(GradeSchema.subjectID)
         .select_from(GradeSchema)
-        .filter(GradeSchema.studentID == studentID,GradeSchema.status==0)
+        .filter(GradeSchema.studentID == studentID,GradeSchema.status==2)
         .distinct()
         .all()
     )
