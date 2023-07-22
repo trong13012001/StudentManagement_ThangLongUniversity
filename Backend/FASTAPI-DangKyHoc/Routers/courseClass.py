@@ -45,7 +45,7 @@ async def create_class(
             ClassSchema.classID
             )
             .select_from(ClassSchema)
-            .filter(ClassSchema.courseID == courseID, ClassSchema.termID == termID).first()
+            .filter(ClassSchema.courseID == courseID,ClassSchema.studentID==studentID, ClassSchema.termID == termID).first()
         )
         examid1 = (db.query
                    (
@@ -140,6 +140,7 @@ async def update_class(
         )
             .select_from(ClassSchema)
             .filter(ClassSchema.studentID==studentID, ClassSchema.termID==termID, ClassSchema.courseID==courseID).first())
+
 
     examid = (db.query
             (
@@ -374,7 +375,8 @@ def get_courses_with_subject_info(
             CourseSchema.courseDate,
             CourseSchema.courseShiftStart,
             CourseSchema.courseShiftEnd,
-            CourseSchema.courseRoom
+            CourseSchema.courseRoom,
+            ClassSchema.status
         )
         .join(ClassSchema, CourseSchema.courseID == ClassSchema.courseID)
         .join(StudentSchema, ClassSchema.studentID == StudentSchema.studentID)
@@ -390,7 +392,8 @@ def get_courses_with_subject_info(
                 "courseDate": get_class[2],
                 "courseShiftStart": get_class[3],
                 "courseShiftEnd": get_class[4],
-                "courseRoom": get_class[5]
+                "courseRoom": get_class[5],
+                "status":get_class[6]
             }
         )
     return {"schedule": result}
@@ -411,7 +414,8 @@ def get_courses_with_subject_info(
             CourseSchema.courseShiftStart,
             CourseSchema.courseShiftEnd,
             CourseSchema.courseRoom,
-            CourseSchema.courseID
+            CourseSchema.courseID,
+            ClassSchema.status,
         )
         .join(ClassSchema, CourseSchema.courseID == ClassSchema.courseID)
         .join(StudentSchema, ClassSchema.studentID == StudentSchema.studentID)
@@ -428,8 +432,8 @@ def get_courses_with_subject_info(
                 "courseShiftStart": get_class[3],
                 "courseShiftEnd": get_class[4],
                 "courseRoom": get_class[5],
-                "courseID":get_class[6]
-
+                "courseID":get_class[6],
+                "status":get_class[7]
             }
         )
 
@@ -482,7 +486,7 @@ def get_unlearned_subject(
     learned = (
         db.query(GradeSchema.subjectID)
         .select_from(GradeSchema)
-        .filter(GradeSchema.studentID == studentID)
+        .filter(GradeSchema.studentID == studentID,GradeSchema.status==2)
         .distinct()
         .all()
     )
@@ -496,7 +500,8 @@ def get_unlearned_subject(
         .join(StudentSchema, StudentSchema.branchID == BranchSubjectSchema.branchID)
         .filter(
             StudentSchema.studentID == studentID,
-            ~BranchSubjectSchema.subjectID.in_(learned_subject_id)
+            ~BranchSubjectSchema.subjectID.in_(learned_subject_id),
+            
         )
         .all()
     )
@@ -512,36 +517,36 @@ def get_unlearned_subject(
 
     return {"unlearnedSubject": result}
 
-#Hiện lớp theo môn
-@router.get("/class_by_subject/{subjectID}/{termID}",dependencies=[Depends(JWTBearer())], summary="Hiện lớp theo môn")
-def get_class_by_subject(
-    subjectID = str,
-    termID = str,
-    db: Session = Depends(get_database_session)
-    ):
+# #Hiện lớp theo môn
+# @router.get("/class_by_subject/{subjectID}/{termID}",dependencies=[Depends(JWTBearer())], summary="Hiện lớp theo môn")
+# def get_class_by_subject(
+#     subjectID = str,
+#     termID = str,
+#     db: Session = Depends(get_database_session)
+#     ):
     
-    courseClass = (
-        db.query(
-                CourseSchema.className,
-                CourseSchema.courseDate,
-                CourseSchema.courseShiftStart,
-                CourseSchema.courseShiftEnd,
-                CourseSchema.courseRoom
-            )
-            .select_from(CourseSchema)
-            .filter(CourseSchema.subjectID == subjectID, CourseSchema.termID == termID)
-            .all()
-    )
+#     courseClass = (
+#         db.query(
+#                 CourseSchema.className,
+#                 CourseSchema.courseDate,
+#                 CourseSchema.courseShiftStart,
+#                 CourseSchema.courseShiftEnd,
+#                 CourseSchema.courseRoom
+#             )
+#             .select_from(CourseSchema)
+#             .filter(CourseSchema.subjectID == subjectID, CourseSchema.termID == termID)
+#             .all()
+#     )
 
-    if courseClass is None:
-        return {"courseClass": {}}
+#     if courseClass is None:
+#         return {"courseClass": {}}
     
-    result = {
-                "className": courseClass[0],
-                "courseDate": courseClass[1],
-                "courseShiftStart": courseClass[2],
-                "courseShiftEnd": courseClass[3],
-                "courseRoom": courseClass[4]
-                }
+#     result = {
+#                 "className": courseClass[0],
+#                 "courseDate": courseClass[1],
+#                 "courseShiftStart": courseClass[2],
+#                 "courseShiftEnd": courseClass[3],
+#                 "courseRoom": courseClass[4]
+#                 }
 
-    return {"courseClass": result}
+#     return {"courseClass": result}

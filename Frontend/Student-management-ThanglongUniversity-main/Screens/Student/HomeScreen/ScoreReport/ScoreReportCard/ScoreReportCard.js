@@ -22,17 +22,17 @@ import axios from "axios";
 import { BASE_URL } from "../../../../../env/url";
 import Header from "../../../../../components/Header/Header";
 import GlobalStyle from "../../../../../GlobalStyle";
-import SubjectViewer from "../../../../../components/SubjectViewer/SubjectViewer";
+import SubjectViewer from "../../../../../components/Viewer/SubjectViewer";
 import Loader from "../../../../../components/Loader/Loader";
 import CustomPicker from "../../../../../components/Picker/CustomPicker";
 import * as SecureStore from "expo-secure-store";
-import { useRoute } from '@react-navigation/native';
+import { useRoute } from "@react-navigation/native";
 
 let windowWidth = Dimensions.get("window").width;
 
 const ScoreReportCard = () => {
   const route = useRoute();
-  const dataTerm = route.params.data; 
+  const dataTerm = route.params.data;
   const [loading, setLoading] = useState(true);
   const [loadingLoader, setLoadingLoader] = useState(true);
   const [dataset, setDataset] = useState([]);
@@ -41,34 +41,37 @@ const ScoreReportCard = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     load();
   }, []);
 
   const load = useCallback(async () => {
-  
     try {
-        const studentID=await SecureStore.getItemAsync("studentId")
-        console.log(studentID)
-        const accessToken = await SecureStore.getItemAsync("accessToken");
-        const authorization = `Bearer ${accessToken}`
-       await axios.get(`${BASE_URL}/grade_by_student_and_term/${dataTerm.termID}/${studentID}`,
-       {headers: {
-          "Content-Type": "application/json",
-          "Authorization": authorization,
-                },
-      })  .then(function (response) {
-          setDataset(response.data.studentTermGrade)
-          setRefreshing(false)
-          setLoadingLoader(false)        
-    })
+      const studentID = await SecureStore.getItemAsync("studentId");
+      console.log(studentID);
+      const accessToken = await SecureStore.getItemAsync("accessToken");
+      const authorization = `Bearer ${accessToken}`;
+      await axios
+        .get(
+          `${BASE_URL}/grade_by_student_and_term/${dataTerm.termID}/${studentID}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: authorization,
+            },
+          }
+        )
+        .then(function (response) {
+          setDataset(response.data.studentTermGrade);
+          setRefreshing(false);
+          setLoadingLoader(false);
+        });
     } catch (error) {
       console.log(error);
-      console.log('Response data:', error.response.data);
-      console.log('Response status:', error.response.status);
-      console.log('Response headers:', error.response.headers);    
+      console.log("Response data:", error.response.data);
+      console.log("Response status:", error.response.status);
+      console.log("Response headers:", error.response.headers);
 
       Alert.alert("Error", "Failed to load data. Please try again.");
     } finally {
@@ -76,7 +79,7 @@ const ScoreReportCard = () => {
       setLoadingLoader(false);
     }
   }, [dataTerm.termID]);
-  
+
   useEffect(() => {
     load();
   }, [loadingLoader]);
@@ -95,14 +98,18 @@ const ScoreReportCard = () => {
     <>
       <Header hasBackButton={true} title={"Phiếu báo điểm"} />
       <Loader loading={loadingLoader} />
-      <View style={{marginLeft:"15%"}}>
-      <Text allowFontScaling={false} style={styles.header2}>{dataTerm.termName}</Text>
-
+      <View style={{ marginLeft: "15%" }}>
+        <Text allowFontScaling={false} style={styles.header2}>
+          {dataTerm.termName}
+        </Text>
       </View>
-      <View style={{marginTop:20}}>
+      <View style={{ marginTop: 20 }}>
         <View style={[styles.tableRow, { backgroundColor: "#f9fafb" }]}>
           <View style={{ width: "8%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
               STT
             </Text>
           </View>
@@ -112,22 +119,34 @@ const ScoreReportCard = () => {
             </Text>
           </View>
           <View style={{ width: "20%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
-               Quá trình
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
+              Quá trình
             </Text>
           </View>
           <View style={{ width: "10%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
               KN1
             </Text>
           </View>
           <View style={{ width: "10%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
               KN2
             </Text>
           </View>
           <View style={{ width: "15%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
               Kết quả
             </Text>
           </View>
@@ -137,7 +156,9 @@ const ScoreReportCard = () => {
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ flexGrow: 1 }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
           {loading ? (
             <ActivityIndicator
@@ -150,7 +171,9 @@ const ScoreReportCard = () => {
             <View>
               <View style={styles.tableContainer}>
                 {filteredDataset.length === 0 ? (
-                  <Text style={styles.noResultsText}>No results found</Text>
+                  <Text style={{ ...styles.text, textAlign: "center" }}>
+                    No results found
+                  </Text>
                 ) : (
                   filteredDataset?.map((data, index) => {
                     return (
@@ -158,40 +181,65 @@ const ScoreReportCard = () => {
                         key={data.id}
                         style={[
                           styles.tableRow,
-                          { backgroundColor: index % 2 === 0 ? "white" : "#f6f6f6", borderColor: "#EAECF0" },
+                          {
+                            backgroundColor:
+                              index % 2 === 0 ? "white" : "#f6f6f6",
+                            borderColor: "#EAECF0",
+                          },
                         ]}
                       >
-                        <View style={{ width: "8%", alignSelf: "center"}}>
-                          <Text allowFontScaling={false} style={[styles.text,{textAlign:"center"}]}>
+                        <View style={{ width: "8%", alignSelf: "center" }}>
+                          <Text
+                            allowFontScaling={false}
+                            style={[styles.text, { textAlign: "center" }]}
+                          >
                             {index + 1}
                           </Text>
                         </View>
-                        <View style={{ width: "35%", alignSelf: "center", marginRight: "2%" }}>
-                          <Text allowFontScaling={false} style={styles.headerText}>
+                        <View
+                          style={{
+                            width: "35%",
+                            alignSelf: "center",
+                            marginRight: "2%",
+                          }}
+                        >
+                          <Text
+                            allowFontScaling={false}
+                            style={styles.headerText}
+                          >
                             {data.subjectName}
-                          </Text>
-                          <Text allowFontScaling={false} style={styles.text}>
-                            {data.subjectID}
                           </Text>
                         </View>
                         <View style={{ width: "20%", alignSelf: "center" }}>
-                          <Text allowFontScaling={false} style={{...styles.text,textAlign:"center"}}>
-                            {data.progressGrade}
+                          <Text
+                            allowFontScaling={false}
+                            style={{ ...styles.text, textAlign: "center" }}
+                          >
+                            {parseFloat(data.progressGrade).toFixed(1)}
                           </Text>
                         </View>
                         <View style={{ width: "10%", alignSelf: "center" }}>
-                          <Text allowFontScaling={false} style={{...styles.text,textAlign:"center"}}>
-                            {data.examGrade1}
+                          <Text
+                            allowFontScaling={false}
+                            style={{ ...styles.text, textAlign: "center" }}
+                          >
+                            {parseFloat(data.examGrade1).toFixed(1)}{" "}
                           </Text>
                         </View>
                         <View style={{ width: "10%", alignSelf: "center" }}>
-                          <Text allowFontScaling={false} style={{...styles.text,textAlign:"center"}}>
+                          <Text
+                            allowFontScaling={false}
+                            style={{ ...styles.text, textAlign: "center" }}
+                          >
                             {data.examGrade2}
                           </Text>
                         </View>
                         <View style={{ width: "15%", alignSelf: "center" }}>
-                          <Text allowFontScaling={false} style={{...styles.text,textAlign:"center"}}>
-                            {data.finalGrade}
+                          <Text
+                            allowFontScaling={false}
+                            style={{ ...styles.text, textAlign: "center" }}
+                          >
+                            {parseFloat(data.finalGrade).toFixed(1)}
                           </Text>
                         </View>
                       </View>
@@ -237,7 +285,6 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     fontWeight: "600",
     marginLeft: "10%",
-
   },
   tableRow: {
     padding: 8,
@@ -256,18 +303,21 @@ const styles = StyleSheet.create({
   },
   text: {
     color: GlobalStyle.textColor.color,
-    fontSize: Platform.OS === "ios" && windowWidth > 200 && windowWidth < 380 ? 10 : 12,
+    fontSize:
+      Platform.OS === "ios" && windowWidth > 200 && windowWidth < 380 ? 10 : 12,
     marginLeft: "10%",
-
   },
   noResultsText: {
     textAlign: "center",
     marginTop: 20,
     color: "gray",
   },
-  header2:{
-    fontSize: (Platform.OS === 'ios' && windowWidth>400) ?20 : 20*(windowWidth/428),
-    fontWeight:"600",
-    color:GlobalStyle.themeColor.color
-  }
+  header2: {
+    fontSize:
+      Platform.OS === "ios" && windowWidth > 400
+        ? 20
+        : 20 * (windowWidth / 428),
+    fontWeight: "600",
+    color: GlobalStyle.themeColor.color,
+  },
 });

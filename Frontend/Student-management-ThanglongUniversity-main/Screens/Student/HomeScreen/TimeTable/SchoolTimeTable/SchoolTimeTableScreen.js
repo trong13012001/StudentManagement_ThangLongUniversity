@@ -26,13 +26,13 @@ import SubjectViewer from "../../../../../components/Viewer/SubjectViewer";
 import Loader from "../../../../../components/Loader/Loader";
 import CustomPicker from "../../../../../components/Picker/CustomPicker";
 import * as SecureStore from "expo-secure-store";
-import { useRoute } from '@react-navigation/native';
+import { useRoute } from "@react-navigation/native";
 
 let windowWidth = Dimensions.get("window").width;
 
 const SchoolTimeTableScreen = () => {
   const route = useRoute();
-  const dataTerm = route.params.data; 
+  const dataTerm = route.params.data;
   const [loading, setLoading] = useState(true);
   const [loadingLoader, setLoadingLoader] = useState(true);
   const [dataset, setDataset] = useState([]);
@@ -41,30 +41,30 @@ const SchoolTimeTableScreen = () => {
   const [showModal, setShowModal] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     load();
   }, []);
 
   const load = useCallback(async () => {
-  
     try {
-       await axios.get(`${BASE_URL}/course/`, {
-        headers: {
-          "Content-Type": "application/json",
-          termID: dataTerm.termID,
-        },
-      })  .then(function (response) {
-          setDataset(response.data.courses)
-          setRefreshing(false)
-          setLoadingLoader(false)        
-    })
+      await axios
+        .get(`${BASE_URL}/course/`, {
+          headers: {
+            "Content-Type": "application/json",
+            termID: dataTerm.termID,
+          },
+        })
+        .then(function (response) {
+          setDataset(response.data.courses);
+          setRefreshing(false);
+          setLoadingLoader(false);
+        });
     } catch (error) {
       console.log(error);
-      console.log('Response data:', error.response.data);
-      console.log('Response status:', error.response.status);
-      console.log('Response headers:', error.response.headers);    
+      console.log("Response data:", error.response.data);
+      console.log("Response status:", error.response.status);
+      console.log("Response headers:", error.response.headers);
 
       Alert.alert("Error", "Failed to load data. Please try again.");
     } finally {
@@ -72,7 +72,7 @@ const SchoolTimeTableScreen = () => {
       setLoadingLoader(false);
     }
   }, [dataTerm.termID]);
-  
+
   useEffect(() => {
     load();
   }, [loadingLoader]);
@@ -91,9 +91,10 @@ const SchoolTimeTableScreen = () => {
     <>
       <Header hasBackButton={true} title={"Thời khóa biểu toàn trường"} />
       <Loader loading={loadingLoader} />
-      <View style={{marginLeft:"15%"}}>
-      <Text allowFontScaling={false} style={styles.header2}>{dataTerm.termName}</Text>
-
+      <View style={{ marginLeft: "15%" }}>
+        <Text allowFontScaling={false} style={styles.header2}>
+          {dataTerm.termName}
+        </Text>
       </View>
       <TextInput
         style={styles.searchInput}
@@ -105,27 +106,42 @@ const SchoolTimeTableScreen = () => {
       <View>
         <View style={[styles.tableRow, { backgroundColor: "#f9fafb" }]}>
           <View style={{ width: "8%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
               STT
             </Text>
           </View>
           <View style={{ width: "50%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
               Tên môn
             </Text>
           </View>
           <View style={{ width: "10%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
               Thứ
             </Text>
           </View>
           <View style={{ width: "10%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
               Ca
             </Text>
           </View>
           <View style={{ width: "20%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
               Phòng học
             </Text>
           </View>
@@ -135,7 +151,9 @@ const SchoolTimeTableScreen = () => {
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ flexGrow: 1 }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
           {loading ? (
             <ActivityIndicator
@@ -156,20 +174,39 @@ const SchoolTimeTableScreen = () => {
                         key={data.id}
                         style={[
                           styles.tableRow,
-                          { backgroundColor: index % 2 === 0 ? "white" : "#f6f6f6", borderColor: "#EAECF0" },
+                          {
+                            backgroundColor:
+                              index % 2 === 0 ? "white" : "#f6f6f6",
+                            borderColor: "#EAECF0",
+                          },
                         ]}
                         onPress={async () => {
                           setCourseID(data.courseID);
                           setShowModal(true);
                         }}
                       >
-                        <View style={{ width: "8%", alignSelf: "center", marginRight: "3%" }}>
+                        <View
+                          style={{
+                            width: "8%",
+                            alignSelf: "center",
+                            marginRight: "3%",
+                          }}
+                        >
                           <Text allowFontScaling={false} style={[styles.text]}>
                             {index + 1}
                           </Text>
                         </View>
-                        <View style={{ width: "45%", alignSelf: "center", marginRight: "2%" }}>
-                          <Text allowFontScaling={false} style={styles.headerText}>
+                        <View
+                          style={{
+                            width: "45%",
+                            alignSelf: "center",
+                            marginRight: "2%",
+                          }}
+                        >
+                          <Text
+                            allowFontScaling={false}
+                            style={styles.headerText}
+                          >
                             {data.subjectName}
                           </Text>
                           <Text allowFontScaling={false} style={styles.text}>
@@ -196,7 +233,11 @@ const SchoolTimeTableScreen = () => {
                   })
                 )}
               </View>
-              <SubjectViewer courseID={courseID} showModal={showModal} onRequestClose={closeModal} />
+              <SubjectViewer
+                courseID={courseID}
+                showModal={showModal}
+                onRequestClose={closeModal}
+              />
             </View>
           )}
         </ScrollView>
@@ -253,7 +294,8 @@ const styles = StyleSheet.create({
   },
   text: {
     color: GlobalStyle.textColor.color,
-    fontSize: Platform.OS === "ios" && windowWidth > 200 && windowWidth < 380 ? 10 : 12,
+    fontSize:
+      Platform.OS === "ios" && windowWidth > 200 && windowWidth < 380 ? 10 : 12,
     textAlign: "center",
   },
   noResultsText: {
@@ -261,9 +303,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: "gray",
   },
-  header2:{
-    fontSize: (Platform.OS === 'ios' && windowWidth>400) ?20 : 20*(windowWidth/428),
-    fontWeight:"600",
-    color:GlobalStyle.themeColor.color
-  }
+  header2: {
+    fontSize:
+      Platform.OS === "ios" && windowWidth > 400
+        ? 20
+        : 20 * (windowWidth / 428),
+    fontWeight: "600",
+    color: GlobalStyle.themeColor.color,
+  },
 });

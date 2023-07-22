@@ -26,7 +26,7 @@ import SubjectViewer from "../../../../../components/Viewer/SubjectViewer";
 import Loader from "../../../../../components/Loader/Loader";
 import CustomPicker from "../../../../../components/Picker/CustomPicker";
 import * as SecureStore from "expo-secure-store";
-import { useRoute } from '@react-navigation/native';
+import { useRoute } from "@react-navigation/native";
 
 let windowWidth = Dimensions.get("window").width;
 
@@ -38,9 +38,9 @@ const CollegeTranscriptsScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [fullName, setFullName]=useState("");
-  const [studentID,setStudentID]=useState("")
-  const [branchName,setBranchName]=useState("")
+  const [fullName, setFullName] = useState("");
+  const [studentID, setStudentID] = useState("");
+  const [branchName, setBranchName] = useState("");
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -48,35 +48,36 @@ const CollegeTranscriptsScreen = () => {
   }, []);
 
   const load = useCallback(async () => {
-  
     try {
-        const fullName=await SecureStore.getItemAsync("fullName")
-        const studentID=await SecureStore.getItemAsync("studentId")
-        const branchName=await SecureStore.getItemAsync("branchName")
+      const fullName = await SecureStore.getItemAsync("fullName");
+      const studentID = await SecureStore.getItemAsync("studentId");
+      const branchName = await SecureStore.getItemAsync("branchName");
 
-        setStudentID(studentID)
-        setFullName(fullName)
-        setBranchName(branchName)
-        const accessToken = await SecureStore.getItemAsync("accessToken");
-        const authorization = `Bearer ${accessToken}`
-       await axios.get(`${BASE_URL}/get_final_grade_by_student`,
-       {headers: {
-          "Content-Type": "application/json",
-          "Authorization": authorization,
-          "studentID":studentID
-                },
-      })  .then(function (response) {
-        console.log(response)
+      setStudentID(studentID);
+      setFullName(fullName);
+      setBranchName(branchName);
+      const accessToken = await SecureStore.getItemAsync("accessToken");
+      const authorization = `Bearer ${accessToken}`;
+      await axios
+        .get(`${BASE_URL}/get_final_grade_by_student`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: authorization,
+            studentID: studentID,
+          },
+        })
+        .then(function (response) {
+          console.log(response);
 
-          setDataset(response.data.grades)
-          setRefreshing(false)
-          setLoadingLoader(false)        
-    })
+          setDataset(response.data.grades);
+          setRefreshing(false);
+          setLoadingLoader(false);
+        });
     } catch (error) {
       console.log(error);
-      console.log('Response data:', error.response.data);
-      console.log('Response status:', error.response.status);
-      console.log('Response headers:', error.response.headers);    
+      console.log("Response data:", error.response.data);
+      console.log("Response status:", error.response.status);
+      console.log("Response headers:", error.response.headers);
 
       Alert.alert("Error", "Failed to load data. Please try again.");
     } finally {
@@ -84,7 +85,7 @@ const CollegeTranscriptsScreen = () => {
       setLoadingLoader(false);
     }
   }, []);
-  
+
   useEffect(() => {
     load();
   }, [loadingLoader]);
@@ -93,21 +94,26 @@ const CollegeTranscriptsScreen = () => {
     setShowModal(false);
   };
 
-
-
   return (
     <>
       <Header hasBackButton={true} title={"Bảng điểm"} />
       <Loader loading={loadingLoader} />
-      <View style={{marginLeft:"15%"}}>
-      <Text allowFontScaling={false} style={styles.header2}><Text style={{textTransform: 'uppercase'}}>{studentID} </Text>{fullName}</Text>
-      <Text allowFontScaling={false} style={styles.header3}>Ngành: {branchName}</Text>
-
+      <View style={{ marginLeft: "15%" }}>
+        <Text allowFontScaling={false} style={styles.header2}>
+          <Text style={{ textTransform: "uppercase" }}>{studentID} </Text>
+          {fullName}
+        </Text>
+        <Text allowFontScaling={false} style={styles.header3}>
+          Ngành: {branchName}
+        </Text>
       </View>
-      <View style={{marginTop:20}}>
+      <View style={{ marginTop: 20 }}>
         <View style={[styles.tableRow, { backgroundColor: "#f9fafb" }]}>
           <View style={{ width: "8%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
               STT
             </Text>
           </View>
@@ -117,28 +123,38 @@ const CollegeTranscriptsScreen = () => {
             </Text>
           </View>
           <View style={{ width: "40%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
-               Tên HP
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
+              Tên HP
             </Text>
           </View>
           <View style={{ width: "15%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
               Số TC
             </Text>
           </View>
           <View style={{ width: "15%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
               Điểm
             </Text>
           </View>
-      
         </View>
       </View>
       <View style={styles.container}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ flexGrow: 1 }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
           {loading ? (
             <ActivityIndicator
@@ -159,11 +175,17 @@ const CollegeTranscriptsScreen = () => {
                         key={data.id}
                         style={[
                           styles.tableRow,
-                          {   backgroundColor: data.finalGrade === -1 ? "green" : (data.finalGrade === null ? "#fafad2" : "white"),
-                        },
+                          {
+                            backgroundColor:
+                              data.finalGrade === -1
+                                ? "green"
+                                : data.finalGrade === null
+                                ? "#fafad2"
+                                : "white",
+                          },
                         ]}
                       >
-                        <View style={{ width: "8%", alignSelf: "center"}}>
+                        <View style={{ width: "8%", alignSelf: "center" }}>
                           <Text allowFontScaling={false} style={[styles.text]}>
                             {index + 1}
                           </Text>
@@ -174,31 +196,63 @@ const CollegeTranscriptsScreen = () => {
                           </Text>
                         </View>
                         <View style={{ width: "40%", alignSelf: "center" }}>
-                        <Text allowFontScaling={false} style={styles.headerText}>
+                          <Text
+                            allowFontScaling={false}
+                            style={styles.headerText}
+                          >
                             {data.subjectName}
                           </Text>
                         </View>
                         <View style={{ width: "15%", alignSelf: "center" }}>
-                          <Text allowFontScaling={false} style={{...styles.text}}>
+                          <Text
+                            allowFontScaling={false}
+                            style={{ ...styles.text }}
+                          >
                             {data.subjectCredit}
                           </Text>
                         </View>
                         <View style={{ width: "15%", alignSelf: "center" }}>
-                            {data.finalGrade===null?(<Text allowFontScaling={false} style={{...styles.text,color:GlobalStyle.textColor.color}}>
-                            ?
-                          </Text>):data.finalGrade<4 &&data.finalGrade>0?
-                          (<Text allowFontScaling={false} style={{...styles.text,color:GlobalStyle.themeColor.color}}>
-                            {parseFloat(data.finalGrade).toFixed(1)}
-                          </Text>):
-                        data.finalGrade>=4?
-                          (<Text allowFontScaling={false} style={{...styles.text,color:GlobalStyle.textColor.color}}>
-                            {parseFloat(data.finalGrade).toFixed(1)}
-                          </Text>):
-                           (<Text allowFontScaling={false} style={{...styles.text,color:GlobalStyle.textColor.color}}>
-                            {data.finalGrade}
-                          </Text>)
-                          }
-
+                          {data.finalGrade === null ? (
+                            <Text
+                              allowFontScaling={false}
+                              style={{
+                                ...styles.text,
+                                color: GlobalStyle.textColor.color,
+                              }}
+                            >
+                              ?
+                            </Text>
+                          ) : data.finalGrade < 4 && data.finalGrade > 0 ? (
+                            <Text
+                              allowFontScaling={false}
+                              style={{
+                                ...styles.text,
+                                color: GlobalStyle.themeColor.color,
+                              }}
+                            >
+                              {parseFloat(data.finalGrade).toFixed(1)}
+                            </Text>
+                          ) : data.finalGrade >= 4 ? (
+                            <Text
+                              allowFontScaling={false}
+                              style={{
+                                ...styles.text,
+                                color: GlobalStyle.textColor.color,
+                              }}
+                            >
+                              {parseFloat(data.finalGrade).toFixed(1)}
+                            </Text>
+                          ) : (
+                            <Text
+                              allowFontScaling={false}
+                              style={{
+                                ...styles.text,
+                                color: GlobalStyle.textColor.color,
+                              }}
+                            >
+                              {data.finalGrade}
+                            </Text>
+                          )}
                         </View>
                       </View>
                     );
@@ -243,8 +297,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     fontWeight: "600",
     marginLeft: "10%",
-    textAlign:"center"
-
+    textAlign: "center",
   },
   tableRow: {
     padding: 8,
@@ -263,25 +316,30 @@ const styles = StyleSheet.create({
   },
   text: {
     color: GlobalStyle.textColor.color,
-    fontSize: Platform.OS === "ios" && windowWidth > 200 && windowWidth < 380 ? 10 : 12,
-    textAlign:"center"
+    fontSize:
+      Platform.OS === "ios" && windowWidth > 200 && windowWidth < 380 ? 10 : 12,
+    textAlign: "center",
   },
   noResultsText: {
     textAlign: "center",
     marginTop: 20,
     color: "gray",
   },
-  header2:{
-    fontSize: (Platform.OS === 'ios' && windowWidth>400) ?20 : 20*(windowWidth/428),
-    fontWeight:"600",
-    color:GlobalStyle.themeColor.color
+  header2: {
+    fontSize:
+      Platform.OS === "ios" && windowWidth > 400
+        ? 20
+        : 20 * (windowWidth / 428),
+    fontWeight: "600",
+    color: GlobalStyle.themeColor.color,
   },
-  header3:{
-    fontSize: (Platform.OS === 'ios' && windowWidth>400) ? 16 : 16*(windowWidth/428),
-    fontWeight:"600",
-    color:GlobalStyle.textColor.color,
-    marginTop:5
+  header3: {
+    fontSize:
+      Platform.OS === "ios" && windowWidth > 400
+        ? 16
+        : 16 * (windowWidth / 428),
+    fontWeight: "600",
+    color: GlobalStyle.textColor.color,
+    marginTop: 5,
   },
-
 });
-
