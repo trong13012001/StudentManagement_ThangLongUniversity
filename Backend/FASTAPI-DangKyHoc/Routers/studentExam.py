@@ -89,7 +89,7 @@ def get_student_exam_by_student(
         .select_from(StudentExamSchema)
         .join(ExamSchema, StudentExamSchema.examID == ExamSchema.examID)
         .join(SubjectSchema, ExamSchema.subjectID == SubjectSchema.subjectID)
-        .filter(StudentExamSchema.studentID == studentID, ExamSchema.termID == termID).all() 
+        .filter(StudentExamSchema.studentID == studentID, ExamSchema.termID == termID, StudentExamSchema.status == 2).all() 
     )
 
     result = []

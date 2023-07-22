@@ -328,7 +328,7 @@ async def lock_class(
         db.refresh(get_grade)
         return JSONResponse(status_code=200, content={"message": "Đã đóng đăng ký học!"})
     else:
-        return JSONResponse(status_code=200, content={"message": "Không có dữ liệu!"})
+        return JSONResponse(status_code=400, content={"message": "Không có dữ liệu!"})
         
 #Lấy danh sách lớp
 @router.get("/class_by_course/",dependencies=[Depends(JWTBearer())], summary="Lấy danh sách lớp")
@@ -511,37 +511,3 @@ def get_unlearned_subject(
         )
 
     return {"unlearnedSubject": result}
-
-#Hiện lớp theo môn
-@router.get("/class_by_subject/{subjectID}/{termID}",dependencies=[Depends(JWTBearer())], summary="Hiện lớp theo môn")
-def get_class_by_subject(
-    subjectID = str,
-    termID = str,
-    db: Session = Depends(get_database_session)
-    ):
-    
-    courseClass = (
-        db.query(
-                CourseSchema.className,
-                CourseSchema.courseDate,
-                CourseSchema.courseShiftStart,
-                CourseSchema.courseShiftEnd,
-                CourseSchema.courseRoom
-            )
-            .select_from(CourseSchema)
-            .filter(CourseSchema.subjectID == subjectID, CourseSchema.termID == termID)
-            .all()
-    )
-
-    if courseClass is None:
-        return {"courseClass": {}}
-    
-    result = {
-                "className": courseClass[0],
-                "courseDate": courseClass[1],
-                "courseShiftStart": courseClass[2],
-                "courseShiftEnd": courseClass[3],
-                "courseRoom": courseClass[4]
-                }
-
-    return {"courseClass": result}

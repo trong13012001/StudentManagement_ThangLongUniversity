@@ -245,7 +245,7 @@ def get_courses_by_subject_term(
     result = []
     
     for course in courses:
-        is_registered = db.query(exists().where(ClassSchema.studentID == studentID, ClassSchema.courseID == course[4])).scalar()
+        is_registered = db.query(exists().where(ClassSchema.studentID == studentID, ClassSchema.courseID == course[4], ClassSchema.status == 1)).scalar()
     
         result.append(
             {
