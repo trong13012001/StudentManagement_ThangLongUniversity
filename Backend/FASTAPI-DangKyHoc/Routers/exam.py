@@ -108,7 +108,7 @@ def get_exam_with_subject_info(
  
         )
         .join(SubjectSchema, ExamSchema.subjectID == SubjectSchema.subjectID)
-        .filter(ExamSchema.term==termID).all()
+        .filter(ExamSchema.termID==termID).all()
     )
 
     result = []

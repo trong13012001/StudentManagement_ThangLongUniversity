@@ -104,13 +104,15 @@ async def login(db: Session = Depends(get_database_session),
         return JSONResponse(status_code=400, content={"message": "Sai mật khẩu!"})
     else:
         if userNewPassword == userConfirmPassword:
-            newPassword = base64.b64encode(userNewPassword.encode("utf-8"))
-            user.userPassword = newPassword
-            print(newPassword)
-            db.commit()
-            db.refresh(user)
-            
-            return JSONResponse(status_code=200, content={"message": "Đổi mật khẩu thành công!"})
+            if len(userNewPassword) >=6 and len(userConfirmPassword) >= 6:
+                newPassword = base64.b64encode(userNewPassword.encode("utf-8"))
+                user.userPassword = newPassword
+                print(newPassword)
+                db.commit()
+                db.refresh(user)
+                return JSONResponse(status_code=200, content={"message": "Đổi mật khẩu thành công!"})
+            else:
+                return JSONResponse(status_code=400, content={"message": "Mật khẩu quá ngắn!"})
         else:
             return JSONResponse(status_code=400, content={"message": "Mật khẩu xác nhận không khớp!"})
 

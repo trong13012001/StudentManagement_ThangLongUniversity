@@ -25,7 +25,7 @@ def get_database_session():
         db.close()
 
 #Tổng tiền từng môn
-@router.get("/bill_by_subject/{StudentID}/{termID}",dependencies=[Depends(JWTBearer())])
+@router.get("/bill_by_subject/{StudentID}/{termID}",dependencies=[Depends(JWTBearer())], summary="Tổng tiền từng môn")
 def get_bill_by_subject(StudentID: str,termID:str, db: Session = Depends(get_database_session)):
     bills = (
         db.query(
@@ -38,7 +38,7 @@ def get_bill_by_subject(StudentID: str,termID:str, db: Session = Depends(get_dat
         )
         .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
-        .filter(ClassSchema.studentID == StudentID,ClassSchema.termID==termID, ClassSchema.status == 1)
+        .filter(ClassSchema.studentID == StudentID,ClassSchema.termID==termID, ClassSchema.status == 2)
         .all()
     )
 
@@ -59,7 +59,7 @@ def get_bill_by_subject(StudentID: str,termID:str, db: Session = Depends(get_dat
     return {"bills": result}
 
 #Tổng tiền theo kỳ
-@router.get("/bill_by_term/{StudentID}/{termID}",dependencies=[Depends(JWTBearer())])
+@router.get("/bill_by_term/{StudentID}/{termID}",dependencies=[Depends(JWTBearer())], summary="Tổng tiền theo kỳ")
 def get_bill_by_term(
             StudentID: str,
             termID: str,
@@ -73,7 +73,7 @@ def get_bill_by_term(
         .select_from(ClassSchema)
         .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
-        .filter(ClassSchema.studentID == StudentID, CourseSchema.termID == termID, ClassSchema.status == 1)
+        .filter(ClassSchema.studentID == StudentID, CourseSchema.termID == termID, ClassSchema.status == 2)
         .group_by(ClassSchema.studentID, ClassSchema.termID)
         .first()
     )
@@ -90,7 +90,7 @@ def get_bill_by_term(
     return {"bill": result}
 
 #Tổng tiền
-@router.get("/bill_total/{StudentID}",dependencies=[Depends(JWTBearer())])
+@router.get("/bill_total/{StudentID}",dependencies=[Depends(JWTBearer())], summary="Tổng tiền")
 def get_bill_total(
             StudentID: str,
             db: Session = Depends(get_database_session)):
@@ -102,7 +102,7 @@ def get_bill_total(
         .select_from(ClassSchema)
         .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
-        .filter(ClassSchema.studentID == StudentID, ClassSchema.status == 1)
+        .filter(ClassSchema.studentID == StudentID, ClassSchema.status == 2)
         .group_by(ClassSchema.studentID)
         .first()
     )
@@ -131,7 +131,7 @@ def get_courses_bill_info(courseID: int, db: Session = Depends(get_database_sess
         )
         .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
         .join(SubjectSchema, CourseSchema.subjectID == SubjectSchema.subjectID)
-        .filter(ClassSchema.courseID == courseID, ClassSchema.status == 1)
+        .filter(ClassSchema.courseID == courseID, ClassSchema.status == 2)
         .first()
     )
 
