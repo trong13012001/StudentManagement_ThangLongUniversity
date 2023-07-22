@@ -6,11 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/logotlu.jpg",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -20,13 +15,18 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo_tlu.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.trong_xm_2001.Dangkyhoc"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9dd0f08e-8d41-4bbb-95b5-1ac7af96fc1f"
+      }
     }
   }
 }

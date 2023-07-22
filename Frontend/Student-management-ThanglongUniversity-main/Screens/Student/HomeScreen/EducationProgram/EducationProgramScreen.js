@@ -22,17 +22,17 @@ import axios from "axios";
 import { BASE_URL } from "../../../../env/url";
 import Header from "../../../../components/Header/Header";
 import GlobalStyle from "../../../../GlobalStyle";
-import SubjectViewer from "../../../../components/SubjectViewer/SubjectViewer";
+import SubjectViewer from "../../../../components/Viewer/SubjectViewer";
 import Loader from "../../../../components/Loader/Loader";
 import CustomPicker from "../../../../components/Picker/CustomPicker";
 import * as SecureStore from "expo-secure-store";
-import { useRoute } from '@react-navigation/native';
+import { useRoute } from "@react-navigation/native";
 
 let windowWidth = Dimensions.get("window").width;
 
 const EducationProgramScreen = () => {
-    const route = useRoute();
-    const branchID = route.params.dataUser; 
+  const route = useRoute();
+  const branchID = route.params.dataUser;
   const [loading, setLoading] = useState(true);
   const [loadingLoader, setLoadingLoader] = useState(true);
   const [dataset, setDataset] = useState([]);
@@ -41,7 +41,7 @@ const EducationProgramScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [termID, setTermID] = useState("2223HK1N1");
   const [showModal, setShowModal] = useState(false);
-  const [branchName,setBranchName]=useState("")
+  const [branchName, setBranchName] = useState("");
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -49,25 +49,23 @@ const EducationProgramScreen = () => {
   }, []);
 
   const load = useCallback(async () => {
-  
     try {
       const branchName = await SecureStore.getItemAsync("branchName");
-      setBranchName(branchName)
+      setBranchName(branchName);
       const accessToken = await SecureStore.getItemAsync("accessToken");
-      const authorization = `Bearer ${accessToken}`
-       await axios.get(`${BASE_URL}/get_subject_by_branch/${branchID}`,
-       {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": authorization,
-        },
-      }
-       )
-         .then(function (response) {
-          setDataset(response.data.subject)
-          setRefreshing(false)
-          setLoadingLoader(false)        
-    })
+      const authorization = `Bearer ${accessToken}`;
+      await axios
+        .get(`${BASE_URL}/get_subject_by_branch/${branchID}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: authorization,
+          },
+        })
+        .then(function (response) {
+          setDataset(response.data.subject);
+          setRefreshing(false);
+          setLoadingLoader(false);
+        });
     } catch (error) {
       console.log(error);
       Alert.alert("Error", "Failed to load data. Please try again.");
@@ -76,7 +74,7 @@ const EducationProgramScreen = () => {
       setLoadingLoader(false);
     }
   }, [termID]);
-  
+
   useEffect(() => {
     load();
   }, [loadingLoader]);
@@ -95,10 +93,11 @@ const EducationProgramScreen = () => {
     <>
       <Header hasBackButton={true} title={"Chương trình đào tạo"} />
       <Loader loading={loadingLoader} />
-      <Text allowFontScaling={false} style={styles.header2}>Ngành: {branchName}</Text>
+      <Text allowFontScaling={false} style={styles.header2}>
+        Ngành: {branchName}
+      </Text>
 
-      <View style={{marginLeft:"15%"}}>
-      </View>
+      <View style={{ marginLeft: "15%" }}></View>
       <TextInput
         style={styles.searchInput}
         placeholder="Tìm kiếm"
@@ -109,22 +108,34 @@ const EducationProgramScreen = () => {
       <View>
         <View style={[styles.tableRow, { backgroundColor: "#f9fafb" }]}>
           <View style={{ width: "10%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
               STT
             </Text>
           </View>
           <View style={{ width: "30%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
               Mã Môn
             </Text>
           </View>
           <View style={{ width: "45%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
               Tên Môn
             </Text>
           </View>
           <View style={{ width: "15%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText, { alignSelf: "center" }]}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText, { alignSelf: "center" }]}
+            >
               Tín chỉ
             </Text>
           </View>
@@ -134,7 +145,9 @@ const EducationProgramScreen = () => {
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ flexGrow: 1 }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
           {loading ? (
             <ActivityIndicator
@@ -155,7 +168,11 @@ const EducationProgramScreen = () => {
                         key={data.id}
                         style={[
                           styles.tableRow,
-                          { backgroundColor: index % 2 === 0 ? "white" : "#f6f6f6", borderColor: "#EAECF0" },
+                          {
+                            backgroundColor:
+                              index % 2 === 0 ? "white" : "#f6f6f6",
+                            borderColor: "#EAECF0",
+                          },
                         ]}
                       >
                         <View style={{ width: "10%", alignSelf: "center" }}>
@@ -164,12 +181,15 @@ const EducationProgramScreen = () => {
                           </Text>
                         </View>
                         <View style={{ width: "30%", alignSelf: "center" }}>
-                          <Text allowFontScaling={false} style={styles.headerText}>
+                          <Text
+                            allowFontScaling={false}
+                            style={styles.headerText}
+                          >
                             {data.subjectId}
                           </Text>
                         </View>
                         <View style={{ width: "45%", alignSelf: "center" }}>
-                        <Text allowFontScaling={false} style={styles.text}>
+                          <Text allowFontScaling={false} style={styles.text}>
                             {data.subjectName}
                           </Text>
                         </View>
@@ -240,18 +260,22 @@ const styles = StyleSheet.create({
   },
   text: {
     color: GlobalStyle.textColor.color,
-    fontSize: Platform.OS === "ios" && windowWidth > 200 && windowWidth < 380 ? 10 : 12,
-    textAlign:"center"
+    fontSize:
+      Platform.OS === "ios" && windowWidth > 200 && windowWidth < 380 ? 10 : 12,
+    textAlign: "center",
   },
   noResultsText: {
     textAlign: "center",
     marginTop: 20,
     color: "gray",
   },
-  header2:{
-    fontSize: (Platform.OS === 'ios' && windowWidth>400) ?20 : 20*(windowWidth/428),
-    fontWeight:"600",
-    color:GlobalStyle.themeColor.color,
-    marginLeft:"15%"
-  }
+  header2: {
+    fontSize:
+      Platform.OS === "ios" && windowWidth > 400
+        ? 20
+        : 20 * (windowWidth / 428),
+    fontWeight: "600",
+    color: GlobalStyle.themeColor.color,
+    marginLeft: "15%",
+  },
 });

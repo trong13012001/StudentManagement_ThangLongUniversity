@@ -71,7 +71,6 @@ async def login(db:Session=Depends(get_database_session),
     pass_exists = db.query(exists().where(UserSchema.userPassword==password)).scalar()
     user = db.query(UserSchema).filter(UserSchema.userName == userName).first()
     role_exists = user.userRole if user else None
-    # print(role_exists)
     # print(password)
     if user_exists==False:
         return JSONResponse(status_code=400, content={"message": "Không có tài khoản"})
