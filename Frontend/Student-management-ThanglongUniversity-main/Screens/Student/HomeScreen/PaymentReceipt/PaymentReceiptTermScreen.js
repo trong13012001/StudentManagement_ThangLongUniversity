@@ -19,23 +19,18 @@ import {
   RefreshControl,
 } from "react-native";
 import axios from "axios";
-import { BASE_URL } from "../../../../../env/url";
-import Header from "../../../../../components/Header/Header";
-import GlobalStyle from "../../../../../GlobalStyle";
-import Loader from "../../../../../components/Loader/Loader";
 import * as SecureStore from "expo-secure-store";
 import Icon1 from "react-native-vector-icons/SimpleLineIcons";
 import { useNavigation, CommonActions } from "@react-navigation/native";
-import TermList from "../../../../../components/TermList";
+import { BASE_URL } from "../../../../env/url";
+import Header from "../../../../components/Header/Header";
+import GlobalStyle from "../../../../GlobalStyle";
+import Loader from "../../../../components/Loader/Loader";
+import TermList from "../../../../components/TermList";
 let windowWidth = Dimensions.get("window").width;
 
-const SchoolTimeTableScreen = () => {
-  return (
-    <TermList
-      title={"Thời khóa biểu toàn trường"}
-      name={"Thời khóa biểu toàn trường"}
-    />
-  );
+const SchoolReExaminationScheduleTerm = () => {
+  return <TermList title={"Phiếu báo thu tiền"} name={"Danh sách học phí"} />;
 };
 
-export default SchoolTimeTableScreen;
+export default SchoolReExaminationScheduleTerm;

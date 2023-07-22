@@ -45,7 +45,7 @@ async def create_class(
             ClassSchema.classID
             )
             .select_from(ClassSchema)
-            .filter(ClassSchema.courseID == courseID, ClassSchema.termID == termID).first()
+            .filter(ClassSchema.courseID == courseID,ClassSchema.studentID==studentID, ClassSchema.termID == termID).first()
         )
         examid1 = (db.query
                    (
