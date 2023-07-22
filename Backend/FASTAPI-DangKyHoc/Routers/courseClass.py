@@ -513,6 +513,6 @@ def get_unlearned_subject(
                 "subjectID": unlearned[0],
                 "subjectName": unlearned[1]
             }
-
+        )
     return {"unlearnedSubject": result}
 
