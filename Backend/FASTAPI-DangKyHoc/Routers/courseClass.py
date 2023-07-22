@@ -109,7 +109,7 @@ async def create_class(
             
         classSchema = ClassSchema(courseID = courseID, studentID = studentID, termID = termID, status = 1)
         gradeSchema = GradeSchema(studentID = studentID, termID = termID, subjectID = subjectID, status = 1)
-        examFilter = db.query(ExamSchema).filter(ExamSchema.subjectID == subjectID).first()
+        examFilter = db.query(ExamSchema).filter(ExamSchema.subjectID == subjectID, ExamSchema.termID == termID).first()
         examid = examFilter.examID
         examSchema = StudentExamSchema(studentID = studentID, examID = examid, status = 1)
 
@@ -134,7 +134,13 @@ async def update_class(
     termID:str=Form(...)
 ):
     student_exists = db.query(exists().where(StudentSchema.studentID == studentID)).scalar()
-    classID=db.query(ClassSchema.classID).select_from(ClassSchema).filter(ClassSchema.studentID==studentID,ClassSchema.termID==termID,ClassSchema.courseID==courseID).first()
+    classID=(
+            db.query(
+            ClassSchema.classID
+        )
+            .select_from(ClassSchema)
+            .filter(ClassSchema.studentID==studentID, ClassSchema.termID==termID, ClassSchema.courseID==courseID).first())
+
 
     examid = (db.query
             (
@@ -155,7 +161,7 @@ async def update_class(
             .join(GradeSchema, CourseSchema.subjectID == GradeSchema.subjectID)
             .filter(ClassSchema.studentID==studentID,ClassSchema.termID==termID,ClassSchema.courseID==courseID).first()
         )
-    
+
     get_class = db.query(ClassSchema).get(classID)
     get_exam = db.query(StudentExamSchema).get(examid)
     get_grade = db.query(GradeSchema).get(gradeid)
