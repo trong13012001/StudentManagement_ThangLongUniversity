@@ -17,7 +17,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import GlobalStyle from "../../../../../GlobalStyle";
-import { faL } from "@fortawesome/free-solid-svg-icons";
+import { fa0, faL } from "@fortawesome/free-solid-svg-icons";
 const statusBarStyle = Platform.OS === "ios" ? "dark-content" : "light-content";
 let windowWidth = Dimensions.get("window").width;
 import axios from "axios";
@@ -55,12 +55,13 @@ const CourseRegistrationScreen = () => {
   const [showModalSubject, setShowModalSubject] = useState(false);
   const [showModalCourse, setShowModalCourse] = useState(false);
   const [subjectName, setSubjectName] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    unLearnSubject();
-    currentTerm();
-    listTermStudy();
-  }, []);
+    Promise.all([unLearnSubject(), currentTerm(), listTermStudy(), getTimeTableDay()])
+      .finally(() => setRefreshing(false));
+  }, [currentTermName, currentTermId, setRefreshing]);
+
   const getTimeTableDay = async (value, selectedTerm) => {
     console.log("Thứ", value);
     console.log("Học kỳ", selectedTerm);
@@ -68,6 +69,7 @@ const CourseRegistrationScreen = () => {
     const studentID = await SecureStore.getItemAsync("studentId");
     const accessToken = await SecureStore.getItemAsync("accessToken");
     const authorization = `Bearer ${accessToken}`;
+
     try {
       await axios
         .get(
@@ -80,15 +82,16 @@ const CourseRegistrationScreen = () => {
           }
         )
         .then(function (response) {
-          const filteredData = response.data.dateSchedule.filter(item => item.status === 1);
-          setListTimeTableDay(filteredData);
           setRefreshing(false);
+          const filteredData = response.data.dateSchedule.filter(item => item.status === 1 ||item.status===2);
+          setListTimeTableDay(filteredData);
           setLoadingLoader(false);
         });
     } catch (error) {
       console.log(error);
       Alert.alert("Error", "Failed to load data. Please try again.");
     } finally {
+      setRefreshing(false); // Set refreshing to false after loading data
       setLoading(false);
       setLoadingLoader(false);
     }
@@ -283,17 +286,28 @@ const CourseRegistrationScreen = () => {
   };
   let closeModalCourse = () => {
     setShowModalCourse(false);
+    getTimeTableDay(selectDate, currentTermId); 
   };
+  const filteredDataset = dataUnlearnSubject.filter(
+    (data) =>
+      data.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) );
+
   return (
     <>
       <StatusBar barStyle={statusBarStyle} />
       <Header title={"Đăng ký học"} hasBackButton={true} />
 
       <View style={{ marginLeft: "5%" }}>
-        <View style={{ marginLeft: "10%" }}>
+        <View style={{ marginLeft: "10%",marginBottom:5 }}>
           <Text style={{ ...styles.header2 }}>{currentTermName}</Text>
         </View>
-        <View style={{ height: "35%", marginTop: 15 }}>
+        <TextInput
+        style={styles.searchInput}
+        placeholder="Tìm kiếm"
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
+        <View style={{ height: "30%", marginTop: 15 }}>
           <ScrollView
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{ flexGrow: 1 }}
@@ -314,10 +328,10 @@ const CourseRegistrationScreen = () => {
                       <Text style={{...styles.text,marginLeft:"30%"}}>Hết thời gian đăng ký</Text>
                       ) : (
                   <View style={styles.tableContainer}>
-                    {dataUnlearnSubject.length === 0 ? (
+                    {filteredDataset.length === 0 ? (
                       <Text style={{...styles.text,marginLeft:"30%"}}>Hết thời gian đăng ký</Text>
                     ) : (
-                      dataUnlearnSubject?.map((data, index) => {
+                      filteredDataset?.map((data, index) => {
                         return (
                           <TouchableOpacity
                             key={data.id}
@@ -465,7 +479,12 @@ const CourseRegistrationScreen = () => {
           </TouchableOpacity>
         </ScrollView>
         <View style={{ height: "30%",marginBottom:"55%" }}>
-          <ScrollView style={{ marginTop: "2%" }}>
+          <ScrollView style={{ marginTop: "2%" }}
+
+refreshControl={
+  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+}
+            >
             {listTimeTableDay.length === 0 ? (
               <Text style={{ ...styles.text, textAlign: "center" }}>
                 {selectDate === 1
@@ -522,7 +541,7 @@ const CourseRegistrationScreen = () => {
                         flexDirection: "column",
                       }}
                     >
-                      <Text allowFontScaling={false} style={styles.headerText}>
+                      <Text allowFontScaling={false} style={{...styles.headerText,marginRight:"5%"}}>
                         Tên môn: {data.subjectName}
                       </Text>
                       <Text allowFontScaling={false} style={styles.headerText}>
@@ -599,5 +618,14 @@ const styles = StyleSheet.create({
     borderBottomColor: "#e9ecef",
     flexDirection: "row",
     marginRight: "5%",
+  },
+  searchInput: {
+    height: 40,
+    
+    width: "95%",
+    paddingHorizontal: 10,
+    borderColor: GlobalStyle.textColor.color,
+    borderWidth: 1,
+    borderRadius: 8,
   },
 });

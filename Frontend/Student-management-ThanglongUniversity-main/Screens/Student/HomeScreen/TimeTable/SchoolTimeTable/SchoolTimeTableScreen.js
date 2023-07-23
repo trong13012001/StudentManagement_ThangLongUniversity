@@ -83,9 +83,7 @@ const SchoolTimeTableScreen = () => {
 
   const filteredDataset = dataset.filter(
     (data) =>
-      data.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      data.className.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+      data.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) );
 
   return (
     <>

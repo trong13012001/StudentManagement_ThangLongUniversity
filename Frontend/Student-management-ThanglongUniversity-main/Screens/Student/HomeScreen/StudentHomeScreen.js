@@ -191,7 +191,7 @@ const StudentHomeScreen = ({ navigation }) => {
               icon: "calendar-check",
               onPress: () => {
                 navigation.dispatch(
-                  CommonActions.navigate({ name: "Lịch thi chính thức" })
+                  CommonActions.navigate({ name: "Lịch thi chính thức Stack" })
                 );
               },
             },
@@ -200,7 +200,7 @@ const StudentHomeScreen = ({ navigation }) => {
               icon: "calendar-question",
               onPress: () => {
                 navigation.dispatch(
-                  CommonActions.navigate({ name: "Lịch thi dự kiến" })
+                  CommonActions.navigate({ name: "Lịch thi dự kiến Stack" })
                 );
               },
             },

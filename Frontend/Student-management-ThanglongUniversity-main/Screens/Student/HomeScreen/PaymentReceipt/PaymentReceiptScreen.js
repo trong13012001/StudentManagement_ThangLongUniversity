@@ -27,6 +27,10 @@ import GlobalStyle from "../../../../GlobalStyle";
 import SubjectViewer from "../../../../components/Viewer/SubjectViewer";
 import Loader from "../../../../components/Loader/Loader";
 import BillViewer from "../../../../components/Viewer/BillViewer";
+import { Copy } from "phosphor-react-native";
+import Clipboard from '@react-native-clipboard/clipboard';
+import HasCopy from "../../../../components/Popup/HasCopy";
+
 let windowWidth = Dimensions.get("window").width;
 
 const PaymentReceiptScreen = () => {
@@ -42,6 +46,15 @@ const PaymentReceiptScreen = () => {
   const [studentID, setStudentID] = useState("");
   const [fullName, setFullName] = useState("");
   const [totalBill, setTotalBill] = useState("");
+  const [copiedText, setCopiedText] = useState('');
+  const [showModalCopied, setShowModalCopied]=useState(false)
+
+  const copyToClipboard = () => {
+    Clipboard.setString('12410000535355');
+  };
+  const copyToClipboardMessage = () => {
+    Clipboard.setString(`${studentID}_${fullName}_NopHP ${dataTerm.termID}`);
+  };
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     getCourseBill();
@@ -64,7 +77,7 @@ const PaymentReceiptScreen = () => {
           },
         })
         .then(function (response) {
-          setTotalBill(response.data.bills.termSum);
+          setTotalBill(response.data.bill.termSum);
           setRefreshing(false);
           setLoadingLoader(false);
         });
@@ -121,7 +134,12 @@ const PaymentReceiptScreen = () => {
   let closeModal = () => {
     setShowModal(false);
   };
-
+  let closeModalCopied= () => {
+    setShowModalCopied(true)
+    setTimeout(() => {
+      setShowModalCopied(false);
+    }, 500);
+  };
   return (
     <>
       <Header hasBackButton={true} title={"Phiếu báo thu tiền"} />
@@ -183,16 +201,18 @@ const PaymentReceiptScreen = () => {
               :
             </Text>
           </View>
-          <View style={{ width: "50%" }}>
-            <Text allowFontScaling={false} style={[styles.headerText1]}>
-              {totalBill.toLocaleString()} VND
-            </Text>
-          </View>
+          {totalBill==undefined?(
+                      <View style={{ width: "50%" }}>
+                      <Text allowFontScaling={false} style={[styles.headerText1]}></Text>
+                    </View>
+          ):(<View style={{ width: "50%" }}>
+          <Text allowFontScaling={false} style={[styles.headerText1]}>{totalBill.toLocaleString()} VND</Text>
+        </View>)}
         </View>
         <View style={[styles.tableRow, { backgroundColor: "#f9fafb" }]}>
           <View style={{ width: "50%" }}>
             <Text allowFontScaling={false} style={[styles.headerText1]}>
-              Tình trạng
+              Ngân hàng
             </Text>
           </View>
           <View style={{ width: "1%" }}>
@@ -203,8 +223,76 @@ const PaymentReceiptScreen = () => {
           <View style={{ width: "50%" }}>
             <Text
               allowFontScaling={false}
-              style={[styles.headerText1, { textTransform: "capitalize" }]}
-            ></Text>
+              style={[styles.headerText1,{fontSize:12}]}
+            >BIDV -  Chi nhánh Hoàn Kiếm</Text>
+          </View>
+        </View>
+        <View style={[styles.tableRow, { backgroundColor: "#f9fafb" }]}>
+          <View style={{ width: "50%" }}>
+            <Text allowFontScaling={false} style={[styles.headerText1]}>
+            Tên tài khoản
+            </Text>
+          </View>
+          <View style={{ width: "1%" }}>
+            <Text allowFontScaling={false} style={[styles.headerText]}>
+              :
+            </Text>
+          </View>
+          <View style={{ width: "50%" }}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText1, { textTransform: "capitalize",fontSize:13 }]}
+            >Trường Đại học Thăng Long</Text>
+          </View>
+        </View>
+        <View style={[styles.tableRow, { backgroundColor: "#f9fafb" }]}>
+          <View style={{ width: "50%" }}>
+            <Text allowFontScaling={false} style={[styles.headerText1]}>
+              Số tài khoản
+            </Text>
+          </View>
+          <View style={{ width: "1%" }}>
+            <Text allowFontScaling={false} style={[styles.headerText]}>
+              :
+            </Text>
+          </View>
+          <View style={{ width: "50%",flexDirection:"row" }}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText1, { textTransform: "capitalize" ,marginRight:10 }]}
+            >
+              1241 0000 53 53 55
+            </Text>
+            <TouchableOpacity
+                  onPress={async () => {
+                    copyToClipboard(),
+                    closeModalCopied()
+                  }}            ><Copy/></TouchableOpacity>
+          </View>
+        </View>
+        <View style={[styles.tableRow, { backgroundColor: "#f9fafb" }]}>
+          <View style={{ width: "50%" }}>
+            <Text allowFontScaling={false} style={[styles.headerText1]}>
+              Lời nhắn
+            </Text>
+          </View>
+          <View style={{ width: "1%" }}>
+            <Text allowFontScaling={false} style={[styles.headerText]}>
+              :
+            </Text>
+          </View>
+          <View style={{ width: "45%",flexDirection:"row" }}>
+            <Text
+              allowFontScaling={false}
+              style={[styles.headerText1, {marginRight:10 }]}
+            >
+              {studentID}_{fullName}_NopHP {dataTerm.termID}
+            </Text>
+            <TouchableOpacity
+                  onPress={async () => {
+                    copyToClipboardMessage(),
+                    closeModalCopied()
+                  }}            ><Copy/></TouchableOpacity>
           </View>
         </View>
       </View>
@@ -256,7 +344,7 @@ const PaymentReceiptScreen = () => {
             <View>
               <View style={styles.tableContainer}>
                 {dataset.length === 0 ? (
-                  <Text style={styles.noResultsText}>No results found</Text>
+                  <Text style={styles.noResultsText}>Không có dữ liệu</Text>
                 ) : (
                   dataset?.map((data, index) => {
                     return (
@@ -313,6 +401,7 @@ const PaymentReceiptScreen = () => {
                   })
                 )}
               </View>
+              <HasCopy showModal={showModalCopied} title={"Đã sao chép"}/>
               <BillViewer
                 courseID={courseID}
                 showModal={showModal}

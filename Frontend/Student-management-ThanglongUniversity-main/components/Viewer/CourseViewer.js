@@ -24,6 +24,7 @@ import CheckBox from "@react-native-community/checkbox";
 import CourseRegistrationScreen from "../../Screens/Student/HomeScreen/Registration/CourseRegistration/CourseRegistrationScreen";
 import PopupMsgAdd from "../Popup/PopupMsgAdd";
 import PopupMsgDelete from "../Popup/PopupMsgDelete";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 // Get window's width, height to style view
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -73,6 +74,8 @@ const CourseViewer = (props) => {
         }));
 
         setDataCourse(modifiedData);
+        setRefreshing(false)
+        setLoading(false);
       })
       .catch(function (error) {
         console.log(error);
@@ -89,6 +92,9 @@ const CourseViewer = (props) => {
   }, [dataCourse]);
   useEffect(() => {
     load();
+  }, []);
+  useEffect(() => {
+    load();
   }, [subjectID, termID]);
 
   useEffect(() => {
@@ -98,19 +104,19 @@ const CourseViewer = (props) => {
     setShowModalDeny(true)
     setTimeout(() => {
       setShowModalDeny(false);
-    }, 3000);
+    }, 2000);
   }; 
   let closeModalDuplicate= () => {
     setShowModalDuplicate(true)
     setTimeout(() => {
       setShowModalDuplicate(false);
-    }, 3000);
+    }, 2000);
   };
   let closeModalSuccess= () => {
     setShowModalSuccess(true)
     setTimeout(() => {
       setShowModalSuccess(false);
-    }, 3000);
+    }, 2000);
   };
 
   const onCheckBoxPress = async (index) => {
@@ -122,7 +128,6 @@ const CourseViewer = (props) => {
     );
 
     const course = dataCourse[index];
-    setCourseID(course.courseID)
     const studentID = await SecureStore.getItemAsync("studentId");
     const accessToken = await SecureStore.getItemAsync("accessToken");
     const authorization = `Bearer ${accessToken}`;

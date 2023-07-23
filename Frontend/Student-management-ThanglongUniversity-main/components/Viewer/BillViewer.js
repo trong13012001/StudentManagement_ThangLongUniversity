@@ -38,11 +38,11 @@ const BillViewer = (props) => {
         }
         )
           .then(function (response) {
-            setSubjectID(response.data.courses.subjectID)
-            setSubjectName(response.data.courses.subjectName)
-            setQuantity(response.data.courses.quantity)
-            setUnit(response.data.courses.unit)
-            setBill(response.data.courses.bill)
+            setSubjectID(response.data.bill.subjectID)
+            setSubjectName(response.data.bill.subjectName)
+            setQuantity(response.data.bill.quantity)
+            setUnit(response.data.bill.unit)
+            setBill(response.data.bill.bill)
           })
           .catch(function (error) {
             console.log(error)

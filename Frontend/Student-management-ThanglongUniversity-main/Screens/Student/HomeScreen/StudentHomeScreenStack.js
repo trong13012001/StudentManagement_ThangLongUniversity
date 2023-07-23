@@ -7,13 +7,14 @@ import ReExaminationRegistrationScreen from "../HomeScreen/Registration/ReExamin
 import PaymentReceiptScreen from "../HomeScreen/PaymentReceipt/PaymentReceiptScreen";
 import CollegeTranscriptsScreen from "../HomeScreen/ScoreReport/CollegeTranscripts/CollegeTranscriptsScreen";
 import OfficialExamSchedule from "../HomeScreen/ExamSchedule/OfficialExamSchedule/OfficialExamSchedule";
-import ExpectedExamSchedule from "../HomeScreen/ExamSchedule/ExpectedExamSchedule/ExpectedExamSchedule";
 import OriginalBookSigningScheduleScreen from "../HomeScreen/ExamSchedule/OriginalBookSigningSchedule/OriginalBookSigningScheduleScreen";
 import LearningOrientation from "../HomeScreen/LearningOrientation/LearningOrientation";
 import SchooleTimeTableStack from "./TimeTable/SchoolTimeTable/SchooleTimeTableStack";
 import SchoolReExaminationScheduleStack from "./ExamSchedule/SchoolReExaminationScheduleScreen/SchoolReExaminationScheduleStack";
 import ScoreReportCardStack from "./ScoreReport/ScoreReportCard/ScoreReportCardStack";
 import PaymentReceiptStack from "./PaymentReceipt/PaymentReceiptStack";
+import OfficialExamScheduleStack from "./ExamSchedule/OfficialExamSchedule/OfficialExamScheduleStack";
+import ExpectedExamScheduleStack from "./ExamSchedule/ExpectedExamSchedule/ExpectedExamScheduleStack";
 const Stack = createStackNavigator();
 
 const StudentHomeScreenStack = () => {
@@ -60,13 +61,13 @@ const StudentHomeScreenStack = () => {
         options={{ headerShown: false, unmountOnBlur: true }}
       />
       <Stack.Screen
-        name="Lịch thi chính thức"
-        component={OfficialExamSchedule}
+        name="Lịch thi chính thức Stack"
+        component={OfficialExamScheduleStack}
         options={{ headerShown: false, unmountOnBlur: true }}
       />
       <Stack.Screen
-        name="Lịch thi dự kiến"
-        component={ExpectedExamSchedule}
+        name="Lịch thi dự kiến Stack"
+        component={ExpectedExamScheduleStack}
         options={{ headerShown: false, unmountOnBlur: true }}
       />
       <Stack.Screen

@@ -68,7 +68,8 @@ const TimeTable = () => {
         )
         .then(function (response) {
           console.log(response.data.dateSchedule);
-          setListTimeTableDay(response.data.dateSchedule); // setListTimeTableDay(response)
+          const filteredData = response.data.dateSchedule.filter(item => item.status === 1 ||item.status===2);
+          setListTimeTableDay(filteredData);
           setRefreshing(false);
           setLoadingLoader(false);
         });
