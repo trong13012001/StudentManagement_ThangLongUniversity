@@ -253,6 +253,7 @@ def get_courses_by_subject_term(
                 "courseDate": course[1],
                 "courseShiftStart": course[2],
                 "courseShiftEnd": course[3],
+                "courseID":course[4],
                 "is_registered": is_registered
             }
         )

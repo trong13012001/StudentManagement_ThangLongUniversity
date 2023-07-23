@@ -1,57 +1,89 @@
 import React, { useState, useRef } from "react";
 import {
-    StyleSheet, TextInput, View, Text, ScrollView, Dimensions, Platform,
-    Image, Keyboard, TouchableOpacity, KeyboardAvoidingView, Alert,StatusBar
-  } from "react-native"; 
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import GlobalStyle from '../../../GlobalStyle';
+  StyleSheet,
+  TextInput,
+  View,
+  Text,
+  ScrollView,
+  Dimensions,
+  Platform,
+  Image,
+  Keyboard,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Alert,
+  StatusBar,
+} from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import GlobalStyle from "../../../GlobalStyle";
 
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import StudentHomeScreen from "../HomeScreen/StudentHomeScreen";
-import TimeTable from "../HomeScreen/TimeTable/StudentTimeTable/TimeTable"
+import TimeTable from "../HomeScreen/TimeTable/StudentTimeTable/TimeTable";
 import StudentHomeScreenStack from "../HomeScreen/StudentHomeScreenStack";
 import StudentAccountScreenStack from "../AccountScreen.js/StudentAccountScreenStack";
-let windowWidth = Dimensions.get('window').width;
+let windowWidth = Dimensions.get("window").width;
 
 const Tab = createBottomTabNavigator();
 
-const StudentMainScreen=()=>{
-    return(
-      <Tab.Navigator
+const StudentMainScreen = () => {
+  return (
+    <Tab.Navigator
       initialRouteName="Trang chủ"
-      id='tab'
-      keyboardDismissMode='none'
-      screenOptions={
-        {
-          tabBarHideOnKeyboard: Platform.OS==="android"?true:false,
-          headerShown: false,
-          tabBarShowLabel: false,
+      id="tab"
+      keyboardDismissMode="none"
+      screenOptions={{
+        tabBarHideOnKeyboard: Platform.OS === "android" ? true : false,
+        headerShown: false,
+        tabBarShowLabel: false,
 
-          tabBarStyle: {
-            height: Platform.OS === 'ios' ? '10%' : '10%',
-            width:"90%",
-            marginLeft:"5%",
-            position: 'absolute',
-            borderTopRightRadius:15,
-            borderTopLeftRadius:15,
-          }
-        }
-      }
+        tabBarStyle: {
+          height: Platform.OS === "ios" ? "10%" : "10%",
+          width: "90%",
+          marginLeft: "5%",
+          position: "absolute",
+          borderTopRightRadius: 15,
+          borderTopLeftRadius: 15,
+        },
+      }}
     >
-         <Tab.Screen
+      <Tab.Screen
         name="Trang chủ"
         component={StudentHomeScreenStack}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
-            <View style={{ alignItems: 'center', width: windowWidth > 800 ? 100 : undefined }}>
-              <Icon name="home" color={focused ? GlobalStyle.themeColor.color : GlobalStyle.textColor.color} size={size} />
-              <Text allowFontScaling={false} style={{ color: focused ? GlobalStyle.themeColor.color : GlobalStyle.textColor.color,fontSize:12, }}>Trang chủ</Text>
+            <View
+              style={{
+                alignItems: "center",
+                width: windowWidth > 800 ? 100 : undefined,
+              }}
+            >
+              <Icon
+                name="home"
+                color={
+                  focused
+                    ? GlobalStyle.themeColor.color
+                    : GlobalStyle.textColor.color
+                }
+                size={size}
+              />
+              <Text
+                allowFontScaling={false}
+                style={{
+                  color: focused
+                    ? GlobalStyle.themeColor.color
+                    : GlobalStyle.textColor.color,
+                  fontSize: 12,
+                }}
+              >
+                Trang chủ
+              </Text>
             </View>
           ),
         }}
         listeners={({ navigation }) => ({
           tabPress: () => {
-            navigation.navigate('Trang chủ', { screen: 'Thông tin trang chủ' });
+            navigation.navigate("Trang chủ", { screen: "Thông tin trang chủ" });
           },
         })}
       />
@@ -59,44 +91,84 @@ const StudentMainScreen=()=>{
         name="Thời khóa biểu"
         component={TimeTable}
         options={{
-          tabBarIcon:({focused,color,size})=>(
-            <View style={{alignItems:'center', width: windowWidth > 800 ? 100 : undefined}}>
-               <Icon name="calendar" color={focused ? GlobalStyle.themeColor.color : GlobalStyle.textColor.color} size={size} />
-              <Text allowFontScaling={false} style={{ color: focused ? GlobalStyle.themeColor.color : GlobalStyle.textColor.color,fontSize:12, }}>Thời khóa biểu</Text>
+          tabBarIcon: ({ focused, color, size }) => (
+            <View
+              style={{
+                alignItems: "center",
+                width: windowWidth > 800 ? 100 : undefined,
+              }}
+            >
+              <Icon
+                name="calendar"
+                color={
+                  focused
+                    ? GlobalStyle.themeColor.color
+                    : GlobalStyle.textColor.color
+                }
+                size={size}
+              />
+              <Text
+                allowFontScaling={false}
+                style={{
+                  color: focused
+                    ? GlobalStyle.themeColor.color
+                    : GlobalStyle.textColor.color,
+                  fontSize: 12,
+                }}
+              >
+                Thời khóa biểu
+              </Text>
             </View>
-          )
+          ),
         }}
-      
       />
-       
 
-      
-   
-        <Tab.Screen
+      <Tab.Screen
         name="Tài khoản"
         component={StudentAccountScreenStack}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
-            <View style={{ alignItems: 'center', width: windowWidth > 800 ? 100 : undefined }}>
-              <Icon name="user" color={focused ? GlobalStyle.themeColor.color : GlobalStyle.textColor.color} size={size} />
-              <Text allowFontScaling={false} style={{ color: focused ? GlobalStyle.themeColor.color : GlobalStyle.textColor.color,fontSize:12, }}>Tài khoản</Text>
+            <View
+              style={{
+                alignItems: "center",
+                width: windowWidth > 800 ? 100 : undefined,
+              }}
+            >
+              <Icon
+                name="user"
+                color={
+                  focused
+                    ? GlobalStyle.themeColor.color
+                    : GlobalStyle.textColor.color
+                }
+                size={size}
+              />
+              <Text
+                allowFontScaling={false}
+                style={{
+                  color: focused
+                    ? GlobalStyle.themeColor.color
+                    : GlobalStyle.textColor.color,
+                  fontSize: 12,
+                }}
+              >
+                Tài khoản
+              </Text>
             </View>
           ),
         }}
         listeners={({ navigation }) => ({
           tabPress: () => {
-            navigation.navigate('Tài khoản', { screen: 'Thông tin' });
+            navigation.navigate("Tài khoản", { screen: "Thông tin" });
           },
         })}
       />
-</Tab.Navigator>
-
-)
-}
+    </Tab.Navigator>
+  );
+};
 const styles = StyleSheet.create({
-    container: {
-      
-      textAlign:"center",
-    },
-  });
+  container: {
+    textAlign: "center",
+  },
+});
 export default StudentMainScreen;

@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import React, { useState, useEffect } from 'react';
 
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View,LogBox } from 'react-native';
 // import MainScreen from './screens/Main/MainScreen';
 import SplashScreen from './Screens/Login/SplashScreen';
 import { NavigationContainer } from '@react-navigation/native';
@@ -12,9 +12,8 @@ import TeacherMainScreen from './Screens/Teacher/MainScreen/TeacherMainScreen'
 
 // Creat stack for authentication ....
 const Stack = createStackNavigator();
-
+LogBox.ignoreAllLogs();//Ignore all log notifications
 export default function App() {
-
   return (
       <View style={styles.container}>
         <NavigationContainer> 
