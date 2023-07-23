@@ -33,19 +33,43 @@ async def create_class(
     termID: str = Form(...)
 ):
     #Check có tồn tại chương trình không
-    course_exists = db.query(exists().where(CourseSchema.courseID == courseID)).scalar()
+    course_exists = db.query(exists().where(CourseSchema.courseID == courseID, TermSchema.termID == termID)).scalar()
     #Check có tồn tại MSV không
     student_exists = db.query(exists().where(StudentSchema.studentID == studentID)).scalar()
     #Check đã từng đăng ký chưa
-    class_exists = db.query(exists().where(ClassSchema.courseID == courseID, ClassSchema.termID == termID, ClassSchema.status == 0)).scalar()
+    class_exists = db.query(exists().where(ClassSchema.courseID == courseID, ClassSchema.termID == termID)).scalar()
 
+    #Nếu đã từng đăng ký xong hủy
     if class_exists:
+        #Lấy lịch từ môn đã đăng ký
+        courseFilter = (
+            db.query(
+                CourseSchema.courseDate,
+                CourseSchema.courseShiftStart,
+                CourseSchema.courseShiftEnd
+            )
+            .select_from(ClassSchema)
+            .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
+            .filter(ClassSchema.termID == termID, ClassSchema.status != 0).all()
+        )
+
+        #Lấy lớp đã chọn
+        chosenCourseFilter = db.query(CourseSchema).filter(CourseSchema.courseID == courseID, CourseSchema.termID == termID).first()
+
+        #Đưa ca vào mảng, khoanh vùng ca của lớp nếu trùng ngày với lớp đã chọn
+        courseTime = [list(range(array[1], array[2]+1)) for array in courseFilter if array[0] == chosenCourseFilter.courseDate]
+        print(courseTime)
+
+        #Kiểm tra ca bắt đầu hoặc kết thúc của lớp đã chọn có nằm trong mảng nào không
+        for i in courseTime:
+            if (chosenCourseFilter.courseShiftStart in i or chosenCourseFilter.courseShiftEnd in i):
+                return JSONResponse(status_code=400, content={"message": "Trùng lịch!"})       
         classid = (db.query
                    (
             ClassSchema.classID
             )
             .select_from(ClassSchema)
-            .filter(ClassSchema.courseID == courseID, ClassSchema.termID == termID).first()
+            .filter(ClassSchema.courseID == courseID, ClassSchema.termID == termID, ClassSchema.status == 0).first()
         )
         examid1 = (db.query
                    (
@@ -54,7 +78,7 @@ async def create_class(
                    .select_from(StudentExamSchema)
                    .join(ExamSchema, StudentExamSchema.examID == ExamSchema.examID)
                    .join(CourseSchema, ExamSchema.subjectID == CourseSchema.subjectID)
-                   .filter(CourseSchema.courseID == courseID, ExamSchema.termID == termID).first()
+                   .filter(CourseSchema.courseID == courseID, ExamSchema.termID == termID, StudentExamSchema.status == 0).first()
         )
         gradeid = (db.query
                    (
@@ -63,7 +87,7 @@ async def create_class(
                    .select_from(GradeSchema)
                    .join(SubjectSchema, SubjectSchema.subjectID == GradeSchema.subjectID)
                    .join(CourseSchema, SubjectSchema.subjectID == CourseSchema.subjectID)
-                   .filter(CourseSchema.courseID == courseID, GradeSchema.termID == termID).first()
+                   .filter(CourseSchema.courseID == courseID, GradeSchema.termID == termID, GradeSchema.status == 0).first()
         )
         get_class = db.query(ClassSchema).get(classid)
         get_exam = db.query(StudentExamSchema).get(examid1)
@@ -78,7 +102,8 @@ async def create_class(
         db.refresh(get_grade)
         return JSONResponse(status_code=200, content={"message": "Đăng ký môn thành công!"})
     
-    if course_exists and student_exists:
+    #Nếu đăng ký mới
+    elif course_exists and student_exists:
         #Lấy mã môn từ course
         subjectFilter = db.query(CourseSchema).filter(CourseSchema.courseID == courseID).first()
         subjectID = subjectFilter.subjectID
@@ -92,7 +117,7 @@ async def create_class(
             )
             .select_from(ClassSchema)
             .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
-            .filter(ClassSchema.termID == termID).all()
+            .filter(ClassSchema.termID == termID, ClassSchema.status != 0).all()
         )
 
         #Lấy lớp đã chọn
@@ -134,12 +159,15 @@ async def update_class(
     termID:str=Form(...)
 ):
     student_exists = db.query(exists().where(StudentSchema.studentID == studentID)).scalar()
+    class_exists = db.query(exists().where(ClassSchema.courseID == courseID, ClassSchema.termID == termID, ClassSchema.status == 0)).scalar()
+    if class_exists:
+        return JSONResponse(status_code=400, content={"message": "Error!"})
     classID=(
             db.query(
             ClassSchema.classID
         )
             .select_from(ClassSchema)
-            .filter(ClassSchema.studentID==studentID, ClassSchema.termID==termID, ClassSchema.courseID==courseID).first())
+            .filter(ClassSchema.studentID==studentID, ClassSchema.termID==termID, ClassSchema.courseID==courseID, ClassSchema.status == 1).first())
 
     examid = (db.query
             (
@@ -149,7 +177,7 @@ async def update_class(
             .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
             .join(ExamSchema, CourseSchema.subjectID == ExamSchema.subjectID)
             .join(StudentExamSchema, ExamSchema.examID == StudentExamSchema.examID)
-            .filter(ClassSchema.studentID==studentID,ClassSchema.termID==termID,ClassSchema.courseID==courseID).first()
+            .filter(ClassSchema.studentID==studentID,ClassSchema.termID==termID,ClassSchema.courseID==courseID, StudentExamSchema.status == 1).first()
             )
     gradeid = (db.query
             (
@@ -158,14 +186,12 @@ async def update_class(
             .select_from(ClassSchema)
             .join(CourseSchema, ClassSchema.courseID == CourseSchema.courseID)
             .join(GradeSchema, CourseSchema.subjectID == GradeSchema.subjectID)
-            .filter(ClassSchema.studentID==studentID,ClassSchema.termID==termID,ClassSchema.courseID==courseID).first()
+            .filter(ClassSchema.studentID==studentID,ClassSchema.termID==termID,ClassSchema.courseID==courseID, GradeSchema.status == 1).first()
         )
 
     get_class = db.query(ClassSchema).get(classID)
     get_exam = db.query(StudentExamSchema).get(examid)
     get_grade = db.query(GradeSchema).get(gradeid)
-    
-    
 
     if student_exists:
         get_class.status = 0
